@@ -1,0 +1,28 @@
+= ADR-0001: TODO
+:toc:
+
+== Status
+
+Proposed
+
+== Context
+
+What problem are we solving? What constraints matter?
+
+== Decision
+
+What did we decide?
+
+== Alternatives considered
+
+* TODO
+
+== Consequences
+
+* Positive:
+* Negative or risks:
+* Follow-up actions:
+
+== References
+
+* TODO

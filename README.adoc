@@ -1,0 +1,50 @@
+= Secure Software Architecture Project Starter
+:toc:
+:toclevels: 2
+
+This repository is the official team workspace for the Secure Software Architecture course project.
+
+== Team
+
+* Team name: TODO
+* Members:
+** TODO
+** TODO
+** TODO, optional
+
+== Project scenario
+
+Default scenario: Citizen Services Portal.
+
+Keep a short project summary here and link to the main architecture artifacts as they become available.
+
+== Current status
+
+* Week: TODO
+* Main focus this week: TODO
+* Biggest open question: TODO
+* Biggest technical risk: TODO
+
+== Important links
+
+* Architecture document: link:docs/architecture.adoc[docs/architecture.adoc]
+* Architectural drivers: link:docs/drivers.adoc[docs/drivers.adoc]
+* Team contract: link:docs/team_contract.adoc[docs/team_contract.adoc]
+* Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
+* ADR index: link:adrs/README.adoc[adrs/README.adoc]
+* API specifications: link:api/[api/]
+* Deployment and operations notes: link:ops/[ops/]
+* Diagrams: link:diagrams/[diagrams/]
+
+== Course workflow
+
+This repository is the official submission location for the team.
+
+* Invite all team members as collaborators.
+* Invite the instructors as collaborators.
+* Commit regularly with meaningful messages.
+* Use issues or a simple project board to track tasks, risks, and feedback.
+* Keep generated diagram exports together with editable sources.
+* Do not commit secrets, credentials, private keys, or personal data.
+
+At checkpoints, instructors review the state of this repository at the deadline.

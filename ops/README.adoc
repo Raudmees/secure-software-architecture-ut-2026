@@ -1,0 +1,11 @@
+= Deployment and Operations
+
+Use this directory for deployment, observability, recovery, and operations notes.
+
+Start with:
+
+* deployment assumptions;
+* scaling and availability reasoning;
+* observability signals;
+* backup and recovery approach;
+* incident response assumptions.

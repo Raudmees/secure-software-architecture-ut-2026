@@ -1,0 +1,15 @@
+= Risk Register
+:toc:
+
+[cols="1,3,2,2,3",options="header"]
+|===
+|ID |Risk |Likelihood |Impact |Mitigation / treatment
+
+|R-001 |If TODO happens, then TODO impact occurs. |Low/Med/High |Low/Med/High |TODO
+|R-002 | | | |
+|===
+
+== Notes
+
+* Keep risk statements concrete: If condition or event happens, then impact occurs.
+* Track owners and dates in repository issues or this document.

@@ -1,0 +1,11 @@
+= Architecture Decision Records
+
+Use one file per important architecture decision.
+
+Suggested naming:
+
+* `ADR-0001-documentation-and-diagramming.adoc`
+* `ADR-0002-data-ownership.adoc`
+* `ADR-0003-identity-and-access.adoc`
+
+Each ADR should state context, decision, alternatives, consequences, and follow-up actions.

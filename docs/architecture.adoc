@@ -1,0 +1,62 @@
+= Architecture Document
+:toc:
+:toclevels: 3
+
+== 1. Executive summary
+
+* What is the system?
+* Who is it for?
+* What are the top architectural drivers?
+
+== 2. Architectural drivers
+
+Link to or summarize link:drivers.adoc[drivers.adoc].
+
+=== 2.1 Business goals
+
+=== 2.2 Quality attributes
+
+=== 2.3 Constraints and assumptions
+
+== 3. System context
+
+Add the C4 context diagram and supporting text.
+
+== 4. Containers
+
+Add the C4 container diagram and supporting text.
+
+== 5. Components
+
+Add at least two component views for important containers.
+
+== 6. Key architectural mechanisms
+
+=== Identity and access
+
+=== Data management
+
+=== Workflow and messaging
+
+=== Auditing and logging
+
+== 7. Interfaces
+
+Link to API specifications in link:../api/[api/].
+
+== 8. Security analysis
+
+Link to threat model and risk register artifacts.
+
+== 9. Deployment and operations
+
+Link to deployment, observability, and recovery notes in link:../ops/[ops/].
+
+== 10. Evolution plan
+
+Describe expected changes, versioning, compatibility, migration, and deprecation.
+
+== Appendix
+
+* ADR index: link:../adrs/README.adoc[adrs/README.adoc]
+* Glossary: TODO

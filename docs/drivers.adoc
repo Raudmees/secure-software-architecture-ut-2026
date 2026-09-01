@@ -1,0 +1,48 @@
+= Architectural Drivers
+:toc:
+:toclevels: 2
+
+== Mission goals
+
+List 5-8 goals that explain what the Citizen Services Portal should achieve.
+
+* TODO
+
+== Stakeholders
+
+Identify stakeholders and what each needs from the architecture.
+
+[cols="1,3",options="header"]
+|===
+|Stakeholder |Need or concern
+
+|Residents/citizens |TODO
+|Service provider organizations/agencies |TODO
+|Administrators/helpdesk |TODO
+|Auditors/oversight |TODO
+|External registries/back-end systems |TODO
+|Operations/security teams |TODO
+|===
+
+== Quality attributes and constraints
+
+List 8-12 quality attributes or constraints.
+
+[cols="1,3,3",options="header"]
+|===
+|ID |Driver |Why it matters
+
+|QA-001 |TODO |TODO
+|===
+
+== Assumptions
+
+List assumptions that may later need validation.
+
+* TODO
+
+== Open questions
+
+List open questions as questions, not as hidden assumptions.
+
+* TODO

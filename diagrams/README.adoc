@@ -1,0 +1,10 @@
+= Diagrams
+
+Keep exported diagrams and editable sources in this directory.
+
+For each diagram, include:
+
+* title;
+* short caption explaining what question the diagram answers;
+* editable source if available;
+* exported image or PDF used in presentations and documents.

@@ -1,0 +1,28 @@
+= Team Contract
+:toc:
+
+== Team members
+
+* TODO
+* TODO
+* TODO, optional
+
+== Working agreement
+
+* Communication channel:
+* Expected response time:
+* Weekly meeting time:
+* Division of work:
+* Definition of done:
+* Conflict resolution:
+
+== Course repository workflow
+
+* Team fork owner:
+* Instructors invited as collaborators: yes/no
+* Team members invited as collaborators: yes/no
+* Issue tracker or project board used: yes/no
+
+== Integrity
+
+We commit to producing our own work and being able to explain our architecture decisions.

@@ -1,0 +1,8 @@
+openapi: 3.0.3
+info:
+  title: Citizen Services Portal API
+  version: 0.1.0
+  description: Initial API placeholder for the course project.
+paths: {}
+components:
+  schemas: {}
