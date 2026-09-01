@@ -16,7 +16,7 @@ This repository is the official team workspace for the Secure Software Architect
 
 Default scenario: Citizen Services Portal.
 
-Keep a short project summary here and link to the main architecture artifacts as they become available.
+Start from link:docs/scenario.adoc[docs/scenario.adoc]. Keep a short project summary here and link to the main architecture artifacts as they become available.
 
 == Current status
 
@@ -28,6 +28,7 @@ Keep a short project summary here and link to the main architecture artifacts as
 == Important links
 
 * Architecture document: link:docs/architecture.adoc[docs/architecture.adoc]
+* Scenario brief: link:docs/scenario.adoc[docs/scenario.adoc]
 * Architectural drivers: link:docs/drivers.adoc[docs/drivers.adoc]
 * Team contract: link:docs/team_contract.adoc[docs/team_contract.adoc]
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]

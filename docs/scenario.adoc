@@ -1,0 +1,61 @@
+= Citizen Services Portal Scenario
+:toc:
+:toclevels: 2
+
+== Scenario
+
+Design the architecture for a Citizen Services Portal: a single digital entry point where residents can find, request, track, and manage public services.
+
+The portal integrates multiple agencies and registries, supports strong digital identity, and must be highly available, auditable, privacy-preserving, and evolvable. It handles identity, sensitive personal data, documents, audit trails, external integrations, and delegated access to public services.
+
+== Core capabilities
+
+* Digital identity integration, for example national eID or OIDC-based login
+* Localized user interface, profile, preferences, and service catalogue
+* Case management: submit requests, track status, messaging
+* Notifications: email, SMS, push, in-app inbox
+* Document exchange: upload, download, antivirus scanning, retention
+* Digital signing workflow
+* Audit logging and transparency features
+* Regulated public APIs for third-party service providers
+* Integration with 2-3 external organizations, agencies, or registries
+
+== Stakeholders and external systems
+
+Consider at least:
+
+* residents/citizens;
+* service provider organizations or agencies;
+* administrators and helpdesk staff;
+* auditors or oversight roles;
+* external identity provider;
+* external registries and back-end e-services;
+* third-party service providers;
+* operations/security teams.
+
+== Architectural drivers
+
+The baseline drivers are:
+
+* high availability, resilience, and graceful degradation;
+* strong authentication and fine-grained authorization with delegation;
+* role-based access control for back-office users;
+* privacy by design: data minimization, purpose limitation, and access transparency;
+* auditability for access, processing, and administrative actions;
+* evolvability: new services and agencies should be onboarded with low friction;
+* observability: measurable service levels and incident response readiness;
+* a mix of synchronous APIs and asynchronous workflows.
+
+== Decisions to make
+
+Teams should decide and justify:
+
+* where the system boundary is;
+* which containers/services exist and what each owns;
+* how identity, authorization, roles, and delegation work;
+* which workflows are synchronous and which are asynchronous;
+* where documents and case data are stored;
+* how audit logging and user transparency are implemented;
+* how external agencies and registries are integrated;
+* how APIs are versioned and protected;
+* how the system behaves when external systems fail.
