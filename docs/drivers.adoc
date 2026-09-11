@@ -6,7 +6,13 @@
 
 List 5-8 goals that explain what the Citizen Services Portal should achieve.
 
-* TODO
+* Ensure the system meets legal and regulatory obligations for privacy and data protection.
+* Provide auditors and oversight bodies with the ability to verify that citizen data is accessed and processed lawfully.
+* Provide citizens the ability to see for what and how is their personal data used (transparency).
+* Build a single trustworthy entrypoint for all services, replacing current fragmented portals and processes.
+* Enable new agencies and services to be onboarded onto the portal with minimal integration effort.
+* The system should be able to handle technical errors to maintain 24/7 availability.
+
 
 == Stakeholders
 
@@ -16,12 +22,12 @@ Identify stakeholders and what each needs from the architecture.
 |===
 |Stakeholder |Need or concern
 
-|Residents/citizens |TODO
-|Service provider organizations/agencies |TODO
-|Administrators/helpdesk |TODO
-|Auditors/oversight |TODO
-|External registries/back-end systems |TODO
-|Operations/security teams |TODO
+|Residents/citizens |A single, simple, localized way to find and use public services, confidence their data is handled safely and only used for stated purposes, visibility into who accessed their data and why.
+|Service provider organizations/agencies |An easy way to integrate their own services and systems into the portal without needing to completely rebuild current solutions.
+|Administrators/helpdesk |Role-based access to case data and citizen support tools, limited only to what their role needs.
+|Auditors/oversight |Complete logs of who accessed what data, when, and why, across the whole system.
+|External registries/back-end systems |Predictable and well-documented APIs, backend needs to be sure that frontend will not be overloading it with requests.
+|Operations/security teams |Observability into system health and security events.
 |===
 
 == Quality attributes and constraints
@@ -32,17 +38,34 @@ List 8-12 quality attributes or constraints.
 |===
 |ID |Driver |Why it matters
 
-|QA-001 |TODO |TODO
+|QA-001 |Must comply with GDPR (or local equivalent) and national eID/trust regulation |Non-compliance risks legal penalties and loss of public trust.
+|QA-002 |Availability and resilience |The portal is critical public infrastructure, citizens must be able to access core functions at all times.
+|QA-003 |Role-based access control for “other” users |Administrators, helpdesk, and agency staff need different, limited views into the system.
+|QA-004 |Privacy by design |Each service and agency must only see the data necessary for its specific purpose.
+|QA-005 |Fast and easy onboarding of new agencies  |The portal's value depends on how easily new services and agencies can be added.
+|QA-006 |Observability (metrics, logs, tracing) |Operations and security teams need to detect service levels faults and security incidents quickly. They would also trace the system for any criminal activity.
+|QA-007 |Usability and localization |Citizens span multiple languages, ages, and technical literacy levels. The interface, notifications, and service catalogue must be understandable and accessible to all residents.
+|QA-008 |Citizen authentication via federated identity (eID/OIDC) |The portal must not manage citizen credentials itself, so authentication is delegated to a trusted national identity provider.
 |===
 
 == Assumptions
 
 List assumptions that may later need validation.
 
-* TODO
+* The country in which and for what the system will be designed is Estonia.
+* A national eID or another identity provider exists and is available for the portal to delegate authentication to.
+* Back-end e-services expose APIs that the portal can integrate with.
+* Agencies are willing to adopt our API/schema defined by the portal.
+* Citizens without eID access will have some alternative path into the system, even if not the primary one.
+* Traffic patterns are largely predictable, with known peak periods.
 
 == Open questions
 
 List open questions as questions, not as hidden assumptions.
 
-* TODO
+* Which specific services and agencies will be integrated?
+* How many active users are in the country the system will be built?
+* What are the expected peak load scenarios the system must be designed to handle? 
+* Are there data residency or storage restrictions that would prevent the portal from centrally storing certain agencies' documents or case data?
+* Is there a legally required fallback authentication method for residents who cannot use the national eID
+
