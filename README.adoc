@@ -6,11 +6,11 @@ This repository is the official team workspace for the Secure Software Architect
 
 == Team
 
-* Team name: TODO
+* Team name: Randotrio
 * Members:
-** TODO
-** TODO
-** TODO, optional
+* Kevin Markus Korrol
+* Triinu Prants
+* Kaur Kaitsa
 
 == Project scenario
 
@@ -20,9 +20,9 @@ Start from link:docs/scenario.adoc[docs/scenario.adoc]. Keep a short project sum
 
 == Current status
 
-* Week: TODO
-* Main focus this week: TODO
-* Biggest open question: TODO
+* Week: 2
+* Main focus this week: risks
+* Biggest open question: Is there a legally required fallback authentication method for residents who cannot use the national eID?
 * Biggest technical risk: TODO
 
 == Important links
