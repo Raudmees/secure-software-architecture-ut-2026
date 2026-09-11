@@ -3,25 +3,25 @@
 
 == Team members
 
-* TODO
-* TODO
-* TODO, optional
+* Kevin Markus Korrol
+* Triinu Prants
+* Kaur Kaitsa
 
 == Working agreement
 
-* Communication channel:
-* Expected response time:
-* Weekly meeting time:
-* Division of work:
-* Definition of done:
-* Conflict resolution:
+* Communication channel: Slack
+* Expected response time: 1 day
+* Weekly meeting time: Practical Lab, other meetings on-demand, Thursday noon check-up on preparedness for next lab
+* Division of work: Equally
+* Definition of done: Artifact created according to requirements and reviewed by all other teammates
+* Conflict resolution: Democracy
 
 == Course repository workflow
 
-* Team fork owner:
-* Instructors invited as collaborators: yes/no
-* Team members invited as collaborators: yes/no
-* Issue tracker or project board used: yes/no
+* Team fork owner: Kaur
+* Instructors invited as collaborators: yes
+* Team members invited as collaborators: yes
+* Issue tracker or project board used: yes/no - will decide later
 
 == Integrity
 
