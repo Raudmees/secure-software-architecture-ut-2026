@@ -1,87 +1,63 @@
 = Risk Register
 :toc:
 
-[cols="1,4,1,1,4,3",options="header"]
+[cols="1,4,1,1,4",options="header"]
 |===
-|ID |Risk |Likelihood |Impact |Mitigation / treatment |Kommentaar
+|ID |Risk |Likelihood |Impact |Mitigation / treatment
 
 |R-001
 |If traffic is higher than expected, then services will be unavailable.
 |Low
 |High
 |Load testing, capacity planning, rate limiting, graceful degradation of non-critical functions.
-|
 
 |R-002
 |If stored case, document or audit data volumes grow bigger than expected, then the system will not be available.
 |Low
 |High
 |Use of X-Road, scalable storage, retention/archiving policies, storage monitoring and realistic volume tests.
-|
 
 |R-003
 |If an external agency changes their API, then integrations fail and services will be unavailable.
 |Medium
 |High
 |Use X-Road to know beforehand what could change.
-|Triinu: ma ei ole kindel, et siia sai mitigation õigesti kirja? +
-Kaur: see oli mõeldud, et x-teest tuleks teavitused, kui api muutunud on, aga jah, external API ei pruugi ju ainult x-teest tulla.
 
 |R-004
 |If an external agency or registry is unavailable, then integrations fail and services will be unavailable.
 |Medium
 |High
 |Timeouts, circuit breakers, bounded retries, asynchronous processing, graceful degradation of broken functions.
-|Triinu: Lisasin selle integration kohta.
 
 |R-005
 |If a user's authentication session is compromised, then an attacker may access personal information or perform actions under another person's identity.
 |High
 |High
 |Strong federated multi-factor authentication (Smart-ID, ID-card), short-lived sessions, step-up authentication for sensitive actions.
-|
 
 |R-006
 |If roles or authorization policies are configured incorrectly, then staff or agencies may gain access to citizen data beyond what their role or purpose requires.
 |Medium
 |High
 |Centralized authorization rules, least privilege, audit logging of access decisions.
-|Triinu: lisasin selle privacy kohta.
 
 |R-007
 |If an unauthorized party gains access to stored personal data, then citizen privacy may be breached and the system may violate data-protection obligations.
 |Medium
 |High
 |Privacy by design, data minimisation, pseudonymisation, access controls, secure secret/key handling, retention rules.
-|
 
 |R-008
 |If security and data-access events are not logged completely or audit records can be altered, then citizens and auditors may be unable to verify how personal data was accessed and processed.
 |Medium
 |High
 |Centralised structured audit events, immutable storage, correlation IDs, restricted access to logs.
-|Triinu: lisasin selle auditi kohta.
 
 |R-009
 |If major dependency updates occur, then the system will fail.
 |Medium
 |Medium
 |Very high integration test coverage.
-|
-
-|R-010
-|If the project funding runs out, then the system will not be delivered.
-|Medium
-|Medium
-|Perform thorough risk analysis before deciding on the budget.
-|
-
-|R-011
-|If a new person joins the team, then social engineering can occur.
-|Low
-|High
-|NDA / educational material for employees.
-|Triinu: arvan, et likelihood pole väga suur, sest enamasti inimesed pole pahatahtlikud.
 |===
 
 == Notes
