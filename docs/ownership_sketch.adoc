@@ -1,0 +1,38 @@
+= Ownership Sketch
+:toc:
+:toclevels: 2
+
+== Conway Check
+
+=== Citizen Services Team (stream-aligned team)
+
+Owns the citizen-facing portal, service catalogue and the main citizen service/case workflows (end-to-end).
+
+=== Identity and Access Team (complicated-subsystem / enabling team)
+
+Owns the integration with the national eID/OIDC provider, authentication sessions and common authorization mechanisms.
+
+A coordination hotspot exists between this team and every service that needs authentication or authorization.
+
+=== Agency Integration Team (stream-aligned team)
+
+Owns the public/provider APIs, integration adapters and onboarding mechanisms for agencies and external registries.
+
+API changes and schema versioning are likely coordination hotspots.
+
+=== Case, Document and Signing Team (stream-aligned / complicated-subsystem team)
+
+Owns case-management functionality, document exchange and digital-signature integration.
+
+Coordination with the Agency Integration Team is required where cases or documents must be transferred to external agencies.
+
+=== Audit and Transparency Team (complicated-subsystem team)
+
+Owns the common audit event model, audit-log collection and storage, and functionality that allows citizens and auditors to see how personal data has been accessed.
+
+A coordination hotspot exists because all services processing citizen data must produce consistent audit events.
+
+=== Platform and Operations Team (platform team)
+
+Owns shared deployment infrastructure, monitoring, logging, tracing, secrets/configuration management and common resilience mechanisms.
+The platform should provide these capabilities to the service teams through standardized and preferably self-service mechanisms.
