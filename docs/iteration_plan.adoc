@@ -1,0 +1,110 @@
+= Project iteration plan
+:toc:
+:toclevels: 2
+
+== Phase 1. Baseline Architecture (Inception)
+
+The purpose of this phase is to think through and try out the general structure of the application.
+
+[cols="1,3,3",options="header"]
+|===
+|Risk |Action |Artifact or evidence
+
+|R-002
+|Determine retention and archiving requirements per data type.
+
+Decide where and how is data stored, who has access to what data.
+|Database/storage PoC.
+
+Documented retention/archiving approach.
+|===
+
+== Phase 2. Security, Privacy and Auditability (Elaboration)
+
+The purpose of this phase is to validate the most security-critical mechanisms: authentication, authorization, protection of personal data, and auditability.
+
+[cols="1,3,3",options="header"]
+|===
+|Risk |Action |Artifact or evidence
+
+|R-005
+|Validate the federated authentication and session-management approach and verify that compromised or expired sessions cannot continue to access sensitive services.
+|Authentication PoC using an OIDC/eID-like identity provider.
+
+Authentication sequence diagram and tests for session expiry/revocation and sensitive-action authentication.
+
+|R-006
+|Validate that authorization policies correctly restrict staff and agencies to only the data and operations required by their role and purpose.
+|Authorization/RBAC PoC and authorization test matrix with example roles, resources, and permitted/denied actions.
+
+|R-007
+|Validate that personal data is protected according to privacy-by-design principles and that unnecessary personal data is not exposed between components.
+|Data-flow diagram showing where personal data is processed and stored.
+
+Privacy review identifying data minimisation, access-control, retention, and pseudonymisation measures.
+
+|R-008
+|Validate that security and data-access events are recorded consistently and that audit records cannot be silently modified.
+|Audit-logging PoC for one end-to-end use case.
+
+Defined audit-event schema and test showing that the relevant user, action, resource, timestamp, and correlation information are recorded.
+|===
+
+== Phase 3. External Integrations and Interfaces (Construction)
+
+The purpose of this phase is to validate that the portal can integrate with external agencies and registries without becoming tightly coupled to their availability or implementation details.
+
+[cols="1,3,3",options="header"]
+|===
+|Risk |Action |Artifact or evidence
+
+|R-003
+|Validate that an external agency can change or version its API without forcing immediate changes throughout the Citizen Services Portal.
+|Integration PoC using an adapter between the portal and a mock external agency.
+
+Versioned API/OpenAPI specification and contract test demonstrating compatibility between API versions.
+
+|R-004
+|Validate that the failure or slow response of one external agency does not make the entire portal unavailable.
+|Failure-injection integration test using a mock external agency.
+
+Test scenarios for timeouts, bounded retries, circuit breaker behaviour, and graceful degradation.
+
+|R-009
+|Validate that changes to important software or integration dependencies can be detected before deployment.
+|Automated integration/contract test suite covering the main external and internal dependencies, together with a documented dependency-update procedure.
+
+|R-010
+|Validate that the portal's own published API can evolve without breaking existing third-party integrations, and that breaking changes are only ever delivered through a new version with a defined deprecation period.
+|Documented API versioning and deprecation policy (versioning scheme, what counts as a breaking change, support window for old versions).
+
+|===
+
+== Phase 4. Availability, Operations and Evolution (Transition)
+
+The purpose of this phase is to validate the complete architecture under operational conditions and confirm that mitigations from earlier phases work together.
+
+[cols="1,3,3",options="header"]
+|===
+|Risk |Action |Artifact or evidence
+
+|R-001
+|Repeat load and resilience testing using the refined architecture and identify which functions can be degraded while critical services remain available.
+|Final load/stress-test results and documented scaling and graceful-degradation strategy.
+
+|R-002
+|Validate monitoring and operational thresholds for growing storage and data volumes.
+|Storage-capacity monitoring design and test demonstrating alerting at defined thresholds.
+
+|R-004
+|Validate system behaviour when an external dependency becomes unavailable during an end-to-end citizen-service workflow.
+|End-to-end resilience test showing behaviour during external-service failure and recovery.
+
+|R-008
+|Validate that audit information remains available and traceable across multiple services in an end-to-end transaction.
+|End-to-end audit test demonstrating correlation of events across services and verification that required audit events are present.
+
+|R-009
+|Validate that dependency upgrades do not silently break important workflows.
+|Regression and integration-test results after a representative dependency upgrade.
+|===
