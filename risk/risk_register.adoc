@@ -12,19 +12,20 @@
 |Load testing, capacity planning, rate limiting, graceful degradation of non-critical functions.
 
 |R-002
-|If stored case, document or audit data volumes grow bigger than expected, then the system will not be available.
+|If stored case, document or audit data volumes grow larger than expected, then the system will become unavailable.
 |Low
 |High
-|Use of X-Road, scalable storage, retention/archiving policies, storage monitoring and realistic volume tests.
+|Use of X-Road instead of storing all data in-house, scalable storage, retention/archiving policies, storage monitoring and realistic volume tests. +
+Mindset: store as much data as necessary, but as little as possible.
 
 |R-003
-|If an external agency changes their API, then integrations fail and services will be unavailable.
+|If an external agency changes its API, then integrations will fail and services will become unavailable.
 |Medium
 |High
-|Use X-Road to know beforehand what could change.
+|Where possible, use X-Road to learn about upcoming API changes in advance.
 
 |R-004
-|If an external agency or registry is unavailable, then integrations fail and services will be unavailable.
+|If an external agency or registry is unavailable, then integrations will fail and services will become unavailable.
 |Medium
 |High
 |Timeouts, circuit breakers, bounded retries, asynchronous processing, graceful degradation of broken functions.
@@ -45,22 +46,28 @@
 |If an unauthorized party gains access to stored personal data, then citizen privacy may be breached and the system may violate data-protection obligations.
 |Medium
 |High
-|Privacy by design, data minimisation, pseudonymisation, access controls, secure secret/key handling, retention rules.
+|Privacy by design, data minimization, pseudonymization, access controls, secure secret/key handling, retention rules.
 
 |R-008
 |If security and data-access events are not logged completely or audit records can be altered, then citizens and auditors may be unable to verify how personal data was accessed and processed.
 |Medium
 |High
-|Centralised structured audit events, immutable storage, correlation IDs, restricted access to logs.
+|Centralized structured audit events, immutable storage, correlation IDs, restricted access to logs.
 
 |R-009
-|If major dependency updates occur, then the system will fail.
+|If major dependency updates occur, then the system may fail.
 |Medium
 |Medium
 |Very high integration test coverage.
+
+|R-010
+|If our portal's API changes, then existing integrations with third-party service providers will break.
+|Medium
+|High
+|API versioning strategy.
 |===
 
 == Notes
 
-* Keep risk statements concrete: If condition or event happens, then impact occurs.
-* Track owners and dates in repository issues or this document.
+* Keep risk statements concrete: "If _condition or event_ happens, then _impact_ occurs."
+* Track owners and dates in repository issues or in this document.
