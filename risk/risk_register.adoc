@@ -1,70 +1,85 @@
 = Risk Register
 :toc:
 
-[cols="1,4,1,1,4",options="header"]
+== Project risks
+
+Risks to completing the project itself: gaps in team knowledge, unvalidated technology choices and integration unknowns.
+
+[cols="1,5,1,1,5",options="header"]
 |===
-|ID |Risk |Likelihood |Impact |Mitigation / treatment
+|ID |Project risk |Likelihood |Impact |Treatment
 
-|R-001
-|If traffic is higher than expected, then services will be unavailable.
+|R01
+|The team has no prior experience with national eID integration and may underestimate the required protocols, certificates, trust relationships or test setup, preventing completion of a credible eID integration design.
+|Medium
+|High
+|Investigate one national eID integration path immediately; document the authentication flow and build/validate a minimal PoC or mock integration.
+
+|R02
+|A suitable existing workflow/case-management solution may not satisfy the project's workflow, security or integration requirements, leaving insufficient time to design an alternative.
+|Medium
+|High
+|Evaluate 2-3 realistic options early against a small set of required workflows; create a minimal workflow PoC and define a fallback custom solution.
+
+|R03
+|Email, SMS, push and in-app notifications may require substantially different delivery mechanisms, making a single notification architecture more complex than expected and delaying completion of the capability.
+|Medium
+|Medium
+|Prototype the common notification interface and implement/mock at least two different channels to validate the abstraction.
+
+|R04
+|The selected antivirus scanning solution may not integrate cleanly with the planned upload/storage flow, requiring changes to file storage, quarantine or asynchronous processing.
+|Medium
+|High
+|Test a representative upload -> scan -> accept/reject flow early, including a deliberately infected test file and scanner failure.
+
+|R05
+|The chosen storage approach may not support the required automated retention rules cleanly, requiring custom deletion/lifecycle logic and redesign of document metadata.
+|Medium
 |Low
-|High
-|Load testing, capacity planning, rate limiting, graceful degradation of non-critical functions.
+|Define representative retention rules and validate whether the selected storage technology can enforce them automatically; identify fallback application-level lifecycle processing.
 
-|R-002
-|If stored case, document or audit data volumes grow larger than expected, then the system will become unavailable.
-|Low
+|R06
+|The team has no prior eID digital-signing experience and may be unable to validate the complete signing workflow or obtain a usable test environment, leaving a core capability architecturally unresolved.
 |High
-|Use of X-Road instead of storing all data in-house, scalable storage, retention/archiving policies, storage monitoring and realistic volume tests. +
-Mindset: store as much data as necessary, but as little as possible.
+|High
+|Treat signing as an early technical spike: determine available signing APIs/test environments, model the full signing sequence and validate the riskiest integration step.
 
-|R-003
-|If an external agency changes its API, then integrations will fail and services will become unavailable.
+|R07
+|The team may choose a normal application-logging approach that cannot provide the required correlation, integrity and traceability for audit events, causing late architectural changes across multiple services.
 |Medium
 |High
-|Where possible, use X-Road to learn about upcoming API changes in advance.
+|Define required audit events and properties first; prototype logging one end-to-end user action across components and verify that it can be reconstructed reliably.
 
-|R-004
-|If an external agency or registry is unavailable, then integrations will fail and services will become unavailable.
+|R08
+|The team may not sufficiently understand the security and regulatory constraints applying to third-party API access, causing the initial API authentication/authorization design to be unusable and requiring redesign.
 |Medium
 |High
-|Timeouts, circuit breakers, bounded retries, asynchronous processing, graceful degradation of broken functions.
+|Identify the concrete requirements early and design one representative third-party API interaction including authentication, authorization/scopes, auditing and error handling.
 
-|R-005
-|If a user's authentication session is compromised, then an attacker may access personal information or perform actions under another person's identity.
+|R09
+|External systems may use incompatible identifiers, data formats or interface styles, making integration significantly more complex than estimated and threatening completion of all 2-3 required integrations.
 |High
 |High
-|Strong federated multi-factor authentication (Smart-ID, ID-card), short-lived sessions, step-up authentication for sensitive actions.
+|Compare sample contracts/data models from the target systems; define an internal canonical model or adapter boundary and validate it with at least two different external interfaces.
 
-|R-006
-|If roles or authorization policies are configured incorrectly, then staff or agencies may gain access to citizen data beyond what their role or purpose requires.
+|R10
+|Components may appear workable independently but fail when combined into an end-to-end citizen-service flow, revealing incompatible assumptions late in the project.
 |Medium
 |High
-|Centralized authorization rules, least privilege, audit logging of access decisions.
+|Create an early vertical slice such as login -> submit request -> attach document -> status update -> notification -> audit event, using mocks for unfinished components.
 
-|R-007
-|If an unauthorized party gains access to stored personal data, then citizen privacy may be breached and the system may violate data-protection obligations.
-|Medium
+|R11
+|The team has no experience designing systems at national scale, so we lack a reliable basis for estimating load, data volumes and peak demand. If scaling and storage decisions are made on guesswork, then the chosen architecture may fail to handle realistic workloads, and the bottlenecks will only be discovered late, requiring structural redesign.
 |High
-|Privacy by design, data minimization, pseudonymization, access controls, secure secret/key handling, retention rules.
-
-|R-008
-|If security and data-access events are not logged completely or audit records can be altered, then citizens and auditors may be unable to verify how personal data was accessed and processed.
-|Medium
 |High
-|Centralized structured audit events, immutable storage, correlation IDs, restricted access to logs.
+|Estimate expected users, requests and data volumes using public statistics. Identify peak load scenarios.
 
-|R-009
-|If major dependency updates occur, then the system may fail.
-|Medium
-|Medium
-|Very high integration test coverage.
-
-|R-010
-|If our portal's API changes, then existing integrations with third-party service providers will break.
-|Medium
+|R12
+|The team currently assumes the portal itself does not need to handle authorization and delegation, while the scenario requires fine-grained authorization with delegation. If that assumption is carried into the design, then the rules governing which data is accessible to which user will be missing from the architecture and will have to be retrofitted across every component that exposes citizen data.
 |High
-|API versioning strategy.
+|High
+|Establish the authorization boundary early: decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency, and model one delegated-access case end to end (for example a representative acting on behalf of another person).
 |===
 
 == Notes
