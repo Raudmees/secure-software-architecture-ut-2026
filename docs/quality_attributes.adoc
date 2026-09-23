@@ -1,0 +1,140 @@
+= Quality Attributes, Constraints and Security-Relevant Requirements
+:toc:
+:toclevels: 3
+
+This document contains the prioritized list of quality attributes, constraints and
+security-relevant requirements for the Citizen Services Portal. It refines and prioritizes
+the quality attributes first listed in link:drivers.adoc[drivers.adoc].
+
+== 1. Prioritized quality attributes, constraints and security requirements
+
+The top 5 drivers (QA-1 to QA-5) are marked as architecture-critical.
+
+[cols="1,1,1,1,4",options="header"]
+|===
+|ID |Priority |Architecture-critical? |Type |Attribute / constraint description
+
+|QA-1
+|1
+|Yes
+|Security requirement
+|Authorization and confidentiality: Sensitive citizen data, cases, documents and messages must only be accessible to users or organizations that are explicitly authorized to access them.
+
+|QA-2
+|2
+|Yes
+|Security requirement
+|Privacy and data minimization: The portal must process and disclose only the personal data necessary for the relevant service and purpose, including when exchanging data with external agencies.
+
+|QA-3
+|3
+|Yes
+|QA
+|Availability and resilience: Failure or unavailability of one external agency or supporting service should not make unrelated portal functionality unavailable. The system should degrade safely and recover when dependencies become available again.
+
+|QA-4
+|4
+|Yes
+|QA
+|Auditability and accountability: Security-relevant access and actions must produce reliable audit evidence so that data access and processing can later be reviewed by authorized parties.
+
+|QA-5
+|5
+|Yes
+|QA
+|Evolvability and interoperability: New agencies and public services should be integrable without major changes to the portal's core architecture or existing integrations.
+
+|QA-6
+|6
+|No
+|Security requirement / Constraint
+|Trusted authentication: Citizen authentication must use approved national eID or trusted OIDC-based identity providers, and authentication information must be validated before a portal session is established.
+
+|QA-7
+|7
+|No
+|Security requirement
+|Integrity: Unauthorized users or systems must not be able to alter requests, case statuses, documents, permissions, signatures or other protected information.
+
+|QA-8
+|8
+|No
+|QA
+|Recoverability and data durability: Requests, documents, case information and audit records must not be silently lost because of software, infrastructure or integration failures.
+
+|QA-9
+|9
+|No
+|QA
+|Observability: The portal must provide sufficient logs, metrics and other operational information to detect failures, security-relevant events and problems with external integrations.
+
+|QA-10
+|10
+|No
+|QA
+|Performance and scalability: The portal must remain responsive under the expected normal and peak workloads. Exact workload and response-time targets must be determined.
+
+|QA-11
+|11
+|No
+|QA
+|Usability, accessibility and localization: The portal must be usable by residents with different abilities and levels of technical literacy and must support the required user-interface languages consistently.
+
+|QA-12
+|12
+|No
+|Security requirement
+|Secure external integrations: Communication with agencies and third-party APIs must use authenticated and protected interfaces, and external input must not automatically be trusted simply because it originates from an integrated organization.
+
+|QA-13
+|13
+|No
+|Constraint
+|Regulatory compliance: The architecture must support applicable GDPR, national digital-identity, public-sector, retention and other relevant legal requirements.
+|===
+
+== 2. Architecture-critical drivers
+
+The following five drivers are architecture-critical: decisions about them shape the overall
+structure of the portal and are expensive to change later.
+
+* *QA-1* Authorization and confidentiality
+* *QA-2* Privacy and data minimization
+* *QA-3* Availability and resilience
+* *QA-4* Auditability and accountability
+* *QA-5* Evolvability and interoperability
+
+== 3. Trade-offs between important attributes
+
+=== 3.1 Auditability and observability vs. privacy
+
+Auditability and observability require recording information about system activity, while privacy
+and data minimization require limiting the amount of personal information stored. Logs and audit
+records therefore need enough information to reconstruct relevant actions without unnecessarily
+copying sensitive document contents, messages or personal data into logging systems.
+
+=== 3.2 Security and privacy vs. usability
+
+Stronger security controls can reduce usability. For example, frequent re-authentication, short
+sessions, additional authorization checks or restrictive handling of personal information can
+make public services more cumbersome for citizens. The architecture should minimize
+unnecessary user friction while ensuring that sensitive operations do not weaken authentication,
+authorization or privacy controls for convenience.
+
+=== 3.3 Availability and resilience vs. security and privacy controls
+
+Availability requires the portal to keep working when parts of it fail, while security requires that
+protected operations are always properly authenticated, authorized and logged. These pull in
+opposite directions when a security-relevant dependency becomes unavailable: if the service is
+down, the portal must choose between rejecting requests it cannot fully verify (secure but
+unavailable) and serving them with reduced verification (available but potentially unsafe).
+
+This can be solved by degrading functionality rather than controls. When a dependency needed
+to make a safe decision is unavailable, the affected operation is refused, while unrelated
+capabilities remain fully available.
+
+== 4. Related documents
+
+* link:drivers.adoc[drivers.adoc] - business goals, stakeholders, assumptions and open questions
+* link:qa_scenarios.adoc[qa_scenarios.adoc] - quality attribute scenarios that make these attributes measurable
+* link:security_goals.adoc[security_goals.adoc] - security goals, trust boundaries, data categories and attacker assumptions

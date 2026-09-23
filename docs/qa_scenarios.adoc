@@ -1,0 +1,219 @@
+= Quality Attribute Scenarios
+:toc:
+:toclevels: 2
+
+QA means quality attribute. Each scenario below makes one or more quality requirements from
+link:quality_attributes.adoc[quality_attributes.adoc] measurable or testable. Business goals
+(BG-n) refer to the Mission goals section of link:drivers.adoc[drivers.adoc] and security goals
+(SG-n) refer to link:security_goals.adoc[security_goals.adoc].
+
+== Scenario 1. Delegation registry unavailable during delegated access
+
+[cols="1,3",options="header"]
+|===
+|Field |Content
+
+|Scenario name
+|Delegation registry unavailable during delegated access: degrade functionality, not controls
+
+|Linked business goals
+|BG-2, BG-5
+
+|Relevant quality attributes
+|Authorization and confidentiality (QA-1), Availability and resilience (QA-3), Auditability (QA-4)
+
+|Stimulus
+|A delegate (e.g., a parent or legal representative) tries to open a case belonging to the person they represent while the delegation registry that verifies the delegation is unavailable.
+
+|Stimulus source
+|Authenticated citizen acting as a delegate. The failure itself originates in the internal/external delegation registry.
+
+|Environment
+|Degraded operation: the delegation registry is down, and other components are working.
+
+|Artifact
+|Authorization service and delegation verification component
+
+|Response
+|The portal fails closed. Delegated access is refused because the delegation cannot be verified. Cached or expired delegation decisions are not used beyond their allowed validity. The user sees a clear message saying that access on behalf of another person is temporarily unavailable. The user's access to their own data and other portal functions continues normally. The refusal and the cause are logged.
+
+|Response measure
+|0 delegated accesses are granted without a successful, valid delegation check, verified by fault-injection tests. Access to the user's own cases stays available at ≥99% success during the outage. 100% of refused delegated requests produce an audit/security event. The user-facing message is shown within 3 s (no hanging request).
+
+|Questions
+|Is short-lived caching of delegation decisions acceptable (e.g., max 5 min), and does revocation have to take effect immediately (SG-7)? Are there emergency or legally urgent cases where delegated access must be possible through an alternative channel?
+
+|Issues
+|This scenario directly implements the trade-off in 3.3 (availability vs. security). The cache validity period is a trade-off between availability and stale authorization (SG-7, SG-9).
+|===
+
+== Scenario 2. Agency official's access to a citizen document is recorded and reviewable
+
+[cols="1,3",options="header"]
+|===
+|Field |Content
+
+|Scenario name
+|Agency official's access to a citizen document is recorded and reviewable
+
+|Linked business goals
+|BG-2, BG-3
+
+|Relevant quality attributes
+|Privacy and data minimization (QA-2), Auditability and accountability (QA-4), Integrity (QA-7)
+
+|Stimulus
+|An agency official opens a document attached to a citizen's case. Later, the citizen or the data protection supervisory authority asks who has accessed the citizen's data.
+
+|Stimulus source
+|Agency official (access). Citizen or oversight body (review).
+
+|Environment
+|Normal operation
+
+|Artifact
+|Document service, audit logging component and audit record store
+
+|Response
+|Every access creates an audit record containing the actor ID, organization/role, timestamp, resource ID, operation, purpose/legal basis and outcome. Document contents and unnecessary personal data are not included. Audit records are written to a separate append-only audit store running on a different machine/environment than the application, with tamper-evidence (e.g., hash chaining). Application administrators have no rights to modify or delete it. The citizen can see the access in the "Data usage" view, and the oversight body can query the full records. If an audit record cannot be written, the protected operation is not performed.
+
+|Response measure
+|100% of accesses to protected data in the test set produce an audit record. The record is visible to the citizen within 5 min of the access. 100% of attempted modifications or deletions of audit records by application or administrator accounts are either prevented or detected in integrity verification. Audit record contents match the defined field list with no document content, verified by review. An oversight query for one citizen's access history over one year returns within 10 s.
+
+|Questions
+|Which accesses must be visible to citizens, and which may be hidden legally (e.g., police or tax investigations)? What is the retention period for audit records? Who is allowed to read the full audit trail?
+
+|Issues
+|Trade-off between auditability and privacy (3.3): the audit store itself contains personal data and needs its own access control and retention rules. Requiring audit writes to succeed before an operation proceeds makes audit store availability critical for all protected operations.
+|===
+
+== Scenario 3. Authenticated citizen attempts to access another citizen's case by manipulating identifiers
+
+[cols="1,3",options="header"]
+|===
+|Field |Content
+
+|Scenario name
+|Authenticated citizen attempts to access another citizen's case by manipulating identifiers
+
+|Linked business goals
+|BG-1, BG-2
+
+|Relevant quality attributes
+|Authorization and confidentiality (QA-1), Auditability (QA-4), Observability (QA-9)
+
+|Stimulus
+|An authenticated citizen changes the case or document ID in an API request to the ID of a case that belongs to someone else.
+
+|Stimulus source
+|Malicious or curious authenticated citizen, or a script using a valid session
+
+|Environment
+|Normal operation. The attacker has a valid portal session.
+
+|Artifact
+|Public API gateway, case service and authorization service
+
+|Response
+|Authorization is evaluated on every request using the identity, delegations, operation and specific resource. The request is refused with a response that does not reveal whether the resource exists (e.g., a uniform 404). A security event is logged. Repeated attempts trigger rate limiting and an alert to the security team.
+
+|Response measure
+|0 unauthorized disclosures in an automated authorization test suite that covers 100% of endpoints returning protected resources. 100% of refused attempts are logged. The alert is raised when there are more than 10 refused resource accesses from one session within 1 min. The response time for a refused request does not differ enough to reveal whether the resource exists.
+
+|Questions
+|Should repeated attempts automatically terminate the session or only alert? Who handles alerts, and within what time?
+
+|Issues
+|Authorization must be enforced in backend services and not only in the UI or gateway (SG-2). Using non-guessable IDs (UUIDs) reduces risk but does not replace authorization checks.
+|===
+
+== Scenario 4. External agency system unavailable during request submission
+
+[cols="1,3",options="header"]
+|===
+|Field |Content
+
+|Scenario name
+|External agency system unavailable during request submission
+
+|Linked business goals
+|BG-1, BG-5
+
+|Relevant quality attributes
+|Availability and resilience (QA-3), Recoverability and data durability (QA-8), Observability (QA-9)
+
+|Stimulus
+|An agency backend system stops responding (timeouts or HTTP 5xx) while citizens are submitting requests to that agency's service.
+
+|Stimulus source
+|External agency information system (outage, maintenance or overload)
+
+|Environment
+|Normal operation during peak hours. Other agencies and portal components are working normally.
+
+|Artifact
+|Agency integration layer (adapter for the affected agency), request submission service and message queue/outbox
+
+|Response
+|The integration layer detects the failure and stops sending calls to the agency (circuit breaker). New requests to that agency are persisted in the portal and queued for delivery. The citizen gets a confirmation with the status "Submitted – awaiting delivery to agency". Services of other agencies and general portal functions keep working normally. Operators are alerted. When the agency recovers, queued requests are delivered automatically in order and their statuses are updated.
+
+|Response measure
+|The failure is detected and the circuit breaker opens within 30 s. The operator alert is raised within 5 min. There are 0 lost or duplicated requests, verified by comparing submitted and delivered request IDs. All queued requests are delivered within 15 min of the agency recovering. For unrelated services, the error rate increases by less than 1% and p95 latency stays within 10% of the baseline during the outage.
+
+|Questions
+|How long may requests stay queued before the citizen must be notified or the request expires? Do some agencies' services have legal deadlines that are affected by delivery delay? Which timestamp counts as the official submission time: portal receipt or agency receipt?
+
+|Issues
+|Queued requests contain personal data, so the queue must follow the same access control and encryption rules as the main data store (SG-1, SG-5). Idempotent delivery is required on the agency side or through deduplication in the adapter. Some services may require synchronous agency validation and cannot be queued. These need to be identified.
+|===
+
+== Scenario 5. New agency connects a new public service to the portal
+
+[cols="1,3",options="header"]
+|===
+|Field |Content
+
+|Scenario name
+|New agency connects a new public service to the portal
+
+|Linked business goals
+|BG-4, BG-7
+
+|Relevant quality attributes
+|Evolvability and interoperability (QA-5), Availability (QA-3), Secure external integrations (QA-12)
+
+|Stimulus
+|A new agency requests to offer a new service (e.g., a permit application) through the portal using its existing REST API.
+
+|Stimulus source
+|Agency / portal service owner
+
+|Environment
+|Development and deployment time. The portal is running in production.
+
+|Artifact
+|Agency integration layer, service catalog and integration contract/adapter
+
+|Response
+|The service is added by implementing an adapter that follows the standard integration contract, registering the service in the service catalog (forms, data fields and permissions through configuration), and defining which citizen data fields the agency may receive (SG-5). The core portal and existing adapters are not modified. The new adapter is deployed independently without downtime.
+
+|Response measure
+|The portal team spends ≤10 person-days on integration. There are 0 code changes to core portal modules or other agencies' adapters. 0 regressions occur in the existing integration test suite. Deployment causes 0 min of downtime. The data-sharing configuration for the new service passes privacy review before go-live.
+
+|Questions
+|What happens if an agency cannot provide an API that fits the standard contract (SOAP, X-Road, file exchange)? Who approves data-sharing configurations? Is the 10 person-day target realistic for the first integrations?
+
+|Issues
+|Adapters for non-standard agency systems may take significantly more effort. The integration contract must be versioned so it can evolve without breaking existing agencies (BG-7). Every new agency is a new trust boundary and must be added to the trust-boundary list (5.2) and risk register.
+|===
+
+== Coverage
+
+[cols="2,3",options="header"]
+|===
+|Required coverage |Scenario
+
+|Availability / resilience |Scenario 1, Scenario 4
+|Security / auditability |Scenario 1, Scenario 2, Scenario 3
+|Modifiability / evolution |Scenario 5
+|===
