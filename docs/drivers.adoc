@@ -4,15 +4,27 @@
 
 == Mission goals
 
-List 5-8 goals that explain what the Citizen Services Portal should achieve.
+The refined business goals for the Citizen Services Portal. Quality attribute scenarios in
+link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals as BG-1 to BG-7.
 
-* Ensure the system meets legal and regulatory obligations for privacy and data protection.
-* Provide auditors and oversight bodies with the ability to verify that citizen data is accessed and processed lawfully.
-* Provide citizens the ability to see for what and how is their personal data used (transparency).
-* Build a single trustworthy entrypoint for all services, replacing current fragmented portals and processes.
-* Enable new agencies and services to be onboarded onto the portal with minimal integration effort.
-* The system should be able to handle technical errors to maintain 24/7 availability.
+[cols="1,5",options="header"]
+|===
+|ID |Business goal
 
+|BG-1 |Provide residents with a single trustworthy digital entry point through which they can discover, request, track, and manage public services.
+|BG-2 |Ensure that citizen data is processed lawfully, securely, and only for appropriate purposes.
+|BG-3 |Allow residents and authorized oversight bodies to understand and verify how personal data and public-service requests have been accessed and processed.
+|BG-4 |Allow new public agencies and services to join the portal without major changes to either the portal or existing agency systems.
+|BG-5 |Ensure residents can reliably access essential portal capabilities despite component failures or temporary problems in external systems.
+|BG-6 |Make public services understandable and usable by residents with different languages, abilities, ages, and levels of technical literacy.
+|BG-7 |Allow the portal to evolve as public services, regulations, integrations, and technologies change without requiring major system redesign.
+|===
+
+== Out of scope
+
+* The portal integrates with national eID/OIDC identity providers but does not issue or manage national identity credentials.
+* Browser/device compromise is outside the portal's direct control, although the portal should still use appropriate session and authentication protections.
+* The portal integrates with email/SMS/push providers but does not control the security or availability of the telecommunications infrastructure itself.
 
 == Stakeholders
 
@@ -33,6 +45,11 @@ Identify stakeholders and what each needs from the architecture.
 == Quality attributes and constraints
 
 List 8-12 quality attributes or constraints.
+
+NOTE: The refined, prioritized list of 10-15 quality attributes, constraints and
+security-relevant requirements, including the architecture-critical drivers and the trade-offs
+between them, is maintained in link:quality_attributes.adoc[quality_attributes.adoc].
+Security goals and trust boundaries are in link:security_goals.adoc[security_goals.adoc].
 
 [cols="1,3,3",options="header"]
 |===

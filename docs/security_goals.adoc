@@ -1,0 +1,189 @@
+= Security Goals and Trust-Boundary Assumptions
+:toc:
+:toclevels: 2
+
+Initial security goals and trust-boundary assumptions for the Citizen Services Portal.
+Quality attribute IDs (QA-n) refer to link:quality_attributes.adoc[quality_attributes.adoc]
+and risk IDs (Rnn) refer to link:../risk/risk_register.adoc[risk/risk_register.adoc].
+
+== 5.1 Security goals
+
+Each goal is written as a property the system must preserve, and is tied to an asset and a
+threat category.
+
+[cols="1,5,2,2",options="header"]
+|===
+| |Security Goal |Asset |Threat
+
+|SG-1
+|Case data, documents and protected personal information must only be disclosed to a citizen, valid delegate, agency role or other actor explicitly authorized for that data.
+|Citizen data, cases, documents
+|Unauthorized information disclosure
+
+|SG-2
+|Every protected operation must be authorized based on the authenticated identity, role/delegation, requested operation and relevant resource; authentication alone must never imply authorization.
+|All protected portal resources
+|Privilege escalation / broken access control
+
+|SG-3
+|Unauthorized actors must not be able to create, alter or delete case state, submitted requests, documents or digital-signature information.
+|Requests, cases, documents, signatures
+|Tampering
+
+|SG-4
+|The portal must accept authenticated citizen identities only from explicitly trusted identity providers and must validate the identity/authentication evidence before establishing a portal session.
+|Digital identities and sessions
+|Identity spoofing / authentication bypass
+
+|SG-5
+|An integrated agency must receive only the citizen information required for the service/purpose it is performing and must not automatically gain visibility into data belonging to unrelated services.
+|Citizen profile and service data
+|Excessive disclosure / misuse of personal data
+
+|SG-6
+|Security-relevant access, administrative actions and protected-data processing must generate audit evidence that ordinary users and business-service actors cannot silently alter or delete.
+|Audit records
+|Repudiation / audit tampering
+
+|SG-7
+|Delegated access must be restricted to its explicitly authorized scope and duration and must stop being accepted after revocation or expiry.
+|Delegations and citizen resources
+|Privilege misuse / stale authorization
+
+|SG-8
+|Uploaded files must be treated as untrusted input and must not expose portal users or systems to malicious executable content.
+|Portal infrastructure, citizen/employee users and documents
+|Malicious file upload / malware
+
+|SG-9
+|Failure or overload of an external/internal dependency must not cause the portal to bypass required authentication, authorization, privacy or integrity controls.
+|Portal services and protected information
+|Denial of service combined with unsafe degradation
+
+|SG-10
+|External/public API clients must only access operations and information for which they have been explicitly authorized, and abusive/replayed/excessive requests must be constrained.
+|APIs, citizen/service data and capacity
+|API abuse, unauthorized access, replay, resource exhaustion
+|===
+
+== 5.2 Initial trust-boundary list
+
+[cols="2,2,3",options="header"]
+|===
+|System |Data categories |Trust level
+
+|User → our portal
+|Personal information, uploads, API requests
+|None, anything could be sent so check everything
+
+|Our portal → eID service provider
+|Authentication info (tokens)
+|Trust, but verify
+
+|Our portal → third party API clients
+|User information, API requests
+|Trust, but verify
+
+|Our portal → admin systems overviewing our portal
+|Audit logs
+|Trust, but verify
+
+|Our portal → signing service
+|Documents or hashes to be signed, signature results
+|Signatures are validated by the portal before being accepted as legally binding
+
+|Citizen session → back-office/admin functions (helpdesk, agency staff)
+|Case data, citizen profile data, documents
+|Different privilege level within the same system; must be explicitly authorized and role-checked, never assumed from login alone
+|===
+
+== 5.3 Important data categories
+
+[cols="2,3,1",options="header"]
+|===
+|Category |Example |Sensitivity level
+
+|Citizen profile data
+|Name, ID, contact details
+|High
+
+|Requests/cases
+|Application content, case status, messages between citizen and agency
+|High
+
+|Documents
+|Uploaded attachments, issued decisions and certificates
+|High
+
+|Audit records
+|System logs: actor, action, resource, time, purpose, outcome
+|High
+
+|Delegation/mandate records
+|Sharing access between users
+|High
+
+|Service-provider data
+|API client registrations, credentials, usage
+|Medium
+|===
+
+== 5.4 Initial attacker/abuse assumptions
+
+[cols="2,2,2",options="header"]
+|===
+|Attacker |Action |What they want
+
+|Attacker with a stolen or compromised session/credentials
+|Logging in to someone else's account
+|Personal information of the person
+
+|Admin/auditor
+|Trying to access information they are not supposed to see
+|Excessive access to personal data, tampering with such data
+
+|Former delegate
+|Try to access information they no longer have access to
+|Data beyond their rights
+
+|Malicious file uploader
+|Will upload files of any type/content
+|Get access to sensitive data or disrupt the service
+
+|Denial-of-service attacker
+|High request volume, possibly distributed
+|To disrupt the service
+
+|An ordinary authenticated citizen acting maliciously
+|Holds a valid session; can modify requests and identifiers
+|Trying to access other citizens data
+
+|Compromised or malicious third-party API client
+|Holds valid API credentials
+|Bulk data extraction, scope abuse
+|===
+
+== 5.5 Mapping from security goals to risks in the risk register
+
+[cols="2,3",options="header"]
+|===
+|Connection |Reason
+
+|SG-9 → R11
+|Scaling/failure decisions made on guesswork may cause unsafe fallback under load
+
+|SG-1, SG-2 → R12
+|No explicit authorization model designed → data exposed beyond intended access
+
+|SG-8 → R04
+|Antivirus integration may not fit the upload/storage flow
+
+|SG-5 → R08
+|Third party API access
+
+|SG-3 → R06
+|Unresolved signing workflow leaves integrity of signed data unverified
+
+|SG-4 → R01
+|No eID experience risks incorrect token/trust validation
+|===
