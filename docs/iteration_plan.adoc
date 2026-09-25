@@ -2,109 +2,116 @@
 :toc:
 :toclevels: 2
 
+Risk IDs refer to link:../risk/risk_register.adoc[risk/risk_register.adoc].
+
 == Phase 1. Baseline Architecture (Inception)
 
-The purpose of this phase is to think through and try out the general structure of the application.
+Establish the initial system structure, service boundaries, workflows and common interface conventions before committing to more detailed architectural decisions.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
-|R-002
-|Determine retention and archiving requirements per data type.
+|R10
+|Define the initial containers/services and their interfaces, then model one representative end-to-end flow across them.
+|Baseline container diagram and end-to-end sequence diagram showing how the main components interact.
 
-Decide where and how is data stored, who has access to what data.
-|Database/storage PoC.
+|R02
+|Model one representative case-management workflow and evaluate whether an existing workflow/case-management solution can support it.
+|Case-management workflow model and a short technology evaluation / decision record.
 
-Documented retention/archiving approach.
+|R11
+|Do research to estimate the maximum expected users, requests and data volumes using public statistics.
+
+Build an initial infrastructure MVP and test it with a load test.
+|Capacity estimates and infrastructure scalability parameters.
+
+Load-test results for the infrastructure with those parameters, at a level acceptable for a good-quality application (99.9th percentile response time under 300 ms).
 |===
 
 == Phase 2. Security, Privacy and Auditability (Elaboration)
 
-The purpose of this phase is to validate the most security-critical mechanisms: authentication, authorization, protection of personal data, and auditability.
+Validate that the architecture can support the required identity, signing, document-security, retention, authorization and auditability properties.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
-|R-005
-|Validate the federated authentication and session-management approach and verify that compromised or expired sessions cannot continue to access sensitive services.
-|Authentication PoC using an OIDC/eID-like identity provider.
+|R01
+|Investigate one national eID integration approach and model the authentication flow, trust relationships, certificates and test-environment requirements.
+|eID authentication flow / sequence diagram and a small PoC or mock integration.
 
-Authentication sequence diagram and tests for session expiry/revocation and sensitive-action authentication.
+|R04
+|Prototype the document upload and antivirus-scanning flow, including successful scanning, infected files and scanner failure.
+|Document-processing flow and antivirus integration PoC.
 
-|R-006
-|Validate that authorization policies correctly restrict staff and agencies to only the data and operations required by their role and purpose.
-|Authorization/RBAC PoC and authorization test matrix with example roles, resources, and permitted/denied actions.
+|R05
+|Define representative retention rules and check whether the selected storage approach can enforce them automatically.
+|Document-retention design describing automated retention or the application-level fallback.
 
-|R-007
-|Validate that personal data is protected according to privacy-by-design principles and that unnecessary personal data is not exposed between components.
-|Data-flow diagram showing where personal data is processed and stored.
+|R06
+|Investigate available eID signing APIs/test environments and validate the most difficult part of the signing flow.
+|Digital-signing sequence diagram and technical spike / PoC.
 
-Privacy review identifying data minimisation, access-control, retention, and pseudonymisation measures.
+|R07
+|Define the required audit events and verify that one user action can be correlated across multiple components.
+|Audit-event model and an example end-to-end audit trail.
 
-|R-008
-|Validate that security and data-access events are recorded consistently and that audit records cannot be silently modified.
-|Audit-logging PoC for one end-to-end use case.
+|R08
+|Define authentication, authorization/scopes and auditing for one representative third-party API interaction.
+|Third-party API security model and API authentication/authorization flow.
 
-Defined audit-event schema and test showing that the relevant user, action, resource, timestamp, and correlation information are recorded.
+|R12
+|Decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency.
+|One delegated-access case modelled end to end.
 |===
 
 == Phase 3. External Integrations and Interfaces (Construction)
 
-The purpose of this phase is to validate that the portal can integrate with external agencies and registries without becoming tightly coupled to their availability or implementation details.
+Validate that external organizations and third-party systems can be integrated without forcing major changes to the internal architecture.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
-|R-003
-|Validate that an external agency can change or version its API without forcing immediate changes throughout the Citizen Services Portal.
-|Integration PoC using an adapter between the portal and a mock external agency.
+|R09
+|Compare representative interfaces from at least two external systems and map their identifiers and data formats into the internal model.
+|External integration mapping and adapter/canonical data model design.
 
-Versioned API/OpenAPI specification and contract test demonstrating compatibility between API versions.
+|R01, R06, R08
+|Treat eID, digital signing and third-party API access as external dependencies and document the interfaces between the system and those external services.
+|External interface contracts for identity, signing and third-party API access.
 
-|R-004
-|Validate that the failure or slow response of one external agency does not make the entire portal unavailable.
-|Failure-injection integration test using a mock external agency.
-
-Test scenarios for timeouts, bounded retries, circuit breaker behaviour, and graceful degradation.
-
-|R-009
-|Validate that changes to important software or integration dependencies can be detected before deployment.
-|Automated integration/contract test suite covering the main external and internal dependencies, together with a documented dependency-update procedure.
-
-|R-010
-|Validate that the portal's own published API can evolve without breaking existing third-party integrations, and that breaking changes are only ever delivered through a new version with a defined deprecation period.
-|Documented API versioning and deprecation policy (versioning scheme, what counts as a breaking change, support window for old versions).
-
+|R10
+|Connect representative components and external-system mocks into one vertical flow.
+|Integrated vertical-slice prototype using real interfaces where possible and mocks where necessary.
 |===
 
 == Phase 4. Availability, Operations and Evolution (Transition)
 
-The purpose of this phase is to validate the complete architecture under operational conditions and confirm that mitigations from earlier phases work together.
+Validate that the architecture behaves predictably when dependencies fail and that components and interfaces can evolve without requiring system-wide redesign.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
-|R-001
-|Repeat load and resilience testing using the refined architecture and identify which functions can be degraded while critical services remain available.
-|Final load/stress-test results and documented scaling and graceful-degradation strategy.
+|R03
+|Define a common notification abstraction and test at least two channels, including retry and provider-failure behaviour.
+|Notification interface/design and failure/retry handling model.
 
-|R-002
-|Validate monitoring and operational thresholds for growing storage and data volumes.
-|Storage-capacity monitoring design and test demonstrating alerting at defined thresholds.
+|R04
+|Define what happens when the antivirus service is slow or unavailable.
+|Document-processing failure-handling design.
 
-|R-004
-|Validate system behaviour when an external dependency becomes unavailable during an end-to-end citizen-service workflow.
-|End-to-end resilience test showing behaviour during external-service failure and recovery.
+|R09
+|Validate that an external-interface change can be handled mainly inside its adapter instead of changing unrelated services.
+|Updated integration contract / compatibility example demonstrating interface isolation.
 
-|R-008
-|Validate that audit information remains available and traceable across multiple services in an end-to-end transaction.
-|End-to-end audit test demonstrating correlation of events across services and verification that required audit events are present.
+|R10
+|Run the representative end-to-end flow with selected component or external-service failures and check that failures remain contained.
+|End-to-end architecture validation results and an updated architecture diagram if changes are required.
 
-|R-009
-|Validate that dependency upgrades do not silently break important workflows.
-|Regression and integration-test results after a representative dependency upgrade.
+|R11
+|Validate the Phase 1 capacity estimates against the refined architecture, focusing on shared components every request passes through, using load tests.
+|Capacity calculation or load-test results for the peak load scenario, showing whether the identified bottlenecks meet the target.
 |===
