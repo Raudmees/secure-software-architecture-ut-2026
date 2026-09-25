@@ -6,36 +6,31 @@ This repository is the official team workspace for the Secure Software Architect
 
 == Team
 
-* Team name: Randotrio
+* Team name: *Randotrio*
 * Members:
-* Kevin Markus Korrol
-* Triinu Prants
-* Kaur Kaitsa
+** Kevin Markus Korrol
+** Triinu Prants
+** Kaur Kaitsa
 
 == Project scenario
 
-Default scenario: Citizen Services Portal.
-
-Start from link:docs/scenario.adoc[docs/scenario.adoc]. Keep a short project summary here and link to the main architecture artifacts as they become available.
+For this project we are using the default scenario of Citizen Services Portal, described in detail in link:docs/scenario.adoc[docs/scenario.adoc].
 
 == Current status
 
-* Week: 2
-* Main focus this week: risks
-* Biggest open question: Is there a legally required fallback authentication method for residents who cannot use the national eID?
-* Biggest technical risk: TODO
+* Week: *4*
+* Main focus this week: *Initial architecture*
+* Biggest open question: *What data do we save ourselves?*
+* Biggest technical risk: *No prior eID digital-signing experience*
 
 == Important links
 
-* Architecture document: link:docs/architecture.adoc[docs/architecture.adoc]
-* Scenario brief: link:docs/scenario.adoc[docs/scenario.adoc]
-* Architectural drivers: link:docs/drivers.adoc[docs/drivers.adoc]
-* Team contract: link:docs/team_contract.adoc[docs/team_contract.adoc]
+* Scenario: link:docs/scenario.adoc[docs/scenario.adoc]
+* Glossary: link:docs/glossary.adoc[docs/glossary.adoc]
+* Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
+* ADRs: link:adrs/[adrs/]
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
-* ADR index: link:adrs/README.adoc[adrs/README.adoc]
-* API specifications: link:api/[api/]
-* Deployment and operations notes: link:ops/[ops/]
-* Diagrams: link:diagrams/[diagrams/]
+* Iteration Plan: link:docs/iteration_plan.adoc[docs/iteration_plan.adoc]
 
 == Course workflow
 
