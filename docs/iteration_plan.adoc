@@ -2,116 +2,126 @@
 :toc:
 :toclevels: 2
 
-Risk IDs refer to link:../risk/risk_register.adoc[risk/risk_register.adoc].
+Risk IDs refer to link:../risk/risk_register.adoc[risk/risk_register.adoc]. The phases follow
+the RUP lifecycle and address higher-priority risks first. A risk may appear in more than one
+phase when early validation is followed by implementation or final verification.
 
-== Phase 1. Baseline Architecture (Inception)
+== Phase 1. Inception
 
-Establish the initial system structure, service boundaries, workflows and common interface conventions before committing to more detailed architectural decisions.
+Agree the scope and initial architecture, and reduce the High/High risks that could invalidate the project direction.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
 |R10
-|Define the initial containers/services and their interfaces, then model one representative end-to-end flow across them.
-|Baseline container diagram and end-to-end sequence diagram showing how the main components interact.
+|Define the initial system context, containers and one main end-to-end flow.
+|Initial C4 diagrams and sequence diagram.
 
-|R02
-|Model one representative case-management workflow and evaluate whether an existing workflow/case-management solution can support it.
-|Case-management workflow model and a short technology evaluation / decision record.
+|R13
+|Define which case data and documents are handled by the portal and which remain with agencies.
+|Data ownership and system-of-record boundaries.
+
+|R06
+|Investigate the signing integration and validate its riskiest step with a PoC or mock.
+|Signing sequence and technical spike.
+
+|R09
+|Select representative external systems, compare their interfaces and test the adapter approach.
+|Interface comparison and adapter PoC or mock.
 
 |R11
-|Do research to estimate the maximum expected users, requests and data volumes using public statistics.
+|Estimate users, requests and data volumes, and define the peak-load scenario.
+|Capacity assumptions and target workload.
 
-Build an initial infrastructure MVP and test it with a load test.
-|Capacity estimates and infrastructure scalability parameters.
-
-Load-test results for the infrastructure with those parameters, at a level acceptable for a good-quality application (99.9th percentile response time under 300 ms).
+|R12
+|Define the authorization boundary and validate one delegated-access path.
+|Delegation model and small authorization spike.
 |===
 
-== Phase 2. Security, Privacy and Auditability (Elaboration)
+== Phase 2. Elaboration
 
-Validate that the architecture can support the required identity, signing, document-security, retention, authorization and auditability properties.
+Establish the executable architecture baseline and reduce the remaining high-impact risks.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
 
 |R01
-|Investigate one national eID integration approach and model the authentication flow, trust relationships, certificates and test-environment requirements.
-|eID authentication flow / sequence diagram and a small PoC or mock integration.
+|Model and validate one national eID authentication flow.
+|Authentication sequence and PoC or mock.
+
+|R02
+|Evaluate the case-management approach with one representative workflow.
+|Workflow model and technology decision.
 
 |R04
-|Prototype the document upload and antivirus-scanning flow, including successful scanning, infected files and scanner failure.
-|Document-processing flow and antivirus integration PoC.
-
-|R05
-|Define representative retention rules and check whether the selected storage approach can enforce them automatically.
-|Document-retention design describing automated retention or the application-level fallback.
-
-|R06
-|Investigate available eID signing APIs/test environments and validate the most difficult part of the signing flow.
-|Digital-signing sequence diagram and technical spike / PoC.
+|Prototype document upload and antivirus scanning, including failure handling.
+|Document-processing PoC.
 
 |R07
-|Define the required audit events and verify that one user action can be correlated across multiple components.
-|Audit-event model and an example end-to-end audit trail.
+|Define audit events and trace one action across components.
+|Audit-event model and example trail.
 
 |R08
-|Define authentication, authorization/scopes and auditing for one representative third-party API interaction.
-|Third-party API security model and API authentication/authorization flow.
-
-|R12
-|Decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency.
-|One delegated-access case modelled end to end.
-|===
-
-== Phase 3. External Integrations and Interfaces (Construction)
-
-Validate that external organizations and third-party systems can be integrated without forcing major changes to the internal architecture.
-
-[cols="1,3,3",options="header"]
-|===
-|Risk |Action |Artifact or evidence
-
-|R09
-|Compare representative interfaces from at least two external systems and map their identifiers and data formats into the internal model.
-|External integration mapping and adapter/canonical data model design.
-
-|R01, R06, R08
-|Treat eID, digital signing and third-party API access as external dependencies and document the interfaces between the system and those external services.
-|External interface contracts for identity, signing and third-party API access.
+|Define security for one third-party API interaction.
+|API authentication, authorization and audit model.
 
 |R10
-|Connect representative components and external-system mocks into one vertical flow.
-|Integrated vertical-slice prototype using real interfaces where possible and mocks where necessary.
+|Connect the main components into an executable architecture baseline.
+|Representative vertical slice.
+
+|R14
+|Confirm fallback requirements for residents without eID and model one valid path.
+|Fallback authentication or service-path model.
 |===
 
-== Phase 4. Availability, Operations and Evolution (Transition)
+== Phase 3. Construction
 
-Validate that the architecture behaves predictably when dependencies fail and that components and interfaces can evolve without requiring system-wide redesign.
+Build the system on the validated architecture and integrate the selected mechanisms.
 
 [cols="1,3,3",options="header"]
 |===
 |Risk |Action |Artifact or evidence
+
+|R02, R04, R06
+|Implement the selected case, document-scanning and signing flows.
+|Integrated feature flows and tests.
 
 |R03
-|Define a common notification abstraction and test at least two channels, including retry and provider-failure behaviour.
-|Notification interface/design and failure/retry handling model.
+|Implement the notification abstraction with at least two channels.
+|Notification integration and retry tests.
 
-|R04
-|Define what happens when the antivirus service is slow or unavailable.
-|Document-processing failure-handling design.
+|R05
+|Implement representative document-retention rules.
+|Automated retention or application-level fallback.
 
-|R09
-|Validate that an external-interface change can be handled mainly inside its adapter instead of changing unrelated services.
-|Updated integration contract / compatibility example demonstrating interface isolation.
+|R07, R08, R09, R12
+|Apply the audit, API-security, adapter and delegation mechanisms across the built features.
+|Component and integration tests.
 
 |R10
-|Run the representative end-to-end flow with selected component or external-service failures and check that failures remain contained.
-|End-to-end architecture validation results and an updated architecture diagram if changes are required.
+|Complete the main end-to-end citizen-service flow.
+|Integrated vertical slice.
+|===
+
+== Phase 4. Transition
+
+Validate the completed system under realistic load and failure conditions, and prepare it for operation.
+
+[cols="1,3,3",options="header"]
+|===
+|Risk |Action |Artifact or evidence
 
 |R11
-|Validate the Phase 1 capacity estimates against the refined architecture, focusing on shared components every request passes through, using load tests.
-|Capacity calculation or load-test results for the peak load scenario, showing whether the identified bottlenecks meet the target.
+|Run load tests using the capacity estimates and peak-load scenario from Inception.
+|Load-test results and identified bottlenecks.
+
+|R03, R04, R09
+|Test notification-provider, antivirus-service and agency-system failures and recovery.
+|Failure and recovery test results.
+
+|R07, R10
+|Validate observability and the end-to-end flow in the deployment environment.
+|Operational and end-to-end validation results.
 |===
