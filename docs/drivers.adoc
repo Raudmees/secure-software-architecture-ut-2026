@@ -61,5 +61,5 @@ Security goals and trust boundaries are in link:security_goals.adoc[security_goa
 . Which specific services and agencies will be integrated?
 . How many active users are in the country the system will be built?
 . What are the expected peak load scenarios the system must be designed to handle?
-. Are there data residency or storage restrictions that would prevent the portal from centrally storing certain agencies' documents or case data?
+. Which data should the portal store and process itself, and which should remain with the agencies?
 . Is there a legally required fallback authentication method for residents who cannot use the national eID?
