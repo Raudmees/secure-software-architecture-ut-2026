@@ -72,29 +72,33 @@ threat category.
 |===
 |System |Data categories |Trust level
 
-|User → our portal
-|Personal information, uploads, API requests
-|None, anything could be sent so check everything
+|Residents ↔ our portal
+|Personal information, uploads, requests and portal responses
+|Treat all resident input as untrusted; authorize access and protect returned data
 
-|Our portal → eID service provider
-|Authentication info (tokens)
-|Trust, but verify
+|Our portal ↔ eID service provider
+|Authentication requests, redirects and tokens
+|Trust only configured providers; validate all tokens and authentication responses
 
-|Our portal → third party API clients
-|User information, API requests
-|Trust, but verify
+|Our portal ↔ external agencies and registries
+|Service requests, case updates, documents and registry data
+|Separate trust domain; authenticate each system, authorize and minimize shared data, and validate all received data
 
-|Our portal → admin systems overviewing our portal
+|Third-party API clients ↔ our portal
+|API requests and authorized service data
+|Untrusted until authenticated and authorized; validate requests and constrain scopes and request rates
+
+|Our portal → monitoring and audit systems
 |Audit logs
-|Trust, but verify
+|Authenticate the destination and protect log integrity and confidentiality
 
-|Our portal → signing service
+|Our portal ↔ signing service
 |Documents or hashes to be signed, signature results
-|Signatures are validated by the portal before being accepted as legally binding
+|Authenticate the service and validate signatures before accepting them as legally binding
 
-|Citizen session → back-office/admin functions (helpdesk, agency staff)
+|Back-office/admin users ↔ back-office portal functions
 |Case data, citizen profile data, documents
-|Different privilege level within the same system; must be explicitly authorized and role-checked, never assumed from login alone
+|Separate privilege boundary; require explicit authentication and role-based authorization
 |===
 
 == 5.3 Important data categories
