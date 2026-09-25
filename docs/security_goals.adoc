@@ -80,6 +80,10 @@ threat category.
 |Authentication info (tokens)
 |Trust, but verify
 
+|Our portal ↔ external agencies and registries
+|Service requests, case updates, documents and registry data
+|Separate trust domain; authenticate each system, authorize and minimize shared data, and validate all received data
+
 |Our portal → third party API clients
 |User information, API requests
 |Trust, but verify
