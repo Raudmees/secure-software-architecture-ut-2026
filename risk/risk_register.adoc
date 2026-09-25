@@ -80,6 +80,18 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |High
 |High
 |Establish the authorization boundary early: decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency, and model one delegated-access case end to end (for example a representative acting on behalf of another person).
+
+|R13
+|It is unclear whether the portal or agencies should store and process case data and documents. A wrong boundary could require major architectural redesign.
+|Medium
+|High
+|Define data ownership and system-of-record boundaries for one representative service.
+
+|R14
+|It is unclear whether residents without eID require a legally valid fallback authentication method. If required, omitting it could make the design non-compliant and require redesign.
+|Medium
+|High
+|Confirm the requirements and model one fallback path.
 |===
 
 == Notes
