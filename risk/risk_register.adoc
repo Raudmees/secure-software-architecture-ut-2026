@@ -78,7 +78,7 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |R12
 |The team currently assumes the portal itself does not need to handle authorization and delegation, while the scenario requires fine-grained authorization with delegation. If that assumption is carried into the design, then the rules governing which data is accessible to which user will be missing from the architecture and will have to be retrofitted across every component that exposes citizen data.
 |High
-|High
+|Low
 |Establish the authorization boundary early: decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency, and model one delegated-access case end to end (for example a representative acting on behalf of another person).
 
 |R13
