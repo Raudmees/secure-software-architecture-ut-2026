@@ -33,10 +33,6 @@ Agree the scope and initial architecture, and reduce the High/High risks that co
 |R11
 |Estimate users, requests and data volumes, and define the peak-load scenario.
 |Capacity assumptions and target workload.
-
-|R12
-|Define the authorization boundary and validate one delegated-access path.
-|Delegation model and small authorization spike.
 |===
 
 == Phase 2. Elaboration
@@ -70,6 +66,10 @@ Establish the executable architecture baseline and reduce the remaining high-imp
 |R10
 |Connect the main components into an executable architecture baseline.
 |Representative vertical slice.
+
+|R12
+|Define the authorization boundary and validate one delegated-access path.
+|Delegation model and small authorization spike.
 
 |R14
 |Confirm fallback requirements for residents without eID and model one valid path.
