@@ -182,8 +182,8 @@ threat category.
 |SG-8 → R04
 |Antivirus integration may not fit the upload/storage flow
 
-|SG-5 → R08
-|Third party API access
+|SG-6 → R07
+|Audit
 
 |SG-3 → R06
 |Unresolved signing workflow leaves integrity of signed data unverified
