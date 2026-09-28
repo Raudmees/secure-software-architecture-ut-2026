@@ -4,19 +4,96 @@
 
 == 1. Executive summary
 
-* What is the system?
-* Who is it for?
-* What are the top architectural drivers?
+=== What the system is
+
+The Citizen Services Portal is a single digital entry point through which residents find,
+request, track, and manage public services. It authenticates residents through a national
+eID/OIDC identity provider, hosts the service catalogue and case workflows, exchanges documents
+and notifications, and integrates the back-end systems of the public agencies that actually
+deliver the services.
+
+The full problem statement is in link:scenario.adoc[scenario.adoc].
+
+=== Who it is for
+
+[cols="1,3",options="header"]
+|===
+|User group |What they do with the portal
+
+|Residents/citizens |Discover and request public services, track cases, exchange documents and messages, sign documents, and see how their personal data has been used.
+|Delegates |Act on behalf of another person within an given scope.
+|Agency staff |Receive and process requests for their own organization's services.
+|Administrators and helpdesk |Support residents and operate the portal, with role-limited access to case data.
+|Auditors and oversight bodies |Verify that citizen data has been accessed and processed lawfully.
+|Service provider organizations |Offer their services through the portal, or consume regulated public APIs as third-party clients.
+|Operations and security teams |Monitor service health and respond to security events.
+|===
+
+=== Top architectural drivers
+
+Five drivers are architecture-critical and shape the structure of the system. They are defined
+in full in link:quality_attributes.adoc[quality_attributes.adoc].
+
+. *QA-1 Authorization and confidentiality* - protected data reaches only explicitly authorized actors.
+. *QA-2 Privacy and data minimization* - only the personal data needed for a purpose is processed or disclosed.
+. *QA-3 Availability and resilience* - one failing dependency must not take unrelated functionality down.
+. *QA-4 Auditability and accountability* - security-relevant actions leave reliable, reviewable evidence.
+. *QA-5 Evolvability and interoperability* - new agencies and services are added without reworking the core.
 
 == 2. Architectural drivers
 
-Link to or summarize link:drivers.adoc[drivers.adoc].
+link:drivers.adoc[drivers.adoc],
+link:quality_attributes.adoc[quality_attributes.adoc],
+link:qa_scenarios.adoc[qa_scenarios.adoc],
+link:security_goals.adoc[security_goals.adoc] and
+link:../risk/risk_register.adoc[risk/risk_register.adoc].
 
 === 2.1 Business goals
 
+* *BG-1* Single trustworthy digital entry point for discovering, requesting, tracking and managing public services.
+* *BG-2* Citizen data processed lawfully, securely, and only for appropriate purposes.
+* *BG-3* Residents and oversight bodies can understand and verify how data and requests were accessed and processed.
+* *BG-4* New agencies and services join without major changes to the portal or to existing agency systems.
+* *BG-5* Essential capabilities stay reachable despite component failures or external outages.
+* *BG-6* Services are understandable and usable across languages, abilities, ages and levels of technical literacy.
+* *BG-7* The portal evolves with services, regulations, integrations and technologies without major redesign.
+
+Full text: Mission goals in link:drivers.adoc[drivers.adoc]. Quality attribute scenarios in
+link:qa_scenarios.adoc[qa_scenarios.adoc] reference these goals by ID.
+
 === 2.2 Quality attributes
 
+Thirteen quality attributes, constraints and security-relevant requirements are prioritized in
+link:quality_attributes.adoc[quality_attributes.adoc]. The five architecture-critical ones:
+
+* *QA-1 Authorization and confidentiality* - sensitive citizen data, cases, documents and messages are accessible only to explicitly authorized users or organizations.
+* *QA-2 Privacy and data minimization* - only the personal data necessary for the service and purpose is processed or disclosed, including towards agencies.
+* *QA-3 Availability and resilience* - failure of one external agency or supporting service does not make unrelated functionality unavailable; the system degrades safely and recovers.
+* *QA-4 Auditability and accountability* - security-relevant access and actions produce reliable audit evidence for later review by authorized parties.
+* *QA-5 Evolvability and interoperability* - new agencies and services are integrable without major changes to the core architecture or existing integrations.
+
+The remaining eight (QA-6 to QA-13) cover trusted authentication, integrity, recoverability,
+observability, performance, usability/accessibility, secure external integrations and regulatory
+compliance. Three trade-offs are recorded in section 3 of
+link:quality_attributes.adoc[quality_attributes.adoc]: auditability versus privacy, security and
+privacy versus usability, and availability versus security controls.
+
 === 2.3 Constraints and assumptions
+
+Constraints:
+
+* *Regulatory compliance (QA-13)* - the architecture must support GDPR, national digital-identity, public-sector and retention requirements.
+* *Trusted authentication (QA-6)* - citizen authentication must use an approved national eID or trusted OIDC-based identity provider, validated before a portal session is established.
+* *No credential issuance* - the portal integrates with identity providers but does not issue or manage national identity credentials (see Out of scope in link:drivers.adoc[drivers.adoc]).
+
+Assumptions that most shape the design:
+
+* The target country is Estonia.
+* A national eID or equivalent identity provider exists and is available to delegate authentication to.
+* Back-end e-services expose APIs the portal can integrate with.
+* Agencies are willing to adopt the integration contract and schema defined by the portal.
+
+Full lists, including open questions, are in link:drivers.adoc[drivers.adoc].
 
 == 3. System context
 
