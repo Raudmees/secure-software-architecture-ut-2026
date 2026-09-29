@@ -20,7 +20,28 @@ Link to or summarize link:drivers.adoc[drivers.adoc].
 
 == 3. System context
 
-Add the C4 context diagram and supporting text.
+.System context of the Citizen Services Portal (source: link:../diagrams/c4_system_context.puml[c4_system_context.puml])
+image::../diagrams/c4_system_context.svg[C4 system context diagram of the Citizen Services Portal]
+
+The portal is the single entry point through which residents, and delegates acting within a
+given scope, find, request, track and sign public services. Administrators and helpdesk staff
+work in role-limited back-office functions. Auditors have read-only access to audit evidence.
+Operations and security teams monitor the platform.
+
+Inside the boundary are the service catalogue, case management, document exchange (including
+antivirus scanning and retention), the signing workflow, notification orchestration, the
+authorization and delegation checks, audit and transparency, and the regulated public APIs.
+Outside the boundary are the systems the portal integrates with but does not control:
+
+* *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself (SG-2, SG-4).
+* *Digital signing service* - creates and validates legally binding eID signatures (SG-3).
+* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and receives status updates and decisions. Each agency is a separate trust domain and gets only the minimum data it needs (SG-5, QA-3).
+* *External registries* - authoritative population, business and mandate/delegation data. If a delegation cannot be verified, delegated access is denied (SG-7, SG-9).
+* *Third-party service providers* - call the regulated public APIs as authenticated, scoped and rate-limited clients (SG-10).
+* *Notification providers* - deliver email, SMS and push messages, which carry only minimal content (QA-2).
+
+Trust boundaries for each of these interactions are listed in
+link:security_goals.adoc[security_goals.adoc].
 
 == 4. Containers
 
