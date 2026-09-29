@@ -1,0 +1,25 @@
+= Glossary
+
+== Project terms
+
+* *Citizen Services Portal* — System under design; residents' entry point to public services.
+* *Delegate* — Person authorized to act for another resident within a defined scope and time.
+* *Agency* — Public organization that delivers a service.
+* *Agency system* — External back-end system operated by an agency.
+* *Identity provider (IdP)* — Trusted external eID/OIDC service that authenticates users.
+* *Registry* — External source of authoritative records used by the portal.
+* *Service catalogue* — List of public services available through the portal.
+* *Case* — Service request with its status, messages, and documents.
+
+== Architecture and security
+
+* *C4 context view* — Portal, users, external systems, and their relationships.
+* *C4 container* — Application or data store running as a separate process or service.
+* *C4 component* — Code elements inside one container implementing a technical function.
+* *System boundary* — Separates the portal from external people and systems.
+* *Trust boundary* — Separates trust or privilege domains; crossing it requires explicit checks.
+* *System of record* — Authoritative source for a data set; case and document ownership is still open.
+* *Authentication* — Establishes who an actor is.
+* *Authorization* — Decides whether an actor may perform an operation on a resource.
+* *Audit event* — Record of actor, action, resource, time, and outcome.
+* *ADR* — Record of a significant design decision, its context, alternatives, and consequences.

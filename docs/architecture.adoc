@@ -136,4 +136,4 @@ Describe expected changes, versioning, compatibility, migration, and deprecation
 == Appendix
 
 * ADR index: link:../adrs/README.adoc[adrs/README.adoc]
-* Glossary: TODO
+* Glossary: link:glossary.adoc[glossary.adoc]
