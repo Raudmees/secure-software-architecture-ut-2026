@@ -1,0 +1,42 @@
+@startuml c4_system_context
+' C4 Level 1 - System Context: Citizen Services Portal
+' Question answered: who uses the portal, and which external systems does it depend on or serve?
+' Render: plantuml -tsvg diagrams/c4_system_context.puml
+
+!include <C4/C4_Context>
+
+LAYOUT_TOP_DOWN()
+
+title System Context - Citizen Services Portal
+
+Person(resident, "Resident / Citizen", "Finds, requests and tracks public services; exchanges documents and messages; signs documents; sees who accessed their data. May act as a delegate for another person within a given scope.")
+Person(admin, "Administrator / Helpdesk", "Supports residents and operates the portal with role-limited access to case data.")
+Person(auditor, "Auditor / Oversight body", "Verifies that citizen data was accessed and processed lawfully.")
+Person(ops, "Operations / Security team", "Monitors service health and responds to incidents and security events.")
+Person_Ext(agencyStaff, "Agency staff", "Processes requests for their own organization's services.")
+
+System(portal, "Citizen Services Portal", "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs.")
+
+System_Ext(idp, "National eID / OIDC identity provider", "Authenticates residents. The portal trusts only configured providers and validates every token.")
+System_Ext(signing, "Digital signing service", "Creates and validates legally binding eID signatures.")
+System_Ext(agencies, "Agency back-end e-services", "Systems of the agencies that deliver and decide the services. Separate trust domain.")
+System_Ext(registries, "External registries", "Authoritative data such as population, business and mandate/delegation registries.")
+System_Ext(thirdParty, "Third-party service providers", "Consume the portal's regulated public APIs as registered clients.")
+System_Ext(notify, "Notification providers", "Deliver email, SMS and push messages.")
+
+Rel(resident, portal, "Finds services, submits and tracks requests, uploads documents, signs, reviews data-access log", "HTTPS")
+Rel(admin, portal, "Supports residents and administers the portal via back-office functions", "HTTPS, role-based")
+Rel(auditor, portal, "Reviews audit evidence", "HTTPS, read-only")
+Rel(ops, portal, "Monitors health, logs and security events", "Observability tooling")
+
+Rel(portal, idp, "Delegates resident authentication to", "OIDC")
+Rel(portal, signing, "Sends documents or hashes to sign; validates signatures", "HTTPS API")
+Rel(portal, agencies, "Forwards requests and documents; receives case status and decisions", "Sync API + async messages, mutually authenticated")
+Rel(portal, registries, "Looks up minimal required data; verifies delegations", "HTTPS API, mutually authenticated")
+Rel(thirdParty, portal, "Calls regulated public APIs", "HTTPS, OAuth 2.0 client credentials, rate-limited")
+Rel(portal, notify, "Sends notifications", "Provider APIs, async")
+Rel(notify, resident, "Delivers email, SMS, push")
+Rel(agencyStaff, agencies, "Processes cases in")
+
+SHOW_LEGEND()
+@enduml
