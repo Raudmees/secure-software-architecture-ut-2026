@@ -183,11 +183,14 @@ threat category.
 |Antivirus integration may not fit the upload/storage flow
 
 |SG-6 → R07
-|Audit
+|A normal application-logging approach may not prevent audit records from being silently altered or deleted
 
 |SG-3 → R06
 |Unresolved signing workflow leaves integrity of signed data unverified
 
 |SG-4 → R01
 |No eID experience risks incorrect token/trust validation
+
+|SG-10 → R08
+|Misunderstood third-party API security constraints may lead to scopes that let clients access data beyond their authorization
 |===
