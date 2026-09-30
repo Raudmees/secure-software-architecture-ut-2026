@@ -1,0 +1,55 @@
+= ADR-0001: C4 model with PlantUML for architecture diagrams, AsciiDoc for documentation
+:toc:
+
+== Status
+
+Accepted
+
+== Context
+
+We need a consistent way to visualize and document the structure of the Citizen Services Portal. 
+
+C4 context and container diagrams are the first diagrams we will be required to draw. Diagrams must use consistent names for 
+systems, containers and actors, matching the glossary, drivers and risk register.
+
+If every team member draws in a different style or tool, diagrams become inconsistent and hard to 
+review, and names drift between diagrams and documents.
+
+== Decision
+
+* We use the C4 model as the notation for all architecture diagrams
+* We write the diagrams as code with PlantUML, the diagrams are stored under /diagrams
+* Each diagram is committed as .puml source together with a SVG export.
+* Architecture documentation is written in AsciiDoc in the repository
+
+== Alternatives considered
+
+* *Structurizr*: model-based C4 tool where all diagrams are generated from one model, so names 
+  stay consistent automatically. 
+* *draw.io*: easy to start with, but files are hard to review in Git and nothing keeps names 
+  consistent between diagrams.
+
+== Consequences
+
+* Positive: all diagrams follow the same C4 levels and visual styles. Diagram sources are plain text, 
+  so changes are visible in Git diffs and reviewable in pull requests. Documentation and diagrams 
+  live together in the repository.
+
+* Negative or risks: PlantUML diagrams are separate files, not views of one model, so the context 
+  and container diagrams can drift apart (for example different names for the same element). 
+  Exported images can become outdated if the source changes but is not re-exported.
+
+* Follow-up actions: 
+
+** Create a shared PlantUML include file defining all actors, external systems and containers once, 
+   and include it in every diagram.
+** Keep element names identical to /docs/glossary.adoc.
+
+== References
+
+
+* C4 model: https://c4model.com
+* C4-PlantUML library: https://github.com/plantuml-stdlib/C4-PlantUML
+* C4 tooling overview: https://c4model.tools/#visual-modelling-tools
+* link:../docs/glossary.adoc[Glossary] (stable component names)
+* link:../diagrams/[Diagrams folder]
