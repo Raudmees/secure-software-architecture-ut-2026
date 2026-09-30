@@ -28,9 +28,11 @@ For this project we are using the default scenario of Citizen Services Portal, d
 * Scenario: link:docs/scenario.adoc[docs/scenario.adoc]
 * Glossary: link:docs/glossary.adoc[docs/glossary.adoc]
 * Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
-* ADRs: link:adrs/[adrs/]
+* ADRs: link:adrs/README.adoc[adrs/README.adoc]
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
 * Iteration Plan: link:docs/iteration_plan.adoc[docs/iteration_plan.adoc]
+* Diagrams: link:diagrams/[diagrams/]
+* Drivers: link:docs/drivers.adoc[docs/drivers.adoc]
 
 == Course workflow
 
