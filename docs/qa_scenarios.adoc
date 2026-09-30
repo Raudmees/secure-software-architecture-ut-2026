@@ -34,10 +34,10 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |The portal's authorization and delegation checks.
 
 |*Response*
-|Deny the delegated request and return a clear temporary-unavailability message.
+|Deny the delegated request and return a clear temporary-unavailability message. The resident's access to their own cases continues normally
 
 |*Response measure*
-|All requests in the unavailable-registry test set are denied, no case data is returned, and each response is returned within 3 seconds.
+|All requests in the unavailable-registry test set are denied, no case data is returned, and each response is returned within 3 seconds. Access to the resident's own cases stays available during the outage.
 
 |*Questions*
 |May valid delegation decisions be cached, and for how long?
