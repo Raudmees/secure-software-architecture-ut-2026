@@ -8,7 +8,7 @@ phase when early validation is followed by implementation or final verification.
 
 == Phase 1. Inception
 
-Agree the scope and initial architecture, and reduce the High/High risks that could invalidate the project direction.
+Agree the scope and initial architecture, and reduce the High/High and structure-defining risks that could invalidate the project direction.
 
 [cols="1,3,3",options="header"]
 |===
@@ -32,7 +32,12 @@ Agree the scope and initial architecture, and reduce the High/High risks that co
 
 |R11
 |Estimate users, requests and data volumes, and define the peak-load scenario.
-|Capacity assumptions and target workload.
+|Capacity assumptions, target workload and response-time target (99% under 500 ms for portal-internal requests at estimated peak load).
+
+|R12
+|Define the authorization boundary and validate one delegated-access path.
+|Delegation model and small authorization spike.
+
 |===
 
 == Phase 2. Elaboration
@@ -67,10 +72,6 @@ Establish the executable architecture baseline and reduce the remaining high-imp
 |Connect the main components into an executable architecture baseline.
 |Representative vertical slice.
 
-|R12
-|Define the authorization boundary and validate one delegated-access path.
-|Delegation model and small authorization spike.
-
 |R14
 |Confirm fallback requirements for residents without eID and model one valid path.
 |Fallback authentication or service-path model.
@@ -84,25 +85,48 @@ Build the system on the validated architecture and integrate the selected mechan
 |===
 |Risk |Action |Artifact or evidence
 
-|R02, R04, R06
-|Implement the selected case, document-scanning and signing flows.
-|Integrated feature flows and tests.
+|R02
+|Implement the representative workflow in the selected case-management approach.
+|The workflow runs from submission to agency decision with status updates visible to the resident.
 
 |R03
 |Implement the notification abstraction with at least two channels.
-|Notification integration and retry tests.
+|A notification is delivered via two channels, when one provider fails, it is retried and not lost.
+
+|R04
+|Implement the upload and antivirus-scanning flow.
+|An infected test file is rejected. During a scanner outage, uploads stay quarantined and are never served.
 
 |R05
 |Implement representative document-retention rules.
-|Automated retention or application-level fallback.
+|Test records past their retention period are deleted automatically, records within it are kept.
 
-|R07, R08, R09, R12
-|Apply the audit, API-security, adapter and delegation mechanisms across the built features.
-|Component and integration tests.
+
+|R06
+|Implement the signing flow against the signing test environment.
+|A document is signed and its signature validates, a modified document fails validation.
+
+
+|R07
+|Apply the audit-event model to all features that access citizen data.
+|Response measures of QA scenario 2 pass (every access audited within 5 s, no document content in records).
+
+|R08
+|Apply the third-party API security model to the public API.
+|Authorization test: clients cannot access operations or data outside their granted scopes.
+
+|R09
+|Add the adapters for the selected external systems.
+|Response measures of QA scenario 5 pass (no changes to core or existing adapters).
 
 |R10
 |Complete the main end-to-end citizen-service flow.
 |Integrated vertical slice.
+
+|R12
+|Apply the authorization and delegation model to all endpoints exposing citizen data.
+|Response measures of QA scenarios 1 and 3 pass (all unauthorized and unverifiable delegated requests denied).
+
 |===
 
 == Phase 4. Transition
@@ -115,7 +139,7 @@ Validate the completed system under realistic load and failure conditions, and p
 
 |R11
 |Run load tests using the capacity estimates and peak-load scenario from Inception.
-|Load-test results and identified bottlenecks.
+|Load-test results showing the Phase 1 response-time target is met at estimated peak load, and identified bottlenecks.
 
 |R03, R04, R09
 |Test notification-provider, antivirus-service and agency-system failures and recovery.
