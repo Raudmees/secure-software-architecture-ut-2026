@@ -28,8 +28,6 @@ link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals as BG-1 to BG-7.
 
 == Stakeholders
 
-Identify stakeholders and what each needs from the architecture.
-
 [cols="1,3",options="header"]
 |===
 |Stakeholder |Need or concern
@@ -44,30 +42,12 @@ Identify stakeholders and what each needs from the architecture.
 
 == Quality attributes and constraints
 
-List 8-12 quality attributes or constraints.
-
-NOTE: The refined, prioritized list of 10-15 quality attributes, constraints and
+The refined, prioritized list of 10-15 quality attributes, constraints and
 security-relevant requirements, including the architecture-critical drivers and the trade-offs
 between them, is maintained in link:quality_attributes.adoc[quality_attributes.adoc].
 Security goals and trust boundaries are in link:security_goals.adoc[security_goals.adoc].
 
-[cols="1,3,3",options="header"]
-|===
-|ID |Driver |Why it matters
-
-|QA-001 |Must comply with GDPR (or local equivalent) and national eID/trust regulation |Non-compliance risks legal penalties and loss of public trust.
-|QA-002 |Availability and resilience |The portal is critical public infrastructure, citizens must be able to access core functions at all times.
-|QA-003 |Role-based access control for “other” users |Administrators, helpdesk, and agency staff need different, limited views into the system.
-|QA-004 |Privacy by design |Each service and agency must only see the data necessary for its specific purpose.
-|QA-005 |Fast and easy onboarding of new agencies  |The portal's value depends on how easily new services and agencies can be added.
-|QA-006 |Observability (metrics, logs, tracing) |Operations and security teams need to detect service levels faults and security incidents quickly. They would also trace the system for any criminal activity.
-|QA-007 |Usability and localization |Citizens span multiple languages, ages, and technical literacy levels. The interface, notifications, and service catalogue must be understandable and accessible to all residents.
-|QA-008 |Citizen authentication via federated identity (eID/OIDC) |The portal must not manage citizen credentials itself, so authentication is delegated to a trusted national identity provider.
-|===
-
 == Assumptions
-
-List assumptions that may later need validation.
 
 * The country in which and for what the system will be designed is Estonia.
 * A national eID or another identity provider exists and is available for the portal to delegate authentication to.
@@ -78,11 +58,8 @@ List assumptions that may later need validation.
 
 == Open questions
 
-List open questions as questions, not as hidden assumptions.
-
-* Which specific services and agencies will be integrated?
-* How many active users are in the country the system will be built?
-* What are the expected peak load scenarios the system must be designed to handle? 
-* Are there data residency or storage restrictions that would prevent the portal from centrally storing certain agencies' documents or case data?
-* Is there a legally required fallback authentication method for residents who cannot use the national eID?
-
+. Which specific services and agencies will be integrated?
+. How many active users are in the country the system will be built?
+. What are the expected peak load scenarios the system must be designed to handle?
+. Which data should the portal store and process itself, and which should remain with the agencies?
+. Is there a legally required fallback authentication method for residents who cannot use the national eID?
