@@ -2,8 +2,11 @@
  * Citizen Services Portal - C4 model (Structurizr DSL)
  * C4 Level 1 - System Context: who uses the portal, and which external systems does it depend on or serve?
  * Edit online: paste into https://structurizr.com/dsl
- * Export SVG:  structurizr-cli export -workspace diagrams/workspace.dsl -format plantuml -output <tmp>
- *              plantuml -tsvg <tmp>/structurizr-c4_system_context.puml, then copy to diagrams/c4_system_context.svg
+ * Export SVG:  render with Structurizr (docker run -it --rm --user "$(id -u):$(id -g)" -p 8080:8080
+ *              -v <repo>/diagrams:/usr/local/structurizr structurizr/structurizr local),
+ *              open http://localhost:8080, arrange the diagram, export it as SVG and save it as
+ *              diagrams/c4_system_context.svg. Commit workspace.json together with workspace.dsl,
+ *              because it stores the manual layout.
  */
 workspace "Citizen Services Portal" "Architecture model of the Citizen Services Portal." {
 
@@ -11,17 +14,25 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
 
     model {
         resident = person "Resident / Citizen" "Finds, requests and tracks public services; exchanges documents and messages; signs documents; sees who accessed their data. May act as a delegate for another person within a given scope."
-        admin = person "Administrator / Helpdesk" "Supports residents and operates the portal with role-limited access to case data."
         auditor = person "Auditor / Oversight body" "Verifies that citizen data was accessed and processed lawfully."
-        ops = person "Operations / Security team" "Monitors service health and responds to incidents and security events."
-        agencyStaff = person "Agency staff" "Processes requests for their own organization's services." "External"
 
-        portal = softwareSystem "Citizen Services Portal" "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs."
+        group "Portal operator" {
+            admin = person "Administrator / Helpdesk" "Supports residents and operates the portal with role-limited access to case data."
+            ops = person "Operations / Security team" "Monitors service health and responds to incidents and security events."
+            portal = softwareSystem "Citizen Services Portal" "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs."
+        }
 
-        idp = softwareSystem "National eID / OIDC identity provider" "Authenticates residents. The portal trusts only configured providers and validates every token." "External"
-        signing = softwareSystem "Digital signing service" "Creates and validates legally binding eID signatures." "External"
-        agencies = softwareSystem "Agency back-end e-services" "Systems of the agencies that deliver and decide the services. Separate trust domain." "External"
-        registries = softwareSystem "External registries" "Authoritative data such as population, business and mandate/delegation registries." "External"
+        group "Agency trust domain" {
+            agencyStaff = person "Agency staff" "Processes requests for their own organization's services." "External"
+            agencies = softwareSystem "Agency back-end e-services" "Systems of the agencies that deliver and decide the services. Separate trust domain." "External"
+        }
+
+        group "National trust services" {
+            idp = softwareSystem "National eID / OIDC identity provider" "Authenticates residents. The portal trusts only configured providers and validates every token." "External"
+            signing = softwareSystem "Digital signing service" "Creates and validates legally binding eID signatures." "External"
+            registries = softwareSystem "External registries" "Authoritative data such as population, business and mandate/delegation registries." "External"
+        }
+
         thirdParty = softwareSystem "Third-party service providers" "Consume the portal's regulated public APIs as registered clients." "External"
         notify = softwareSystem "Notification providers" "Deliver email, SMS and push messages." "External"
 
@@ -46,7 +57,6 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             title "System Context - Citizen Services Portal"
             include *
             include agencyStaff
-            autoLayout tb 250 200
         }
 
         styles {

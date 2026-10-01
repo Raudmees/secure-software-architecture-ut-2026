@@ -1,0 +1,363 @@
+{
+  "configuration" : { },
+  "description" : "Architecture model of the Citizen Services Portal.",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedAgent" : "structurizr/diagrams/d55479c3-6142-4170-8e7a-d81cbc2b6002",
+  "lastModifiedDate" : "2026-10-01T19:26:02Z",
+  "lastModifiedUser" : "15707857",
+  "model" : {
+    "people" : [ {
+      "description" : "Finds, requests and tracks public services; exchanges documents and messages; signs documents; sees who accessed their data. May act as a delegate for another person within a given scope.",
+      "id" : "1",
+      "name" : "Resident / Citizen",
+      "properties" : {
+        "structurizr.dsl.identifier" : "resident"
+      },
+      "relationships" : [ {
+        "description" : "Uses services, tracks requests, signs documents",
+        "destinationId" : "5",
+        "id" : "13",
+        "sourceId" : "1",
+        "tags" : "Relationship,r1"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Verifies that citizen data was accessed and processed lawfully.",
+      "id" : "2",
+      "name" : "Auditor / Oversight body",
+      "properties" : {
+        "structurizr.dsl.identifier" : "auditor"
+      },
+      "relationships" : [ {
+        "description" : "Reviews audit evidence (read-only)",
+        "destinationId" : "5",
+        "id" : "15",
+        "sourceId" : "2",
+        "tags" : "Relationship,r3"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Supports residents and operates the portal with role-limited access to case data.",
+      "group" : "Portal operator",
+      "id" : "3",
+      "name" : "Administrator / Helpdesk",
+      "properties" : {
+        "structurizr.dsl.identifier" : "admin"
+      },
+      "relationships" : [ {
+        "description" : "Supports residents, administers portal",
+        "destinationId" : "5",
+        "id" : "14",
+        "sourceId" : "3",
+        "tags" : "Relationship,r2"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Monitors service health and responds to incidents and security events.",
+      "group" : "Portal operator",
+      "id" : "4",
+      "name" : "Operations / Security team",
+      "properties" : {
+        "structurizr.dsl.identifier" : "ops"
+      },
+      "relationships" : [ {
+        "description" : "Monitors health and security events",
+        "destinationId" : "5",
+        "id" : "16",
+        "sourceId" : "4",
+        "tags" : "Relationship,r4"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Processes requests for their own organization's services.",
+      "group" : "Agency trust domain",
+      "id" : "6",
+      "name" : "Agency staff",
+      "properties" : {
+        "structurizr.dsl.identifier" : "agencyStaff"
+      },
+      "relationships" : [ {
+        "description" : "Processes cases in",
+        "destinationId" : "7",
+        "id" : "24",
+        "sourceId" : "6",
+        "tags" : "Relationship,r12"
+      } ],
+      "tags" : "Element,Person,External"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs.",
+      "documentation" : { },
+      "group" : "Portal operator",
+      "id" : "5",
+      "name" : "Citizen Services Portal",
+      "properties" : {
+        "structurizr.dsl.identifier" : "portal"
+      },
+      "relationships" : [ {
+        "description" : "Authenticates residents via",
+        "destinationId" : "8",
+        "id" : "17",
+        "sourceId" : "5",
+        "tags" : "Relationship,r5"
+      }, {
+        "description" : "Signs and validates documents via",
+        "destinationId" : "9",
+        "id" : "18",
+        "sourceId" : "5",
+        "tags" : "Relationship,r6"
+      }, {
+        "description" : "Sends requests; gets status and decisions",
+        "destinationId" : "7",
+        "id" : "19",
+        "sourceId" : "5",
+        "tags" : "Relationship,r7"
+      }, {
+        "description" : "Looks up data, verifies delegations",
+        "destinationId" : "10",
+        "id" : "20",
+        "sourceId" : "5",
+        "tags" : "Relationship,r8"
+      }, {
+        "description" : "Sends notifications via",
+        "destinationId" : "12",
+        "id" : "22",
+        "sourceId" : "5",
+        "tags" : "Relationship,r10"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "description" : "Systems of the agencies that deliver and decide the services. Separate trust domain.",
+      "documentation" : { },
+      "group" : "Agency trust domain",
+      "id" : "7",
+      "name" : "Agency back-end e-services",
+      "properties" : {
+        "structurizr.dsl.identifier" : "agencies"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Authenticates residents. The portal trusts only configured providers and validates every token.",
+      "documentation" : { },
+      "group" : "National trust services",
+      "id" : "8",
+      "name" : "National eID / OIDC identity provider",
+      "properties" : {
+        "structurizr.dsl.identifier" : "idp"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Creates and validates legally binding eID signatures.",
+      "documentation" : { },
+      "group" : "National trust services",
+      "id" : "9",
+      "name" : "Digital signing service",
+      "properties" : {
+        "structurizr.dsl.identifier" : "signing"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Authoritative data such as population, business and mandate/delegation registries.",
+      "documentation" : { },
+      "group" : "National trust services",
+      "id" : "10",
+      "name" : "External registries",
+      "properties" : {
+        "structurizr.dsl.identifier" : "registries"
+      },
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Consume the portal's regulated public APIs as registered clients.",
+      "documentation" : { },
+      "id" : "11",
+      "name" : "Third-party service providers",
+      "properties" : {
+        "structurizr.dsl.identifier" : "thirdParty"
+      },
+      "relationships" : [ {
+        "description" : "Calls regulated public APIs",
+        "destinationId" : "5",
+        "id" : "21",
+        "sourceId" : "11",
+        "tags" : "Relationship,r9"
+      } ],
+      "tags" : "Element,Software System,External"
+    }, {
+      "description" : "Deliver email, SMS and push messages.",
+      "documentation" : { },
+      "id" : "12",
+      "name" : "Notification providers",
+      "properties" : {
+        "structurizr.dsl.identifier" : "notify"
+      },
+      "relationships" : [ {
+        "description" : "Delivers email, SMS, push to",
+        "destinationId" : "1",
+        "id" : "23",
+        "sourceId" : "12",
+        "tags" : "Relationship,r11"
+      } ],
+      "tags" : "Element,Software System,External"
+    } ]
+  },
+  "name" : "Citizen Services Portal",
+  "properties" : {
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.error" : "14",
+    "structurizr.inspection.warning" : "0",
+    "structurizr.dsl" : "LyoKICogQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwgLSBDNCBtb2RlbCAoU3RydWN0dXJpenIgRFNMKQogKiBDNCBMZXZlbCAxIC0gU3lzdGVtIENvbnRleHQ6IHdobyB1c2VzIHRoZSBwb3J0YWwsIGFuZCB3aGljaCBleHRlcm5hbCBzeXN0ZW1zIGRvZXMgaXQgZGVwZW5kIG9uIG9yIHNlcnZlPwogKiBFZGl0IG9ubGluZTogcGFzdGUgaW50byBodHRwczovL3N0cnVjdHVyaXpyLmNvbS9kc2wKICogRXhwb3J0IFNWRzogIHJlbmRlciB3aXRoIFN0cnVjdHVyaXpyIChkb2NrZXIgcnVuIC1pdCAtLXJtIC0tdXNlciAiJChpZCAtdSk6JChpZCAtZykiIC1wIDgwODA6ODA4MAogKiAgICAgICAgICAgICAgLXYgPHJlcG8+L2RpYWdyYW1zOi91c3IvbG9jYWwvc3RydWN0dXJpenIgc3RydWN0dXJpenIvc3RydWN0dXJpenIgbG9jYWwpLAogKiAgICAgICAgICAgICAgb3BlbiBodHRwOi8vbG9jYWxob3N0OjgwODAsIGFycmFuZ2UgdGhlIGRpYWdyYW0sIGV4cG9ydCBpdCBhcyBTVkcgYW5kIHNhdmUgaXQgYXMKICogICAgICAgICAgICAgIGRpYWdyYW1zL2M0X3N5c3RlbV9jb250ZXh0LnN2Zy4gQ29tbWl0IHdvcmtzcGFjZS5qc29uIHRvZ2V0aGVyIHdpdGggd29ya3NwYWNlLmRzbCwKICogICAgICAgICAgICAgIGJlY2F1c2UgaXQgc3RvcmVzIHRoZSBtYW51YWwgbGF5b3V0LgogKi8Kd29ya3NwYWNlICJDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIgIkFyY2hpdGVjdHVyZSBtb2RlbCBvZiB0aGUgQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwuIiB7CgogICAgIWlkZW50aWZpZXJzIGhpZXJhcmNoaWNhbAoKICAgIG1vZGVsIHsKICAgICAgICByZXNpZGVudCA9IHBlcnNvbiAiUmVzaWRlbnQgLyBDaXRpemVuIiAiRmluZHMsIHJlcXVlc3RzIGFuZCB0cmFja3MgcHVibGljIHNlcnZpY2VzOyBleGNoYW5nZXMgZG9jdW1lbnRzIGFuZCBtZXNzYWdlczsgc2lnbnMgZG9jdW1lbnRzOyBzZWVzIHdobyBhY2Nlc3NlZCB0aGVpciBkYXRhLiBNYXkgYWN0IGFzIGEgZGVsZWdhdGUgZm9yIGFub3RoZXIgcGVyc29uIHdpdGhpbiBhIGdpdmVuIHNjb3BlLiIKICAgICAgICBhdWRpdG9yID0gcGVyc29uICJBdWRpdG9yIC8gT3ZlcnNpZ2h0IGJvZHkiICJWZXJpZmllcyB0aGF0IGNpdGl6ZW4gZGF0YSB3YXMgYWNjZXNzZWQgYW5kIHByb2Nlc3NlZCBsYXdmdWxseS4iCgogICAgICAgIGdyb3VwICJQb3J0YWwgb3BlcmF0b3IiIHsKICAgICAgICAgICAgYWRtaW4gPSBwZXJzb24gIkFkbWluaXN0cmF0b3IgLyBIZWxwZGVzayIgIlN1cHBvcnRzIHJlc2lkZW50cyBhbmQgb3BlcmF0ZXMgdGhlIHBvcnRhbCB3aXRoIHJvbGUtbGltaXRlZCBhY2Nlc3MgdG8gY2FzZSBkYXRhLiIKICAgICAgICAgICAgb3BzID0gcGVyc29uICJPcGVyYXRpb25zIC8gU2VjdXJpdHkgdGVhbSIgIk1vbml0b3JzIHNlcnZpY2UgaGVhbHRoIGFuZCByZXNwb25kcyB0byBpbmNpZGVudHMgYW5kIHNlY3VyaXR5IGV2ZW50cy4iCiAgICAgICAgICAgIHBvcnRhbCA9IHNvZnR3YXJlU3lzdGVtICJDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIgIlNpbmdsZSBkaWdpdGFsIGVudHJ5IHBvaW50IGZvciBwdWJsaWMgc2VydmljZXM6IHNlcnZpY2UgY2F0YWxvZ3VlLCBjYXNlIG1hbmFnZW1lbnQsIGRvY3VtZW50IGV4Y2hhbmdlLCBzaWduaW5nIHdvcmtmbG93LCBub3RpZmljYXRpb25zLCBkZWxlZ2F0aW9uLCBhdWRpdCBhbmQgdHJhbnNwYXJlbmN5LCByZWd1bGF0ZWQgcHVibGljIEFQSXMuIgogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIkFnZW5jeSB0cnVzdCBkb21haW4iIHsKICAgICAgICAgICAgYWdlbmN5U3RhZmYgPSBwZXJzb24gIkFnZW5jeSBzdGFmZiIgIlByb2Nlc3NlcyByZXF1ZXN0cyBmb3IgdGhlaXIgb3duIG9yZ2FuaXphdGlvbidzIHNlcnZpY2VzLiIgIkV4dGVybmFsIgogICAgICAgICAgICBhZ2VuY2llcyA9IHNvZnR3YXJlU3lzdGVtICJBZ2VuY3kgYmFjay1lbmQgZS1zZXJ2aWNlcyIgIlN5c3RlbXMgb2YgdGhlIGFnZW5jaWVzIHRoYXQgZGVsaXZlciBhbmQgZGVjaWRlIHRoZSBzZXJ2aWNlcy4gU2VwYXJhdGUgdHJ1c3QgZG9tYWluLiIgIkV4dGVybmFsIgogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIk5hdGlvbmFsIHRydXN0IHNlcnZpY2VzIiB7CiAgICAgICAgICAgIGlkcCA9IHNvZnR3YXJlU3lzdGVtICJOYXRpb25hbCBlSUQgLyBPSURDIGlkZW50aXR5IHByb3ZpZGVyIiAiQXV0aGVudGljYXRlcyByZXNpZGVudHMuIFRoZSBwb3J0YWwgdHJ1c3RzIG9ubHkgY29uZmlndXJlZCBwcm92aWRlcnMgYW5kIHZhbGlkYXRlcyBldmVyeSB0b2tlbi4iICJFeHRlcm5hbCIKICAgICAgICAgICAgc2lnbmluZyA9IHNvZnR3YXJlU3lzdGVtICJEaWdpdGFsIHNpZ25pbmcgc2VydmljZSIgIkNyZWF0ZXMgYW5kIHZhbGlkYXRlcyBsZWdhbGx5IGJpbmRpbmcgZUlEIHNpZ25hdHVyZXMuIiAiRXh0ZXJuYWwiCiAgICAgICAgICAgIHJlZ2lzdHJpZXMgPSBzb2Z0d2FyZVN5c3RlbSAiRXh0ZXJuYWwgcmVnaXN0cmllcyIgIkF1dGhvcml0YXRpdmUgZGF0YSBzdWNoIGFzIHBvcHVsYXRpb24sIGJ1c2luZXNzIGFuZCBtYW5kYXRlL2RlbGVnYXRpb24gcmVnaXN0cmllcy4iICJFeHRlcm5hbCIKICAgICAgICB9CgogICAgICAgIHRoaXJkUGFydHkgPSBzb2Z0d2FyZVN5c3RlbSAiVGhpcmQtcGFydHkgc2VydmljZSBwcm92aWRlcnMiICJDb25zdW1lIHRoZSBwb3J0YWwncyByZWd1bGF0ZWQgcHVibGljIEFQSXMgYXMgcmVnaXN0ZXJlZCBjbGllbnRzLiIgIkV4dGVybmFsIgogICAgICAgIG5vdGlmeSA9IHNvZnR3YXJlU3lzdGVtICJOb3RpZmljYXRpb24gcHJvdmlkZXJzIiAiRGVsaXZlciBlbWFpbCwgU01TIGFuZCBwdXNoIG1lc3NhZ2VzLiIgIkV4dGVybmFsIgoKICAgICAgICAvLyBFYWNoIHJlbGF0aW9uc2hpcCBoYXMgaXRzIG93biBjb2xvdXIgdGFnIChyMS4ucjEyKTsgdGhlIGxhYmVsIHRleHQgbWF0Y2hlcyBpdHMgbGluZS4KICAgICAgICByZXNpZGVudCAtPiBwb3J0YWwgIlVzZXMgc2VydmljZXMsIHRyYWNrcyByZXF1ZXN0cywgc2lnbnMgZG9jdW1lbnRzIiAiIiAicjEiCiAgICAgICAgYWRtaW4gLT4gcG9ydGFsICJTdXBwb3J0cyByZXNpZGVudHMsIGFkbWluaXN0ZXJzIHBvcnRhbCIgIiIgInIyIgogICAgICAgIGF1ZGl0b3IgLT4gcG9ydGFsICJSZXZpZXdzIGF1ZGl0IGV2aWRlbmNlIChyZWFkLW9ubHkpIiAiIiAicjMiCiAgICAgICAgb3BzIC0+IHBvcnRhbCAiTW9uaXRvcnMgaGVhbHRoIGFuZCBzZWN1cml0eSBldmVudHMiICIiICJyNCIKCiAgICAgICAgcG9ydGFsIC0+IGlkcCAiQXV0aGVudGljYXRlcyByZXNpZGVudHMgdmlhIiAiIiAicjUiCiAgICAgICAgcG9ydGFsIC0+IHNpZ25pbmcgIlNpZ25zIGFuZCB2YWxpZGF0ZXMgZG9jdW1lbnRzIHZpYSIgIiIgInI2IgogICAgICAgIHBvcnRhbCAtPiBhZ2VuY2llcyAiU2VuZHMgcmVxdWVzdHM7IGdldHMgc3RhdHVzIGFuZCBkZWNpc2lvbnMiICIiICJyNyIKICAgICAgICBwb3J0YWwgLT4gcmVnaXN0cmllcyAiTG9va3MgdXAgZGF0YSwgdmVyaWZpZXMgZGVsZWdhdGlvbnMiICIiICJyOCIKICAgICAgICB0aGlyZFBhcnR5IC0+IHBvcnRhbCAiQ2FsbHMgcmVndWxhdGVkIHB1YmxpYyBBUElzIiAiIiAicjkiCiAgICAgICAgcG9ydGFsIC0+IG5vdGlmeSAiU2VuZHMgbm90aWZpY2F0aW9ucyB2aWEiICIiICJyMTAiCiAgICAgICAgbm90aWZ5IC0+IHJlc2lkZW50ICJEZWxpdmVycyBlbWFpbCwgU01TLCBwdXNoIHRvIiAiIiAicjExIgogICAgICAgIGFnZW5jeVN0YWZmIC0+IGFnZW5jaWVzICJQcm9jZXNzZXMgY2FzZXMgaW4iICIiICJyMTIiCiAgICB9CgogICAgdmlld3MgewogICAgICAgIHN5c3RlbUNvbnRleHQgcG9ydGFsICJjNF9zeXN0ZW1fY29udGV4dCIgewogICAgICAgICAgICB0aXRsZSAiU3lzdGVtIENvbnRleHQgLSBDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGluY2x1ZGUgYWdlbmN5U3RhZmYKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgICAgIG1ldGFkYXRhIGZhbHNlCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJSZWxhdGlvbnNoaXAiIHsKICAgICAgICAgICAgICAgIHdpZHRoIDIyMAogICAgICAgICAgICAgICAgZm9udFNpemUgMjAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIHNoYXBlIFBlcnNvbgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMDg0MjdiCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxMTY4YmQKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMSIgewogICAgICAgICAgICAgICAgY29sb3IgIzFmNzdiNAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjIiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMyY2EwMmMKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIzIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjOTQ2N2JkCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyNCIgewogICAgICAgICAgICAgICAgY29sb3IgIzhjNTY0YgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjUiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNkNjI3MjgKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI2IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjZTM3N2MyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyNyIgewogICAgICAgICAgICAgICAgY29sb3IgI2ZmN2YwZQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjgiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMxN2JlY2YKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI5IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjN2Y3ZjdmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMTAiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNiY2JkMjIKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIxMSIgewogICAgICAgICAgICAgICAgY29sb3IgIzM5M2I3OQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjEyIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjNjM3OTM5CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cgp9"
+  },
+  "views" : {
+    "configuration" : {
+      "lastSavedView" : "c4_system_context",
+      "metadataSymbols" : "SquareBrackets",
+      "styles" : {
+        "elements" : [ {
+          "color" : "#ffffff",
+          "metadata" : false,
+          "tag" : "Element"
+        }, {
+          "background" : "#999999",
+          "tag" : "External"
+        }, {
+          "background" : "#08427b",
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "background" : "#1168bd",
+          "tag" : "Software System"
+        } ],
+        "relationships" : [ {
+          "color" : "#1f77b4",
+          "tag" : "r1"
+        }, {
+          "color" : "#bcbd22",
+          "tag" : "r10"
+        }, {
+          "color" : "#393b79",
+          "tag" : "r11"
+        }, {
+          "color" : "#637939",
+          "tag" : "r12"
+        }, {
+          "color" : "#2ca02c",
+          "tag" : "r2"
+        }, {
+          "color" : "#9467bd",
+          "tag" : "r3"
+        }, {
+          "color" : "#8c564b",
+          "tag" : "r4"
+        }, {
+          "color" : "#d62728",
+          "tag" : "r5"
+        }, {
+          "color" : "#e377c2",
+          "tag" : "r6"
+        }, {
+          "color" : "#ff7f0e",
+          "tag" : "r7"
+        }, {
+          "color" : "#17becf",
+          "tag" : "r8"
+        }, {
+          "color" : "#7f7f7f",
+          "tag" : "r9"
+        }, {
+          "fontSize" : 20,
+          "tag" : "Relationship",
+          "width" : 220
+        } ]
+      },
+      "terminology" : { }
+    },
+    "systemContextViews" : [ {
+      "dimensions" : {
+        "height" : 3305,
+        "width" : 2703
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 510,
+        "y" : 1075
+      }, {
+        "id" : "2",
+        "x" : 755,
+        "y" : 2785
+      }, {
+        "id" : "3",
+        "x" : 236,
+        "y" : 1609
+      }, {
+        "id" : "4",
+        "x" : 201,
+        "y" : 2184
+      }, {
+        "id" : "5",
+        "x" : 1075,
+        "y" : 1825
+      }, {
+        "id" : "6",
+        "x" : 940,
+        "y" : 190
+      }, {
+        "id" : "7",
+        "x" : 2003,
+        "y" : 218
+      }, {
+        "id" : "8",
+        "x" : 2035,
+        "y" : 1270
+      }, {
+        "id" : "9",
+        "x" : 2045,
+        "y" : 1620
+      }, {
+        "id" : "10",
+        "x" : 2050,
+        "y" : 2045
+      }, {
+        "id" : "11",
+        "x" : 1520,
+        "y" : 2855
+      }, {
+        "id" : "12",
+        "x" : 1095,
+        "y" : 875
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "c4_system_context",
+      "name" : "System Context View: Citizen Services Portal",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "13"
+      }, {
+        "id" : "14"
+      }, {
+        "id" : "15"
+      }, {
+        "id" : "16"
+      }, {
+        "id" : "17"
+      }, {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "20"
+      }, {
+        "id" : "21"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "24"
+      } ],
+      "softwareSystemId" : "5",
+      "title" : "System Context - Citizen Services Portal"
+    } ]
+  }
+}
