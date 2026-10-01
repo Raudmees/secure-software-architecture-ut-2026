@@ -1,38 +1,54 @@
 = Ownership Sketch
 :toc:
-:toclevels: 2
 
-== Conway Check
+Initial ownership assumptions for the containers in
+link:architecture.adoc[architecture.adoc] (section 4). Teams follow the Team Topologies
+types. These are assumptions for a real implementation and may change.
 
-=== Citizen Services Team (stream-aligned team)
+== Ownership
 
-Owns the citizen-facing portal, service catalogue and the main citizen service/case workflows (end-to-end).
+[cols="2,1,3",options="header"]
+|===
+|Team |Type |Containers owned
 
-=== Identity and Access Team (complicated-subsystem / enabling team)
+|Portal Services Team
+|Stream-aligned
+|Citizen web app, back-office web app, Portal backend (catalogue and preferences, cases,
+documents, signing workflow, notifications)
 
-Owns the integration with the national eID/OIDC provider, authentication sessions and common authorization mechanisms.
+|Identity and Access Team
+|Complicated-subsystem
+|Identity & access
 
-A coordination hotspot exists between this team and every service that needs authentication or authorization.
+|Agency Integration Team
+|Stream-aligned
+|Agency integration, API gateway (public and provider APIs, versioning)
 
-=== Agency Integration Team (stream-aligned team)
+|Audit and Transparency Team
+|Complicated-subsystem
+|Audit service, audit store
 
-Owns the public/provider APIs, integration adapters and onboarding mechanisms for agencies and external registries.
+|Platform and Operations Team
+|Platform
+|Message broker, Portal DB (minimal), Temporary doc store, antivirus scanner, observability
+|===
 
-API changes and schema versioning are likely coordination hotspots.
+The Platform and Operations Team runs the shared stores and the broker; the team that writes
+a given kind of data owns its schema and retention rules.
 
-=== Case, Document and Signing Team (stream-aligned / complicated-subsystem team)
+== Conway check
 
-Owns case-management functionality, document exchange and digital-signature integration.
+* *Portal Services and Identity and Access:* every protected operation depends on
+  authorization decisions. Reduced by a stable, versioned authorization API owned by
+  Identity and Access.
+* *Portal Services and Agency Integration:* requests and documents cross to agencies through
+  the integration service. Reduced by the canonical data model, so backend modules do not
+  depend on agency-specific formats.
+* *All teams and Audit and Transparency:* every container must emit consistent audit events.
+  Reduced by a shared audit event schema and client library published by the audit team.
+* *All teams and Platform and Operations:* shared broker and databases. Reduced by
+  self-service provisioning, so teams do not wait on tickets.
 
-Coordination with the Agency Integration Team is required where cases or documents must be transferred to external agencies.
-
-=== Audit and Transparency Team (complicated-subsystem team)
-
-Owns the common audit event model, audit-log collection and storage, and functionality that allows citizens and auditors to see how personal data has been accessed.
-
-A coordination hotspot exists because all services processing citizen data must produce consistent audit events.
-
-=== Platform and Operations Team (platform team)
-
-Owns shared deployment infrastructure, monitoring, logging, tracing, secrets/configuration management and common resilience mechanisms.
-The platform should provide these capabilities to the service teams through standardized and preferably self-service mechanisms.
+Earlier versions split the backend between a Citizen Services Team and a Case, Document and
+Signing Team. After the backend became one container, that split would have made two teams
+coordinate on every release of one deployable, so the teams were merged.
