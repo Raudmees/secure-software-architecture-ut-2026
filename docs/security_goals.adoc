@@ -99,6 +99,14 @@ threat category.
 |Back-office/admin users ↔ back-office portal functions
 |Case data, citizen profile data, documents
 |Separate privilege boundary; require explicit authentication and role-based authorization
+
+|Our portal → notification providers
+|Notification content and contact details
+|Providers are outside the portal's control, so messages carry only minimal content and point back to the portal (QA-2)
+
+|Auditors/oversight bodies → our portal
+|Read-only access to audit evidence
+|External body accessing sensitive audit data; require explicit authentication and a read-only role
 |===
 
 == 5.3 Important data categories
@@ -160,7 +168,7 @@ threat category.
 
 |An ordinary authenticated citizen acting maliciously
 |Holds a valid session; can modify requests and identifiers
-|Trying to access other citizens data
+|Trying to access other citizens' data
 
 |Compromised or malicious third-party API client
 |Holds valid API credentials

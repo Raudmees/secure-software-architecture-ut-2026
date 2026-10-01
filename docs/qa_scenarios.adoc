@@ -34,7 +34,7 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |The portal's authorization and delegation checks.
 
 |*Response*
-|Deny the delegated request and return a clear temporary-unavailability message. The resident's access to their own cases continues normally
+|Deny the delegated request and return a clear temporary-unavailability message. The resident's access to their own cases continues normally.
 
 |*Response measure*
 |All requests in the unavailable-registry test set are denied, no case data is returned, and each response is returned within 3 seconds. Access to the resident's own cases stays available during the outage.
@@ -53,7 +53,7 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Field |Content
 
 |*Scenario name*
-|Record an agency official's access to a citizen document.
+|Record a helpdesk worker's access to a citizen document.
 
 |*Business goal*
 |*BG-3* - make personal-data access verifiable.
@@ -62,10 +62,10 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Privacy and data minimization (*QA-2*), auditability and accountability (*QA-4*).
 
 |*Stimulus*
-|An authorized agency official opens a document attached to a citizen's case.
+|An authorized portal helpdesk worker opens a document attached to a citizen's case through the Back-office web app.
 
 |*Stimulus source*
-|An authenticated agency official.
+|An authenticated portal helpdesk worker.
 
 |*Environment*
 |Normal operation.

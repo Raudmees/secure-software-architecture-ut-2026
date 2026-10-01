@@ -1,0 +1,59 @@
+= ADR-0002: The portal stores minimal data; agencies and registries keep business data
+:toc:
+
+== Status
+
+Accepted
+
+== Context
+
+The portal sits between residents and the agencies and registries that deliver public services.
+We must decide where business data lives: case content, decisions, documents, profile data and
+delegations. A wrong boundary could require major architectural redesign later
+(R13 in link:../risk/risk_register.adoc[the risk register]).
+
+== Decision
+
+The portal stores as little business data as possible.
+
+* Case content, decisions, documents, profile data and delegations stay with the agencies and
+  registries that own them. The portal reads them live through the Agency integration container.
+* The portal stores only:
+** preferences, catalogue configuration, API client registrations, sessions and the notification inbox (Portal DB (minimal));
+** documents in transit, until they are scanned and delivered (Temporary doc store);
+** queued requests to agencies (Message broker);
+** the audit trail (Audit store).
+* Agency staff never use the portal. The portal sends requests and documents to the agencies'
+  own systems (Agency back-end e-services), and agency staff work there.
+
+== Alternatives considered
+
+* *Central portal store*: the portal stores case content and documents centrally, and agency
+  staff process cases in the portal's back-office. 
+* *Hybrid*: the portal stores documents but not case content. Not chosen because documents are
+  among the most sensitive data the portal handles, and a case and its documents would then live
+  in two different systems of record.
+
+== Consequences
+
+* Positive:
+** The portal holds less personal data, so a breach of the portal exposes less (QA-2).
+** Agencies stay the system of record for their cases, decisions and documents.
+** There is no second copy of agency data to keep in sync.
+* Negative or risks:
+** The portal depends on agency availability for live data: when an agency system is unavailable
+   or slow, requests cannot be delivered and live case status cannot be shown (R15).
+** Queued requests in the Message broker contain personal data, so the broker must be encrypted,
+   access-controlled and durable.
+** Document access by agency staff happens in agency systems, so it does not appear in the
+   portal's audit trail or in the resident's data-usage view. This limits transparency (BG-3).
+* Follow-up actions:
+** Add R15 to the risk register.
+** Show the data ownership in link:../docs/architecture.adoc[architecture.adoc] section 4.
+
+== References
+
+* link:../risk/risk_register.adoc[Risk register]: R13 (data ownership), R15 (agency availability)
+* link:../docs/architecture.adoc[architecture.adoc], section 4 (Containers, Data ownership)
+* link:../docs/drivers.adoc[drivers.adoc]: BG-3, BG-4
+* link:../docs/quality_attributes.adoc[quality_attributes.adoc]: QA-2, QA-3
