@@ -5,8 +5,11 @@
  *   Business data (cases, documents, profile, delegations) stays with agencies and registries and is read live
  *   through the Agency integration service; the portal keeps only a minimal database.
  * Edit online: paste into https://structurizr.com/dsl
- * Export SVG:  structurizr-cli export -workspace diagrams/workspace.dsl -format plantuml -output <tmp>
- *              plantuml -tsvg <tmp>/structurizr-<view key>.puml, then copy to diagrams/<view key>.svg
+ * Export SVG:  render with Structurizr (docker run -it --rm --user "$(id -u):$(id -g)" -p 8080:8080
+ *              -v <repo>/diagrams:/usr/local/structurizr structurizr/structurizr local),
+ *              open http://localhost:8080, arrange each diagram, export it as SVG and save it as
+ *              diagrams/<view key>.svg. Commit workspace.json together with workspace.dsl,
+ *              because it stores the manual layout.
  */
 workspace "Citizen Services Portal" "Architecture model of the Citizen Services Portal." {
 
@@ -14,41 +17,41 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
 
     model {
         resident = person "Resident / Citizen" "Finds, requests and tracks public services; exchanges documents and messages; signs documents; sees who accessed their data. May act as a delegate for another person within a given scope."
-        admin = person "Administrator / Helpdesk" "Supports residents and operates the portal with role-limited access to case data."
         auditor = person "Auditor / Oversight body" "Verifies that citizen data was accessed and processed lawfully."
-        ops = person "Operations / Security team" "Monitors service health and responds to incidents and security events."
-        agencyStaff = person "Agency staff" "Processes requests for their own organization's services." "External"
 
-        portal = softwareSystem "Citizen Services Portal" "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs." {
-            group "Front end and entry" {
+        group "Portal operator" {
+            admin = person "Administrator / Helpdesk" "Supports residents and operates the portal with role-limited access to case data."
+            ops = person "Operations / Security team" "Monitors service health and responds to incidents and security events."
+            portal = softwareSystem "Citizen Services Portal" "Single digital entry point for public services: service catalogue, case management, document exchange, signing workflow, notifications, delegation, audit and transparency, regulated public APIs." {
                 web = container "Citizen web app" "Localized citizen UI." "Web SPA"
                 backoffice = container "Back-office web app" "Helpdesk, admin and audit review." "Web SPA"
                 gateway = container "API gateway" "Token validation, scopes, rate limits, API versioning." "Gateway"
-            }
-            group "Business services" {
                 iam = container "Identity & access" "eID login, sessions, role and delegation checks." "Service"
-                catalogue = container "Catalogue & profile" "Service catalogue, preferences." "Service"
-                cases = container "Case service" "Submits requests, shows live case status." "Service"
-                docs = container "Document service" "Upload, scan, deliver, download." "Service"
-                signingSvc = container "Signing service" "eID signing flow." "Service"
-            }
-            group "Shared services" {
-                bus = container "Message broker" "Delivery queue, notification and audit events." "Async messaging" "Queue"
+                backend = container "Portal backend" "Service catalogue and preferences, case submission and status, document upload and download, eID signing workflow, notification dispatch and inbox." "Modular backend service"
+                bus = container "Message broker" "Delivery queue for requests to agencies (contains personal data: encrypted, access-controlled, durable) and audit events." "Async messaging" "Queue"
                 integration = container "Agency integration" "Per-agency adapters, data minimization, retries." "Adapters"
-                notifySvc = container "Notification service" "Inbox, email/SMS/push dispatch." "Service"
                 audit = container "Audit service" "Audit trail, transparency queries." "Service"
-                scanner = container "Antivirus scanner" "Scans every upload before it is accepted." "Scan engine"
+                portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions and notification inbox." "Relational DB" "Database"
+                docStore = container "Temporary doc store" "Quarantine and transit only." "Object storage" "Database"
+                scanner = container "Antivirus scanner" "Scans every upload in isolation before it is accepted." "Scan engine"
+                group "Audit environment" {
+                    auditStore = container "Audit store" "Append-only, tamper-evident audit records." "Relational DB" "Database"
+                }
+                observability = container "Observability" "Health, alerts, security events." "Monitoring, logs, tracing"
             }
-            portalDb = container "Portal DB (minimal)" "Preferences, catalogue config, API clients." "Relational DB" "Database"
-            docStore = container "Temporary doc store" "Quarantine and transit only." "Object storage" "Database"
-            auditStore = container "Audit store" "Append-only, tamper-evident records." "Append-only store" "Database"
-            observability = container "Observability" "Health, alerts, security events." "Monitoring, logs, tracing"
         }
 
-        idp = softwareSystem "National eID / OIDC identity provider" "Authenticates residents. The portal trusts only configured providers and validates every token." "External"
-        signing = softwareSystem "Digital signing service" "Creates and validates legally binding eID signatures." "External"
-        agencies = softwareSystem "Agency back-end e-services" "Systems of the agencies that deliver and decide the services. Separate trust domain." "External"
-        registries = softwareSystem "External registries" "Authoritative data such as population, business and mandate/delegation registries." "External"
+        group "Agency trust domain" {
+            agencyStaff = person "Agency staff" "Processes requests for their own organization's services." "External"
+            agencies = softwareSystem "Agency back-end e-services" "Systems of the agencies that deliver and decide the services. Separate trust domain." "External"
+        }
+
+        group "National trust services" {
+            idp = softwareSystem "National eID / OIDC identity provider" "Authenticates residents. The portal trusts only configured providers and validates every token." "External"
+            signing = softwareSystem "Digital signing service" "Creates and validates legally binding eID signatures." "External"
+            registries = softwareSystem "External registries" "Authoritative data such as population, business and mandate/delegation registries." "External"
+        }
+
         thirdParty = softwareSystem "Third-party service providers" "Consume the portal's regulated public APIs as registered clients." "External"
         notify = softwareSystem "Notification providers" "Deliver email, SMS and push messages." "External"
 
@@ -68,43 +71,36 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         agencyStaff -> agencies "Processes cases in" "" "r12"
 
         // Container level. Colour tags by kind of interaction: user, route, sync, async, external, store.
-        resident -> portal.web "Uses" "" "user"
-        admin -> portal.backoffice "Uses" "" "user"
-        auditor -> portal.backoffice "Reviews audit evidence" "" "user"
-        thirdParty -> portal.gateway "Calls public APIs" "" "user"
-        ops -> portal.observability "Monitors" "" "user"
-        portal.web -> portal.gateway "API calls" "" "user"
-        portal.backoffice -> portal.gateway "API calls" "" "user"
+        resident -> portal.web "Uses" "HTTPS" "user"
+        admin -> portal.backoffice "Uses" "HTTPS" "user"
+        auditor -> portal.backoffice "Reviews audit evidence" "HTTPS" "user"
+        thirdParty -> portal.gateway "Calls public APIs" "HTTPS, OAuth 2.0 client credentials" "user"
+        ops -> portal.observability "Monitors" "HTTPS" "user"
+        portal.web -> portal.gateway "API calls" "HTTPS/JSON" "user"
+        portal.backoffice -> portal.gateway "API calls" "HTTPS/JSON" "user"
 
-        portal.gateway -> portal.iam "Authenticates, authorizes" "" "route"
-        portal.gateway -> portal.catalogue "Routes" "" "route"
-        portal.gateway -> portal.cases "Routes" "" "route"
-        portal.gateway -> portal.docs "Routes" "" "route"
-        portal.gateway -> portal.signingSvc "Routes" "" "route"
-        portal.gateway -> portal.audit "Transparency queries" "" "route"
+        portal.gateway -> portal.iam "Authenticates, authorizes" "HTTPS/JSON" "route"
+        portal.gateway -> portal.backend "Routes API calls" "HTTPS/JSON" "route"
+        portal.gateway -> portal.audit "Transparency queries" "HTTPS/JSON" "route"
 
-        portal.iam -> portal.integration "Verifies delegations" "" "sync"
-        portal.catalogue -> portal.integration "Reads profile" "" "sync"
-        portal.cases -> portal.integration "Reads case status" "" "sync"
-        portal.docs -> portal.integration "Delivers, fetches documents" "" "sync"
-        portal.signingSvc -> portal.docs "Gets document" "" "sync"
-        portal.docs -> portal.scanner "Scans uploads" "" "sync"
+        portal.iam -> portal.integration "Verifies delegations" "HTTPS/JSON" "sync"
+        portal.backend -> portal.integration "Reads profile and case status; delivers and fetches documents" "HTTPS/JSON" "sync"
+        portal.backend -> portal.scanner "Scans uploads" "Scan API" "sync"
 
-        portal.cases -> portal.bus "Publishes requests" "" "async"
-        portal.bus -> portal.integration "Queued delivery" "" "async"
-        portal.bus -> portal.notifySvc "Case events" "" "async"
-        portal.bus -> portal.audit "Audit events (all services)" "" "async"
+        portal.backend -> portal.bus "Publishes requests and events" "Message queue" "async"
+        portal.bus -> portal.integration "Queued delivery" "Message queue" "async"
+        portal.bus -> portal.audit "Audit events (all containers)" "Message queue" "async"
 
-        portal.iam -> idp "Authenticates residents via" "" "external"
-        portal.signingSvc -> signing "Signs, validates via" "" "external"
-        portal.integration -> agencies "Requests, status, documents" "" "external"
-        portal.integration -> registries "Minimal lookups" "" "external"
-        portal.notifySvc -> notify "Sends via" "" "external"
+        portal.iam -> idp "Authenticates residents via" "OIDC" "external"
+        portal.backend -> signing "Signs, validates via" "HTTPS API" "external"
+        portal.integration -> agencies "Requests, status, documents" "HTTPS API, mTLS" "external"
+        portal.integration -> registries "Minimal lookups" "HTTPS API, mTLS" "external"
+        portal.backend -> notify "Sends notifications via" "HTTPS provider APIs" "external"
 
-        portal.catalogue -> portal.portalDb "Reads, writes" "" "store"
-        portal.iam -> portal.portalDb "Reads, writes" "" "store"
-        portal.docs -> portal.docStore "Stores temporarily" "" "store"
-        portal.audit -> portal.auditStore "Appends" "" "store"
+        portal.backend -> portal.portalDb "Reads, writes" "SQL" "store"
+        portal.iam -> portal.portalDb "Reads, writes" "SQL" "store"
+        portal.backend -> portal.docStore "Stores documents temporarily" "Object storage API" "store"
+        portal.audit -> portal.auditStore "Appends" "SQL" "store"
     }
 
     views {
@@ -112,14 +108,12 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             title "System Context - Citizen Services Portal"
             include *
             include agencyStaff
-            autoLayout tb 250 200
         }
 
         container portal "c4_containers" {
             title "Containers - Citizen Services Portal"
             include *
             exclude "notify -> resident"
-            autoLayout tb 150 200
         }
 
         styles {

@@ -20,17 +20,41 @@ Link to or summarize link:drivers.adoc[drivers.adoc].
 
 == 3. System context
 
-Add the C4 context diagram and supporting text.
+.System context of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
+image::../diagrams/c4_system_context.svg[C4 system context diagram of the Citizen Services Portal]
+
+Dashed boxes show trust domains. Each relationship that crosses a box edge is a
+trust boundary, listed in link:security_goals.adoc[security_goals.adoc] (section 5.2).
+
+The portal is the single entry point through which residents, and delegates acting within a
+given scope, find, request, track and sign public services. Administrators and helpdesk staff
+work in role-limited back-office functions. Auditors have read-only access to audit evidence.
+Operations and security teams monitor the platform.
+
+Inside the system boundary are the service catalogue, case management, document exchange (including
+antivirus scanning and retention), the signing workflow, notification orchestration, the
+authorization and delegation checks, audit and transparency, and the regulated public APIs.
+Outside the system boundary are the systems the portal integrates with but does not control:
+
+* *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself (SG-2, SG-4).
+* *Digital signing service* - creates and validates legally binding eID signatures (SG-3).
+* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and receives status updates and decisions. Each agency is a separate trust domain and gets only the minimum data it needs (SG-5, QA-3).
+* *External registries* - authoritative population, business and mandate/delegation data. If a delegation cannot be verified, delegated access is denied (SG-7, SG-9).
+* *Third-party service providers* - call the regulated public APIs as authenticated, scoped and rate-limited clients (SG-10).
+* *Notification providers* - deliver email, SMS and push messages, which carry only minimal content (QA-2).
 
 == 4. Containers
 
 .Containers of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
 image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Services Portal]
 
+All containers publish audit events to the message broker; these arrows are not drawn for readability, and the broker's arrow to the audit service stands for all of them.
+
 The portal holds as little business data as possible. Case content, documents, profile data and
 delegations stay with the owning agencies and registries, and the portal reads them live through
 the agency integration service. The portal stores only its own data: preferences, catalogue
-configuration, API client registrations, documents in transit, and the audit trail.
+configuration, API client registrations, sessions, the notification inbox, documents in transit,
+queued requests in the message broker (which contain personal data), and the audit trail.
 
 [cols="1,3",options="header"]
 |===
@@ -45,36 +69,36 @@ configuration, API client registrations, documents in transit, and the audit tra
 |Identity & access
 |eID/OIDC login, sessions, and role and delegation-based authorization checks. Delegations are verified against the mandate registry.
 
-|Catalogue & profile
-|Service catalogue and resident preferences. Profile data is read from registries on demand.
+|Portal backend
+|One modular backend service with five modules: *catalogue and preferences* (service catalogue and resident preferences; profile data is read from registries on demand), *cases* (submits requests and shows live case status; stores no case content), *documents* (sends every upload to the antivirus scanner before it is accepted, then delivers it to the agency; downloads are fetched from the agency; the temporary document store holds files only until they are scanned and delivered), *signing workflow* (runs the eID signing flow with the external signing service) and *notifications* (in-app inbox and dispatch to email, SMS and push providers). These modules will be shown in a component view later.
 
-|Case service
-|Submits requests and shows live case status. It stores no case content.
-
-|Document service, antivirus scanner
-|Every upload is scanned before it is accepted, then delivered to the agency. Downloads are fetched from the agency. The temporary document store holds files only until they are scanned and delivered.
-
-|Signing service
-|Runs the eID signing flow with the external signing service.
+|Antivirus scanner
+|Scans every upload in isolation before it is accepted. The documents module of the Portal backend sends each upload here.
 
 |Message broker
-|Asynchronous delivery queue to agencies, plus notification and audit event streams.
+|Asynchronous delivery queue to agencies, plus the audit event stream. It holds queued requests, which contain personal data, until they are delivered to the agency, so it is encrypted, access-controlled and durable.
 
 |Agency integration
 |Adapters for each agency and registry, a canonical data model, data minimization, retries and mutual TLS.
 
-|Notification service
-|In-app inbox and dispatch to email, SMS and push providers.
-
 |Audit service, audit store
-|Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries.
+|Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries. Append-only is enforced by insert-only database permissions and hash chaining (tamper evidence), not by the database itself.
 
 |Portal DB (minimal)
-|Preferences, catalogue configuration and API client registrations.
+|Preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
 
 |Observability
 |Monitoring, logs and tracing for the operations and security team.
 |===
+
+Containers are separate only where there is a security or trust reason. Identity & access makes
+every authentication and authorization decision (SG-2, SG-4). Agency integration crosses the agency
+trust boundary and isolates each agency's adapter, so agencies can be added without touching the
+rest of the portal (QA-5, R09). Audit is kept apart, and its store runs in a separate environment,
+so that ordinary portal services cannot alter audit evidence (SG-6). The API gateway is the single
+entry point for third-party clients (SG-10). The antivirus scanner is isolated because uploaded
+files are untrusted input (SG-8). Everything else is one modular backend, to keep deployment and
+operations simple.
 
 Reading data live keeps the portal from becoming a second copy of agency data (R13), but it makes
 the portal depend on agency availability and load (R11). When an agency is unavailable, the
