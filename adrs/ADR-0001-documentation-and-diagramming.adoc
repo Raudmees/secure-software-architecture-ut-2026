@@ -1,4 +1,4 @@
-= ADR-0001: C4 model with PlantUML for architecture diagrams, AsciiDoc for documentation
+= ADR-0001: C4 model with Structurizr for architecture diagrams, AsciiDoc for documentation
 :toc:
 
 == Status
@@ -18,38 +18,38 @@ review, and names drift between diagrams and documents.
 == Decision
 
 * We use the C4 model as the notation for all architecture diagrams
-* We write the diagrams as code with PlantUML, the diagrams are stored under /diagrams
-* Each diagram is committed as .puml source together with a SVG export.
+* We write the diagrams as code with Structurizr, the diagrams are stored under /diagrams
+* Each diagram is committed as source code together with a SVG export.
 * Architecture documentation is written in AsciiDoc in the repository
 
 == Alternatives considered
 
-* *Structurizr*: model-based C4 tool where all diagrams are generated from one model, so names 
-  stay consistent automatically. 
+* *PlantUML*: diagrams as code and easy to start with, but each diagram is a
+  separate file, so the context and container diagrams can drift apart (for example different
+  names for the same element) unless names are kept in sync by hand.
 * *draw.io*: easy to start with, but files are hard to review in Git and nothing keeps names 
   consistent between diagrams.
+* *IcePanel*: a model-based C4 tool, so names stay consistent between views, with a visual,
+  interactive editor.
 
 == Consequences
 
 * Positive: all diagrams follow the same C4 levels and visual styles. Diagram sources are plain text, 
   so changes are visible in Git diffs and reviewable in pull requests. Documentation and diagrams 
-  live together in the repository.
+  live together in the repository. The created diagrams are consistent with each other
 
-* Negative or risks: PlantUML diagrams are separate files, not views of one model, so the context 
-  and container diagrams can drift apart (for example different names for the same element). 
-  Exported images can become outdated if the source changes but is not re-exported.
+* Negative or risks: The team has to learn the Structurizr DSL and its tooling. Diagrams must be exported to SVG for reviewers, and exports can become outdated if the DSL changes but is not re-exported.
 
 * Follow-up actions: 
 
-** Create a shared PlantUML include file defining all actors, external systems and containers once, 
-   and include it in every diagram.
 ** Keep element names identical to /docs/glossary.adoc.
+** Re-export the SVG images whenever the DSL changes, at least before each checkpoint.
 
 == References
 
 
 * C4 model: https://c4model.com
-* C4-PlantUML library: https://github.com/plantuml-stdlib/C4-PlantUML
+* Structurizr: https://structurizr.com/
 * C4 tooling overview: https://c4model.tools/#visual-modelling-tools
 * link:../docs/glossary.adoc[Glossary] (stable component names)
 * link:../diagrams/[Diagrams folder]
