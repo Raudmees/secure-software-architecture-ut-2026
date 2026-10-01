@@ -127,6 +127,10 @@ Build the system on the validated architecture and integrate the selected mechan
 |Apply the authorization and delegation model to all endpoints exposing citizen data.
 |Response measures of QA scenarios 1 and 3 pass (all unauthorized and unverifiable delegated requests denied).
 
+|R16
+|Define the public API versioning and deprecation policy and add contract tests for the public API and one agency adapter.
+|Published versioning policy; contract tests pass against the current API version and one agency test environment.
+
 |===
 
 == Phase 4. Transition
@@ -148,4 +152,8 @@ Validate the completed system under realistic load and failure conditions, and p
 |R07, R10
 |Validate observability and the end-to-end flow in the deployment environment.
 |Operational and end-to-end validation results.
+
+|R15
+|Make one agency system unavailable during the end-to-end flow and check that requests are queued and delivered after recovery.
+|Response measures of QA scenario 4 pass (0 lost or duplicated requests, delivered within 15 min of recovery).
 |===

@@ -5,42 +5,48 @@
 
 Risks to completing the project itself: gaps in team knowledge, unvalidated technology choices and integration unknowns.
 
-[cols="1,5,1,1,5",options="header"]
+[cols="1,5,1,1,1,5",options="header"]
 |===
-|ID |Project risk |Likelihood |Impact |Treatment
+|ID |Project risk |Likelihood |Impact |Priority |Treatment
 
 |R01
 |The team has no prior experience with national eID integration and may underestimate the required protocols, certificates, trust relationships or test setup, preventing completion of a credible eID integration design.
 |Medium
 |High
+|Medium
 |Investigate one national eID integration path immediately; document the authentication flow and build/validate a minimal PoC or mock integration.
 
 |R02
 |A suitable existing workflow/case-management solution may not satisfy the project's workflow, security or integration requirements, leaving insufficient time to design an alternative.
 |Medium
 |High
+|Medium
 |Evaluate 2-3 realistic options early against a small set of required workflows; create a minimal workflow PoC and define a fallback custom solution.
 
 |R03
 |Email, SMS, push and in-app notifications may require substantially different delivery mechanisms, making a single notification architecture more complex than expected and delaying completion of the capability.
 |Medium
 |Medium
+|Low
 |Prototype the common notification interface and implement/mock at least two different channels to validate the abstraction.
 
 |R04
 |The selected antivirus scanning solution may not integrate cleanly with the planned upload/storage flow, requiring changes to file storage, quarantine or asynchronous processing.
 |Medium
 |High
+|Medium
 |Test a representative upload -> scan -> accept/reject flow early, including a deliberately infected test file and scanner failure.
 
 |R05
 |The chosen storage approach may not support the required automated retention rules cleanly, requiring custom deletion/lifecycle logic and redesign of document metadata.
 |Medium
 |Low
+|Low
 |Define representative retention rules and validate whether the selected storage technology can enforce them automatically; identify fallback application-level lifecycle processing.
 
 |R06
 |The team has no prior eID digital-signing experience and may be unable to validate the complete signing workflow or obtain a usable test environment, leaving a core capability architecturally unresolved.
+|High
 |High
 |High
 |Treat signing as an early technical spike: determine available signing APIs/test environments, model the full signing sequence and validate the riskiest integration step.
@@ -49,16 +55,19 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |The team may choose a normal application-logging approach that cannot provide the required correlation, integrity and traceability for audit events, causing late architectural changes across multiple services.
 |Medium
 |High
+|Medium
 |Define required audit events and properties first; prototype logging one end-to-end user action across components and verify that it can be reconstructed reliably.
 
 |R08
 |The team may not sufficiently understand the security and regulatory constraints applying to third-party API access, causing the initial API authentication/authorization design to be unusable and requiring redesign.
 |Medium
 |High
+|Medium
 |Identify the concrete requirements early and design one representative third-party API interaction including authentication, authorization/scopes, auditing and error handling.
 
 |R09
 |External systems may use incompatible identifiers, data formats or interface styles, making integration significantly more complex than estimated and threatening completion of all 2-3 required integrations.
+|High
 |High
 |High
 |Compare sample contracts/data models from the target systems; define an internal canonical model or adapter boundary and validate it with at least two different external interfaces.
@@ -67,31 +76,50 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Components may appear workable independently but fail when combined into an end-to-end citizen-service flow, revealing incompatible assumptions late in the project.
 |Medium
 |High
+|Medium
 |Create an early vertical slice such as login -> submit request -> attach document -> status update -> notification -> audit event, using mocks for unfinished components.
 
 |R11
 |The team has no experience designing systems at national scale, so we lack a reliable basis for estimating load, data volumes and peak demand. If scaling and storage decisions are made on guesswork, then the chosen architecture may fail to handle realistic workloads, and the bottlenecks will only be discovered late, requiring structural redesign.
 |High
 |High
+|High
 |Estimate expected users, requests and data volumes using public statistics. Identify peak load scenarios.
 
 |R12
-|The team currently assumes the portal itself does not need to handle authorization and delegation, while the scenario requires fine-grained authorization with delegation. If that assumption is carried into the design, then the rules governing which data is accessible to which user will be missing from the architecture and will have to be retrofitted across every component that exposes citizen data.
+|The container design makes Identity & access responsible for every authorization decision (SG-2), but the authorization model itself is not yet defined: roles, delegation scopes, and how the portal checks who may access cases and documents that the agencies hold. If it stays undefined, then each container that exposes citizen data will implement its own checks, and access rules will be inconsistent or missing.
 |High
 |High
-|Establish the authorization boundary early: decide what the portal enforces itself versus what it delegates to the identity provider or the owning agency, and model one delegated-access case end to end (for example a representative acting on behalf of another person).
+|High
+|Define the authorization model in Identity & access (roles, delegation scopes, and how case and document ownership is checked against the owning agency) and model one delegated-access case end to end (for example a representative acting on behalf of another person).
 
 |R13
 |It is unclear whether the portal or agencies should store and process case data and documents. A wrong boundary could require major architectural redesign.
 |Medium
 |High
-|Define data ownership and system-of-record boundaries for one representative service. Write a decision in ADR-0002.
+|Medium
+|Define data ownership and system-of-record boundaries for one representative service. Write a decision in ADR-0002. Decided in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
 
 |R14
 |It is unclear whether residents without eID require a legally valid fallback authentication method. If required, they should not be able to do everything that eID-authenticated users can. That means we must distinguish between users based on how they authenticated. If this is not designed, the portal will either block legitimate users from services they are entitled to or allow sensitive actions for users with weaker authentication.
 |Medium
 |High
+|Medium
 |Confirm the requirements and model one fallback path. Define which operations require national-eID-level authentication, and carry the login method in the session so authorization can check it.
+
+|R15
+|Because the portal reads agency data live (ADR-0002), an unavailable or slow agency system means requests cannot be delivered and live case status cannot be shown for that agency's services.
+|Medium
+|High
+|Medium
+|Queue requests in the message broker during outages, timeouts and circuit breakers in the agency integration service, and show residents a clear pending status (QA scenario 4).
+
+|R16
+|If the portal's public API changes without a versioning and deprecation policy, or an agency changes its API without notice, then third-party clients or agency adapters break.
+|Medium
+|High
+|Medium
+|Version the public API with a published deprecation period; isolate each agency behind its own adapter; run contract tests against agency test environments.
 |===
 
 == Notes

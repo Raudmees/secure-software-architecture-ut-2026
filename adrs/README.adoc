@@ -2,10 +2,17 @@
 
 Use one file per important architecture decision.
 
-Suggested naming:
+[cols="1,4,1",options="header"]
+|===
+|ADR |Decision |Status
 
-* `ADR-0001-documentation-and-diagramming.adoc`
-* `ADR-0002-data-ownership.adoc`
-* `ADR-0003-identity-and-access.adoc`
+|link:ADR-0001-documentation-and-diagramming.adoc[ADR-0001]
+|C4 model with Structurizr for architecture diagrams, AsciiDoc for documentation
+|Accepted
+
+|link:ADR-0002-portal-stores-minimal-data.adoc[ADR-0002]
+|The portal stores minimal data; agencies and registries keep business data
+|Accepted
+|===
 
 Each ADR should state context, decision, alternatives, consequences, and follow-up actions.

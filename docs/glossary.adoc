@@ -4,12 +4,46 @@
 
 * *Citizen Services Portal* — System under design; residents' entry point to public services.
 * *Delegate* — Person authorized to act for another resident within a defined scope and time.
+* *Delegation / mandate* — Authorization for one person to act for another within a defined scope and time, held in the mandate/delegation registry.
 * *Agency* — Public organization that delivers a service.
-* *Agency system* — External back-end system operated by an agency.
-* *Identity provider (IdP)* — Trusted external eID/OIDC service that authenticates users.
-* *Registry* — External source of authoritative records used by the portal.
 * *Service catalogue* — List of public services available through the portal.
 * *Case* — Service request with its status, messages, and documents.
+* *Notification inbox* — In-app list of a resident's notifications, stored in Portal DB (minimal).
+* *BG, QA, SG, R* — ID prefixes for business goals (drivers.adoc), quality attributes (quality_attributes.adoc), security goals (security_goals.adoc) and risks (risk_register.adoc).
+
+== Actors and external systems
+
+Names exactly as in the C4 diagrams (link:../diagrams/workspace.dsl[workspace.dsl]).
+
+* *Resident / Citizen* — Person who finds, requests and tracks public services; may act as a delegate for another person.
+* *Administrator / Helpdesk* — Portal staff who support residents and operate the portal with role-limited access to case data.
+* *Auditor / Oversight body* — External body that verifies, with read-only access, that citizen data was accessed and processed lawfully.
+* *Operations / Security team* — Team that monitors service health and responds to incidents and security events.
+* *Agency staff* — Agency employees who process requests in their agency's own systems; they do not use the portal.
+* *Agency back-end e-services* — External back-end systems in which agencies deliver and decide services; system of record for cases and documents.
+* *National eID / OIDC identity provider* — Trusted external eID/OIDC service that authenticates residents (IdP).
+* *Digital signing service* — External service that creates and validates legally binding eID signatures.
+* *External registries* — External sources of authoritative records, such as population, business and mandate/delegation registries.
+* *Third-party service providers* — External organizations that call the portal's regulated public APIs as registered clients.
+* *Notification providers* — External services that deliver email, SMS and push messages.
+
+== Containers
+
+Names exactly as in the C4 container diagram.
+
+* *Citizen web app* — Localized web UI for residents and delegates.
+* *Back-office web app* — Web UI for helpdesk, administration and audit review, with role-limited access.
+* *API gateway* — Single entry point for both web apps and third-party clients: token validation, scopes, rate limiting and API versioning.
+* *Identity & access* — eID/OIDC login, sessions, and role- and delegation-based authorization decisions.
+* *Portal backend* — Modular backend service for the service catalogue and preferences, cases, documents, the signing workflow and notifications.
+* *Message broker* — Asynchronous delivery queue for requests to agencies and the audit event stream; holds personal data until delivery.
+* *Agency integration* — Adapters for each agency and registry, with data minimization, retries and mutual TLS.
+* *Audit service* — Collects audit events and serves resident transparency and auditor queries.
+* *Portal DB (minimal)* — The portal's own data: preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
+* *Temporary doc store* — Holds uploaded documents only until they are scanned and delivered (quarantine and transit).
+* *Antivirus scanner* — Scans every upload in isolation before it is accepted.
+* *Audit store* — Append-only, tamper-evident storage of audit records, in a separate audit environment.
+* *Observability* — Monitoring, logs, tracing and security events for the operations and security team.
 
 == Architecture and security
 
@@ -18,8 +52,17 @@
 * *C4 component* — Code elements inside one container implementing a technical function.
 * *System boundary* — Separates the portal from external people and systems.
 * *Trust boundary* — Separates trust or privilege domains; crossing it requires explicit checks.
-* *System of record* — Authoritative source for a data set; case and document ownership is still open.
+* *Trust domain* — People and systems under one organization's control and trust; shown as dashed boxes in the diagrams (Portal operator, Agency trust domain, National trust services, Audit environment).
+* *System of record* — Authoritative source for a data set; agencies and registries are the systems of record for case content, documents, profile data and delegations (ADR-0002).
+* *Data minimization* — Processing or disclosing only the personal data needed for a given service and purpose (QA-2).
+* *Canonical data model* — Portal-internal data format that agency adapters translate to and from.
+* *Adapter* — Part of Agency integration that connects one agency or registry system to the canonical data model.
+* *Quarantine* — Holding an upload in the Temporary doc store until the Antivirus scanner has accepted it.
+* *eID* — National electronic identity used to authenticate and to sign.
+* *OIDC* — OpenID Connect, the protocol used to authenticate residents through the identity provider.
+* *mTLS* — Mutual TLS: both sides authenticate with certificates; used between Agency integration and external systems.
 * *Authentication* — Establishes who an actor is.
 * *Authorization* — Decides whether an actor may perform an operation on a resource.
 * *Audit event* — Record of actor, action, resource, time, and outcome.
+* *Audit trail* — The sequence of audit events kept in the Audit store.
 * *ADR* — Record of a significant design decision, its context, alternatives, and consequences.

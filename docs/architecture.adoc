@@ -21,8 +21,8 @@ The full problem statement is in link:scenario.adoc[scenario.adoc].
 |User group |What they do with the portal
 
 |Residents/citizens |Discover and request public services, track cases, exchange documents and messages, sign documents, and see how their personal data has been used.
-|Delegates |Act on behalf of another person within an given scope.
-|Agency staff |Receive and process requests for their own organization's services.
+|Delegates |Act on behalf of another person within a given scope.
+|Agency staff |Process requests that the portal forwards to their agency's own systems; they do not use the portal.
 |Administrators and helpdesk |Support residents and operate the portal, with role-limited access to case data.
 |Auditors and oversight bodies |Verify that citizen data has been accessed and processed lawfully.
 |Service provider organizations |Offer their services through the portal, or consume regulated public APIs as third-party clients.
@@ -98,7 +98,7 @@ Full lists, including open questions, are in link:drivers.adoc[drivers.adoc].
 == 3. System context
 
 .System context of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
-image::../diagrams/c4_system_context.svg[C4 system context diagram of the Citizen Services Portal]
+image::../diagrams/c4_context.svg[C4 system context diagram of the Citizen Services Portal]
 
 Dashed boxes show trust domains. Each relationship that crosses a box edge is a
 trust boundary, listed in link:security_goals.adoc[security_goals.adoc] (section 5.2).
@@ -126,12 +126,6 @@ Outside the system boundary are the systems the portal integrates with but does 
 image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Services Portal]
 
 All containers publish audit events to the message broker; these arrows are not drawn for readability, and the broker's arrow to the audit service stands for all of them.
-
-The portal holds as little business data as possible. Case content, documents, profile data and
-delegations stay with the owning agencies and registries, and the portal reads them live through
-the agency integration service. The portal stores only its own data: preferences, catalogue
-configuration, API client registrations, sessions, the notification inbox, documents in transit,
-queued requests in the message broker (which contain personal data), and the audit trail.
 
 [cols="1,3",options="header"]
 |===
@@ -177,11 +171,40 @@ entry point for third-party clients (SG-10). The antivirus scanner is isolated b
 files are untrusted input (SG-8). Everything else is one modular backend, to keep deployment and
 operations simple.
 
+=== Data ownership
+
+The portal holds as little business data as possible. Case content, documents, profile data and
+delegations stay with the owning agencies and registries, and the portal reads them live through
+the agency integration service. The portal stores only its own data: preferences, catalogue
+configuration, API client registrations, sessions, the notification inbox, documents in transit,
+queued requests in the message broker (which contain personal data), and the audit trail.
+
+The decision is recorded in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
+
 Reading data live keeps the portal from becoming a second copy of agency data (R13), but it makes
-the portal depend on agency availability and load (R11). When an agency is unavailable, the
+the portal depend on agency availability and load (R15). When an agency is unavailable, the
 portal must show that clearly rather than stale data. Asynchronous submission through the
 message broker lets residents submit requests even while the agency is down. Container
 ownership follows link:ownership_sketch.adoc[ownership_sketch.adoc].
+
+=== Quality attribute scenarios
+
+How the containers handle each scenario in link:qa_scenarios.adoc[qa_scenarios.adoc]:
+
+* *Scenario 1* (delegation registry unavailable): Identity & access verifies each delegation against External registries through Agency integration; if the registry cannot be reached, it denies the delegated request, while the resident's own cases stay available.
+* *Scenario 2* (helpdesk document access): the helpdesk worker opens the document in the Back-office web app; the Portal backend fetches it from the agency through Agency integration and publishes an audit event to the Message broker, which the Audit service writes to the Audit store.
+* *Scenario 3* (another resident's document): the API gateway passes the request to Identity & access, which denies it; the denied attempt is published as an audit event through the Message broker to the Audit service and Audit store.
+* *Scenario 4* (agency unavailable during submission): the Message broker queues requests while an agency is down; Agency integration delivers them after recovery.
+* *Scenario 5* (new agency service): Agency integration gets one new adapter and the service is added as catalogue configuration in Portal DB (minimal); the Portal backend and existing adapters do not change.
+
+== Open questions and known inconsistencies
+
+* Container and actor names are not final.
+* No overall availability target is defined yet ("what does available enough mean?", QA-3).
+* Whether a digital fallback login is required for residents without eID (R14).
+* Whether delegation decisions may be cached, and for how long (QA scenario 1).
+* Agency staff document access is not visible in the portal's audit trail (link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002], BG-3).
+* Sections 5-10 are not started yet.
 
 == 5. Components
 

@@ -32,12 +32,13 @@ link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals as BG-1 to BG-7.
 |===
 |Stakeholder |Need or concern
 
-|Residents/citizens |A single, simple, localized way to find and use public services, confidence their data is handled safely and only used for stated purposes, visibility into who accessed their data and why.
-|Service provider organizations/agencies |An easy way to integrate their own services and systems into the portal without needing to completely rebuild current solutions.
-|Administrators/helpdesk |Role-based access to case data and citizen support tools, limited only to what their role needs.
-|Auditors/oversight |Complete logs of who accessed what data, when, and why, across the whole system.
-|External registries/back-end systems |Predictable and well-documented APIs, backend needs to be sure that frontend will not be overloading it with requests.
-|Operations/security teams |Observability into system health and security events.
+|Residents/citizens (diagram: Resident / Citizen) |A single, simple, localized way to find and use public services, confidence their data is handled safely and only used for stated purposes, visibility into who accessed their data and why.
+|Service provider organizations/agencies (diagram: Agency staff, Agency back-end e-services) |An easy way to integrate their own services and systems into the portal without needing to completely rebuild current solutions.
+|Administrators/helpdesk (diagram: Administrator / Helpdesk) |Role-based access to case data and citizen support tools, limited only to what their role needs.
+|Auditors/oversight (diagram: Auditor / Oversight body) |Complete logs of who accessed what data, when, and why, across the whole system.
+|External registries/back-end systems (diagram: External registries, Agency back-end e-services) |Predictable and well-documented APIs, backend needs to be sure that frontend will not be overloading it with requests.
+|Operations/security teams (diagram: Operations / Security team) |Observability into system health and security events.
+|Third-party service providers (diagram: Third-party service providers) |A stable, documented and versioned public API with clear authorization scopes, so their integrations do not break.
 |===
 
 == Quality attributes and constraints
@@ -53,8 +54,8 @@ Security goals and trust boundaries are in link:security_goals.adoc[security_goa
 * A national eID or another identity provider exists and is available for the portal to delegate authentication to.
 * Back-end e-services expose APIs that the portal can integrate with.
 * Agencies are willing to adopt our API/schema defined by the portal.
-* Citizens without eID access will have some alternative path into the system, even if not the primary one.
-* Traffic patterns are largely predictable, with known peak periods.
+* Residents without eID can still reach public services through non-digital channels (for example service offices). Whether the portal must also offer a digital fallback is open (R14).
+* Peak load clusters around known deadlines (for example the tax declaration period). Size is not yet known (see R11).
 
 == Open questions
 
