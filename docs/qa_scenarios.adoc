@@ -46,14 +46,14 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Emergency or legally urgent access requires a separate scenario.
 |===
 
-== Scenario 2. Authorized document access is recorded
+== Scenario 2. Agency document exchange is recorded
 
 [cols="1,3",options="header"]
 |===
 |Field |Content
 
 |*Scenario name*
-|Record an agency official's access to a citizen document.
+|Record every citizen document the portal exchanges with an agency back-end e-service.
 
 |*Business goal*
 |*BG-3* - make personal-data access verifiable.
@@ -62,28 +62,28 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Privacy and data minimization (*QA-2*), auditability and accountability (*QA-4*).
 
 |*Stimulus*
-|An authorized agency official opens a document attached to a citizen's case.
+|An agency back-end e-service requests a document attached to a citizen's case through the portal's agency integration API.
 
 |*Stimulus source*
-|An authenticated agency official.
+|A registered agency system, mutually authenticated.
 
 |*Environment*
 |Normal operation.
 
 |*Artifact*
-|The document access interface and audit logging.
+|The agency integration service and audit logging.
 
 |*Response*
-|Allow the access and record the actor, organization or role, time, document ID, action and outcome without recording document content.
+|Return only the requested document for that agency's case, and record the agency, client system, time, case and document IDs, action and outcome without recording document content.
 
 |*Response measure*
-|Every access in the test set has a complete audit record available within 5 seconds, and no document content is present in the record.
+|Every exchange in the test set has a complete audit record available within 5 seconds, no document content is present in the record, and no document outside the agency's case is returned.
 
 |*Questions*
 |Who may read these records, and how long are they retained?
 
 |*Issues*
-|Presenting audit history to residents is outside this scenario.
+|What agency staff do with the document inside the agency's own systems is the agency's responsibility and outside the portal's audit. Presenting audit history to residents is outside this scenario.
 |===
 
 == Scenario 3. Unauthorized document access
