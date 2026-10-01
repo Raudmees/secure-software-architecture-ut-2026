@@ -24,7 +24,7 @@ Add the C4 context diagram and supporting text.
 
 == 4. Containers
 
-.Containers of the Citizen Services Portal (source: link:../diagrams/c4_containers.puml[c4_containers.puml])
+.Containers of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
 image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Services Portal]
 
 The portal holds as little business data as possible. Case content, documents, profile data and
