@@ -20,7 +20,7 @@ Link to or summarize link:drivers.adoc[drivers.adoc].
 
 == 3. System context
 
-.System context of the Citizen Services Portal (source: link:../diagrams/c4_system_context.puml[c4_system_context.puml])
+.System context of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
 image::../diagrams/c4_system_context.svg[C4 system context diagram of the Citizen Services Portal]
 
 The portal is the single entry point through which residents, and delegates acting within a
