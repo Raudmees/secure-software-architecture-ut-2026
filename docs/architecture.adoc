@@ -28,10 +28,10 @@ given scope, find, request, track and sign public services. Administrators and h
 work in role-limited back-office functions. Auditors have read-only access to audit evidence.
 Operations and security teams monitor the platform.
 
-Inside the boundary are the service catalogue, case management, document exchange (including
+Inside the system boundary are the service catalogue, case management, document exchange (including
 antivirus scanning and retention), the signing workflow, notification orchestration, the
 authorization and delegation checks, audit and transparency, and the regulated public APIs.
-Outside the boundary are the systems the portal integrates with but does not control:
+Outside the system boundary are the systems the portal integrates with but does not control:
 
 * *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself (SG-2, SG-4).
 * *Digital signing service* - creates and validates legally binding eID signatures (SG-3).
