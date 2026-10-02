@@ -8,9 +8,8 @@ This repository is the official team workspace for the Secure Software Architect
 
 * Team name: *Randotrio*
 * Members:
-** Kevin Markus Korrol
-** Triinu Prants
-** Kaur Kaitsa
+* Kevin Markus Korrol
+* Kaur Kaitsa
 
 == Project scenario
 
