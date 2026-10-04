@@ -193,7 +193,7 @@ How the containers handle each scenario in link:qa_scenarios.adoc[qa_scenarios.a
 
 * *Scenario 1* (delegation registry unavailable): Identity & access verifies each delegation against External registries through Agency integration; if the registry cannot be reached, it denies the delegated request, while the resident's own cases stay available.
 * *Scenario 2* (helpdesk document access): the helpdesk worker opens the document in the Back-office web app; the Portal backend fetches it from the agency through Agency integration and publishes an audit event to the Message broker, which the Audit service writes to the Audit store.
-* *Scenario 3* (another resident's document): the API gateway passes the request to Identity & access, which denies it; the denied attempt is published as an audit event through the Message broker to the Audit service and Audit store.
+* *Scenario 3* (delivered documents removed): when Agency integration reports that the agency has received a document, the Portal backend deletes it from the Temporary doc store and publishes a deletion audit event through the Message broker to the Audit service and Audit store. A lifecycle rule in the Temporary doc store deletes any document older than 7 days.
 * *Scenario 4* (agency unavailable during submission): the Message broker queues requests while an agency is down; Agency integration delivers them after recovery.
 * *Scenario 5* (new agency service): Agency integration gets one new adapter and the service is added as catalogue configuration in Portal DB (minimal); the Portal backend and existing adapters do not change.
 

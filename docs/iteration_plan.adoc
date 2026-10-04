@@ -99,7 +99,7 @@ Build the system on the validated architecture and integrate the selected mechan
 
 |R05
 |Implement representative document-retention rules.
-|Test records past their retention period are deleted automatically, records within it are kept.
+|Response measures of QA scenario 3 pass (delivered documents deleted within 10 min, none older than 7 days).
 
 
 |R06
@@ -125,7 +125,7 @@ Build the system on the validated architecture and integrate the selected mechan
 
 |R12
 |Apply the authorization and delegation model to all endpoints exposing citizen data.
-|Response measures of QA scenarios 1 and 3 pass (all unauthorized and unverifiable delegated requests denied).
+|Response measures of QA scenario 1 pass, and all requests for another resident's data without authorization are denied.
 
 |R16
 |Define the public API versioning and deprecation policy and add contract tests for the public API and one agency adapter.

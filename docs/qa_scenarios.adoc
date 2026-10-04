@@ -86,44 +86,44 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Presenting audit history to residents is outside this scenario.
 |===
 
-== Scenario 3. Unauthorized document access
+== Scenario 3. Delivered documents are removed from the portal
 
 [cols="1,3",options="header"]
 |===
 |Field |Content
 
 |*Scenario name*
-|Deny access to another resident's document.
+|Delete the portal's copy of a document once the agency has received it.
 
 |*Business goal*
-|*BG-2* - protect citizen data while providing digital services.
+|*BG-2* - process citizen data lawfully and only for appropriate purposes.
 
 |*Relevant quality attributes*
-|Authorization and confidentiality (*QA-1*), auditability and accountability (*QA-4*).
+|Privacy and data minimization (*QA-2*), regulatory compliance (*QA-13*).
 
 |*Stimulus*
-|A request to download another resident's document without a valid delegation or other authorization.
+|The receiving agency confirms that it has received a document submitted by a resident.
 
 |*Stimulus source*
-|An authenticated resident attempting unauthorized access.
+|An agency back-end e-service.
 
 |*Environment*
-|Normal operation, with no authorized relationship between the requester and the document owner.
+|Normal operation. The Temporary doc store also holds documents that have not been delivered yet.
 
 |*Artifact*
-|The portal's document download interface and authorization enforcement.
+|The Temporary doc store and its deletion rules.
 
 |*Response*
-|Deny the request, disclose no document content or protected metadata, and record the denied attempt.
+|Delete the document from the Temporary doc store and record the deletion without recording document content. Documents that are never delivered are deleted when the maximum transit time ends.
 
 |*Response measure*
-|All requests in the unauthorized-access test set are denied; zero protected content or metadata is returned; each attempt has an audit record containing the requester, action, time and outcome within 5 seconds, without document content.
+|Every confirmed document in the test set is deleted within 10 minutes of the confirmation and has an audit record of the deletion. A daily check finds zero documents older than 7 days in the store.
 
 |*Questions*
-|Which roles and delegations authorize access, and who may read the audit records?
+|Is 7 days an acceptable maximum transit time, and what happens to a queued request whose documents are deleted before delivery (see Scenario 4)?
 
 |*Issues*
-|Unavailable authorization or audit services require separate scenarios.
+|Copies of documents in backups are outside this scenario.
 |===
 
 == Scenario 4. Agency unavailable during submission
@@ -213,12 +213,13 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Coverage |Scenario
 
 |Availability / resilience |*Scenario 1*, *Scenario 4*
-|Security / auditability |*Scenario 1*, *Scenario 2*, *Scenario 3*
+|Security / auditability |*Scenario 1*, *Scenario 2*
+|Privacy / data management |*Scenario 2*, *Scenario 3*
 |Modifiability / evolution |*Scenario 5*
 
-|*QA-1* Authorization and confidentiality |*Scenario 1*, *Scenario 3*
-|*QA-2* Privacy and data minimization |*Scenario 2*
+|*QA-1* Authorization and confidentiality |*Scenario 1*
+|*QA-2* Privacy and data minimization |*Scenario 2*, *Scenario 3*
 |*QA-3* Availability and resilience |*Scenario 1*, *Scenario 4*
-|*QA-4* Auditability and accountability |*Scenario 2*, *Scenario 3*
+|*QA-4* Auditability and accountability |*Scenario 2*
 |*QA-5* Evolvability and interoperability |*Scenario 5*
 |===
