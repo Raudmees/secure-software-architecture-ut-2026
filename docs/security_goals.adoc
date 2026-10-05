@@ -111,33 +111,40 @@ threat category.
 
 == 5.3 Important data categories
 
-[cols="2,3,1",options="header"]
+Each category is rated separately for confidentiality (C), integrity (I) and availability (A),
+because the requirements differ. For example, the service catalogue is public but must not be altered.
+
+[cols="2,3,1,1,1",options="header"]
 |===
-|Category |Example |Sensitivity level
+|Category |Example |C |I |A
 
 |Citizen profile data
 |Name, ID, contact details
-|High
+|High |High |Medium
 
 |Requests/cases
 |Application content, case status, messages between citizen and agency
-|High
+|High |High |Medium
 
 |Documents
 |Uploaded attachments, issued decisions and certificates
-|High
+|High |High |Medium
 
 |Audit records
 |System logs: actor, action, resource, time, purpose, outcome
-|High
+|Medium |High |Medium
 
 |Delegation/mandate records
 |Sharing access between users
-|High
+|Medium |High |Medium
 
 |Service-provider data
 |API client registrations, credentials, usage
-|Medium
+|High |High |Medium
+
+|Service catalogue
+|Service descriptions, eligibility rules, agency contact points
+|Low |High |High
 |===
 
 == 5.4 Initial attacker/abuse assumptions
