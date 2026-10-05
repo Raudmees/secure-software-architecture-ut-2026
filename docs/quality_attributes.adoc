@@ -60,7 +60,7 @@ The top 5 drivers (QA-1 to QA-5) are marked as architecture-critical.
 |8
 |No
 |QA
-|Recoverability and data durability: Requests, documents, case information and audit records must not be silently lost because of software, infrastructure or integration failures.
+|Recoverability and data durability: Once the portal confirms receipt of a request or document, it must not be lost before it is delivered to the responsible agency. Audit records must not be lost after they are written. Any failure that loses data or permanently prevents delivery must be detected and reported.
 
 |QA-9
 |9
