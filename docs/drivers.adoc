@@ -33,7 +33,7 @@ link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals.
 |Stakeholder |Need or concern
 
 |Residents/citizens (diagram: Resident / Citizen) |A single, simple, localized way to find and use public services, confidence their data is handled safely and only used for stated purposes, visibility into who accessed their data and why.
-|Service provider organizations/agencies (diagram: Agency staff, Agency back-end e-services) |An easy way to integrate their own services and systems into the portal without needing to completely rebuild current solutions.
+|Agencies (diagram: Agency staff, Agency back-end e-services) |An easy way to integrate their own services and systems into the portal without needing to completely rebuild current solutions.
 |Administrators/helpdesk (diagram: Administrator / Helpdesk) |Role-based access to case data and citizen support tools, limited only to what their role needs.
 |Auditors/oversight (diagram: Auditor / Oversight body) |Complete logs of who accessed what data, when, and why, across the whole system.
 |External registries/back-end systems (diagram: External registries, Agency back-end e-services) |Predictable and well-documented APIs, backend needs to be sure that frontend will not be overloading it with requests.

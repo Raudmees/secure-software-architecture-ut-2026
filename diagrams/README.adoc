@@ -8,3 +8,10 @@ For each diagram, include:
 * short caption explaining what question the diagram answers;
 * editable source if available;
 * exported image or PDF used in presentations and documents.
+
+== Diagrams
+
+* link:c4_context.svg[System context]: who uses the portal, and which external systems it depends on or serves. Dashed boxes are trust domains.
+* link:c4_containers.svg[Containers]: which deployable parts make up the portal, where its data is stored, and how they communicate.
+
+Editable source: link:workspace.dsl[workspace.dsl] (Structurizr DSL; the layout is in `workspace.json`).
