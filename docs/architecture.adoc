@@ -135,7 +135,7 @@ image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Service
 |Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries. Append-only is enforced by insert-only database permissions and hash chaining (tamper evidence).
 
 |Portal DB (minimal)
-|Preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
+|Preferences, catalogue configuration, API client registrations, sessions, the notification inbox and submission records.
 
 |Observability
 |Monitoring, logs and tracing for the operations and security team.
@@ -162,6 +162,39 @@ Add at least two component views for important containers.
 === Identity and access
 
 === Data management
+
+Action: a resident submits a service request and opens its status page (see Workflow and messaging).
+
+[cols="2,2,3",options="header"]
+|===
+|Data |Owner (official version) |Notes
+
+|Submission record: submission ID, resident, agency, delivery status (awaiting delivery, delivered, expired), agency reference
+|Portal DB (minimal)
+|Only the portal knows whether a request has reached the agency. Holds no form content.
+
+|Request content and attached documents, until the agency confirms receipt
+|Portal, in the Message broker queue, documents in the Temporary file store
+|Removed after the agency confirms receipt. Documents are deleted within 10 minutes (Scenario 3, "Delivered documents are removed from the portal").
+
+|The case after delivery: content, case status, decision
+|Agency back-end e-service
+|ADR-0002. The portal reads case status live through Agency integration.
+|===
+
+Copies:
+
+* *Notification inbox* (Portal DB): each message records the status at the time it was sent and can be out of date. The status page never reads it.
+* There is no cache of agency case status. If the agency cannot be reached, the status page says the status is temporarily unavailable instead of showing an older value.
+
+*Promise:* when Portal DB is available, the resident sees "Request saved. It will be sent to the
+agency." with a request reference within 3 seconds, even if the agency is down, and the status page shows the request as
+"Awaiting delivery" straight away (Scenario 4, "Agency unavailable during submission", in
+link:qa_scenarios.adoc[qa_scenarios.adoc]). The status page reads the submission record, which is
+written in the same transaction that confirms the request, so it is never behind. Once the agency
+confirms receipt, the status changes to "Delivered", and the page then shows the agency's case
+status read live. If Portal DB is unavailable, the submission is rejected and nothing is
+confirmed.
 
 === Workflow and messaging
 
