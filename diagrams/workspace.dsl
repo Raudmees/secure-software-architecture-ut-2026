@@ -106,12 +106,14 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
     views {
         systemContext portal "c4_system_context" {
             title "System Context - Citizen Services Portal"
+            description "Who uses the Citizen Services Portal, and which external systems does it depend on or serve? Dashed boxes are trust domains."
             include *
             include agencyStaff
         }
 
         container portal "c4_containers" {
             title "Containers - Citizen Services Portal"
+            description "Which deployable parts make up the portal, where is its data stored, and how do they communicate across trust boundaries?"
             include *
             exclude "notify -> resident"
         }
@@ -119,7 +121,6 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         styles {
             element "Element" {
                 color #ffffff
-                metadata false
             }
             relationship "Relationship" {
                 width 220
@@ -128,13 +129,13 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             element "Person" {
                 shape Person
                 background #08427b
+                height 480
             }
             element "Software System" {
                 background #1168bd
             }
             element "Boundary" {
                 color #1168bd
-                metadata false
             }
             element "Container" {
                 background #438dd5
