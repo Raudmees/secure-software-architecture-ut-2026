@@ -32,7 +32,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
                 integration = container "Agency integration" "Per-agency adapters, data minimization, retries." "Adapters"
                 audit = container "Audit service" "Audit trail, transparency queries." "Service"
                 portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions and notification inbox." "Relational DB" "Database"
-                docStore = container "Temporary doc store" "Quarantine and transit only." "Object storage" "Database"
+                docStore = container "Temporary file store" "Quarantine and transit only." "Object storage" "Database"
                 scanner = container "Antivirus scanner" "Scans every upload in isolation before it is accepted." "Scan engine"
                 group "Audit environment" {
                     auditStore = container "Audit store" "Append-only, tamper-evident audit records." "Relational DB" "Database"
@@ -55,7 +55,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         thirdParty = softwareSystem "Third-party service providers" "Consume the portal's regulated public APIs as registered clients." "External"
         notify = softwareSystem "Notification providers" "Deliver email, SMS and push messages." "External"
 
-        // Each relationship has its own colour tag (r1..r12); the label text matches its line.
+        // Each relationship has its own colour tag (r1..r13); the label text matches its line.
         resident -> portal "Uses services, tracks requests, signs documents" "" "r1"
         admin -> portal "Supports residents, administers portal" "" "r2"
         auditor -> portal "Reviews audit evidence (read-only)" "" "r3"
@@ -64,6 +64,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         portal -> idp "Authenticates residents via" "" "r5"
         portal -> signing "Signs and validates documents via" "" "r6"
         portal -> agencies "Sends requests; gets status and decisions" "" "r7"
+        agencies -> portal "Sends status updates" "" "r13"
         portal -> registries "Looks up data, verifies delegations" "" "r8"
         thirdParty -> portal "Calls regulated public APIs" "" "r9"
         portal -> notify "Sends notifications via" "" "r10"
@@ -84,8 +85,9 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         portal.gateway -> portal.audit "Transparency queries" "HTTPS/JSON" "route"
 
         portal.iam -> portal.integration "Verifies delegations" "HTTPS/JSON" "sync"
-        portal.backend -> portal.integration "Reads profile and case status; delivers and fetches documents" "HTTPS/JSON" "sync"
+        portal.backend -> portal.integration "Reads profile and case status; fetches documents" "HTTPS/JSON" "sync"
         portal.backend -> portal.scanner "Scans uploads" "Scan API" "sync"
+        portal.integration -> portal.backend "Reports delivery and status changes" "HTTPS/JSON" "sync"
 
         portal.backend -> portal.bus "Publishes requests and events" "Message queue" "async"
         portal.bus -> portal.integration "Queued delivery" "Message queue" "async"
@@ -94,12 +96,14 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         portal.iam -> idp "Authenticates residents via" "OIDC" "external"
         portal.backend -> signing "Signs, validates via" "HTTPS API" "external"
         portal.integration -> agencies "Requests, status, documents" "HTTPS API, mTLS" "external"
+        agencies -> portal.integration "Sends status updates" "HTTPS API, mTLS" "external"
         portal.integration -> registries "Minimal lookups" "HTTPS API, mTLS" "external"
         portal.backend -> notify "Sends notifications via" "HTTPS provider APIs" "external"
 
         portal.backend -> portal.portalDb "Reads, writes" "SQL" "store"
         portal.iam -> portal.portalDb "Reads, writes" "SQL" "store"
-        portal.backend -> portal.docStore "Stores documents temporarily" "Object storage API" "store"
+        portal.backend -> portal.docStore "Stores files temporarily" "Object storage API" "store"
+        portal.integration -> portal.docStore "Reads files for delivery" "Object storage API" "store"
         portal.audit -> portal.auditStore "Appends" "SQL" "store"
     }
 
@@ -186,6 +190,9 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             }
             relationship "r12" {
                 color #637939
+            }
+            relationship "r13" {
+                color #8c6d31
             }
             relationship "user" {
                 color #1f77b4

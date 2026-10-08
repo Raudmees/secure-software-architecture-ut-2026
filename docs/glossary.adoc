@@ -40,7 +40,7 @@ Names exactly as in the C4 container diagram.
 * *Agency integration* — Adapters for each agency and registry, with data minimization, retries and mutual TLS.
 * *Audit service* — Collects audit events and serves resident transparency and auditor queries.
 * *Portal DB (minimal)* — The portal's own data: preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
-* *Temporary doc store* — Holds uploaded documents only until they are scanned and delivered (quarantine and transit).
+* *Temporary file store* — Holds uploaded files only until they are scanned and delivered (quarantine and transit).
 * *Antivirus scanner* — Scans every upload in isolation before it is accepted.
 * *Audit store* — Append-only, tamper-evident storage of audit records, in a separate audit environment.
 * *Observability* — Monitoring, logs, tracing and security events for the operations and security team.
@@ -57,7 +57,7 @@ Names exactly as in the C4 container diagram.
 * *Data minimization* — Processing or disclosing only the personal data needed for a given service and purpose (QA-2).
 * *Canonical data model* — Portal-internal data format that agency adapters translate to and from.
 * *Adapter* — Part of Agency integration that connects one agency or registry system to the canonical data model.
-* *Quarantine* — Holding an upload in the Temporary doc store until the Antivirus scanner has accepted it.
+* *Quarantine* — Holding an upload in the Temporary file store until the Antivirus scanner has accepted it.
 * *eID* — National electronic identity used to authenticate and to sign.
 * *OIDC* — OpenID Connect, the protocol used to authenticate residents through the identity provider.
 * *mTLS* — Mutual TLS: both sides authenticate with certificates; used between Agency integration and external systems.

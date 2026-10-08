@@ -50,33 +50,14 @@ link:../risk/risk_register.adoc[risk/risk_register.adoc].
 
 === 2.1 Business goals
 
-* *BG-1* Single trustworthy digital entry point for discovering, requesting, tracking and managing public services.
-* *BG-2* Citizen data processed lawfully, securely, and only for appropriate purposes.
-* *BG-3* Residents and oversight bodies can understand and verify how data and requests were accessed and processed.
-* *BG-4* New agencies and services join without major changes to the portal or to existing agency systems.
-* *BG-5* Essential capabilities stay reachable despite component failures or external outages.
-* *BG-6* Services are understandable and usable across languages, abilities, ages and levels of technical literacy.
-* *BG-7* The portal evolves with services, regulations, integrations and technologies without major redesign.
-
-Full text: Mission goals in link:drivers.adoc[drivers.adoc]. Quality attribute scenarios in
-link:qa_scenarios.adoc[qa_scenarios.adoc] reference these goals by ID.
+Mission goals in link:drivers.adoc[drivers.adoc]. 
+Quality attribute scenarios in link:qa_scenarios.adoc[qa_scenarios.adoc] reference these goals by ID.
 
 === 2.2 Quality attributes
 
 Thirteen quality attributes, constraints and security-relevant requirements are prioritized in
-link:quality_attributes.adoc[quality_attributes.adoc]. The five architecture-critical ones:
-
-* *QA-1 Authorization and confidentiality* - sensitive citizen data, cases, documents and messages are accessible only to explicitly authorized users or organizations.
-* *QA-2 Privacy and data minimization* - only the personal data necessary for the service and purpose is processed or disclosed, including towards agencies.
-* *QA-3 Availability and resilience* - failure of one external agency or supporting service does not make unrelated functionality unavailable; the system degrades safely and recovers.
-* *QA-4 Auditability and accountability* - security-relevant access and actions produce reliable audit evidence for later review by authorized parties.
-* *QA-5 Evolvability and interoperability* - new agencies and services are integrable without major changes to the core architecture or existing integrations.
-
-The remaining eight (QA-6 to QA-13) cover trusted authentication, integrity, recoverability,
-observability, performance, usability/accessibility, secure external integrations and regulatory
-compliance. Three trade-offs are recorded in section 3 of
-link:quality_attributes.adoc[quality_attributes.adoc]: auditability versus privacy, security and
-privacy versus usability, and availability versus security controls.
+link:quality_attributes.adoc[quality_attributes.adoc].
+Three trade-offs are recorded in section 3 of link:quality_attributes.adoc[quality_attributes.adoc].
 
 === 2.3 Constraints and assumptions
 
@@ -109,23 +90,21 @@ work in role-limited back-office functions. Auditors have read-only access to au
 Operations and security teams monitor the platform.
 
 Inside the system boundary are the service catalogue, case management, document exchange (including
-antivirus scanning and retention), the signing workflow, notification orchestration, the
+antivirus scanning and retention), the signing workflow, notification management, the
 authorization and delegation checks, audit and transparency, and the regulated public APIs.
 Outside the system boundary are the systems the portal integrates with but does not control:
 
-* *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself (SG-2, SG-4).
-* *Digital signing service* - creates and validates legally binding eID signatures (SG-3).
-* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and receives status updates and decisions. Each agency is a separate trust domain and gets only the minimum data it needs (SG-5, QA-3).
-* *External registries* - authoritative population, business and mandate/delegation data. If a delegation cannot be verified, delegated access is denied (SG-7, SG-9).
-* *Third-party service providers* - call the regulated public APIs as authenticated, scoped and rate-limited clients (SG-10).
-* *Notification providers* - deliver email, SMS and push messages, which carry only minimal content (QA-2).
+* *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself.
+* *Digital signing service* - creates and validates legally binding eID signatures.
+* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and receives status updates and decisions. Each agency is a separate trust domain and gets only the minimum data it needs.
+* *External registries* - authoritative population, business and mandate/delegation data. If a delegation cannot be verified, delegated access is denied.
+* *Third-party service providers* - call the regulated public APIs as authenticated, scoped and rate-limited clients.
+* *Notification providers* - deliver email, SMS and push messages, which carry only minimal content.
 
 == 4. Containers
 
 .Containers of the Citizen Services Portal (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
 image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Services Portal]
-
-All containers publish audit events to the message broker; these arrows are not drawn for readability, and the broker's arrow to the audit service stands for all of them.
 
 [cols="1,3",options="header"]
 |===
@@ -141,7 +120,7 @@ All containers publish audit events to the message broker; these arrows are not 
 |eID/OIDC login, sessions, and role and delegation-based authorization checks. Delegations are verified against the mandate registry.
 
 |Portal backend
-|One modular backend service with five modules: *catalogue and preferences* (service catalogue and resident preferences; profile data is read from registries on demand), *cases* (submits requests and shows live case status; stores no case content), *documents* (sends every upload to the antivirus scanner before it is accepted, then delivers it to the agency; downloads are fetched from the agency; the temporary document store holds files only until they are scanned and delivered), *signing workflow* (runs the eID signing flow with the external signing service) and *notifications* (in-app inbox and dispatch to email, SMS and push providers). These modules will be shown in a component view later.
+|One modular backend service with five modules: *catalogue and preferences* (service catalogue and resident preferences; profile data is read from registries on demand), *cases* (submits requests and shows live case status; stores no case content), *documents* (sends every upload to the antivirus scanner before it is accepted, then delivers it to the agency; downloads are fetched from the agency; the Temporary file store holds files only until they are scanned and delivered), *signing workflow* (runs the eID signing flow with the external signing service) and *notifications* (in-app inbox and dispatch to email, SMS and push providers).
 
 |Antivirus scanner
 |Scans every upload in isolation before it is accepted. The documents module of the Portal backend sends each upload here.
@@ -153,7 +132,7 @@ All containers publish audit events to the message broker; these arrows are not 
 |Adapters for each agency and registry, a canonical data model, data minimization, retries and mutual TLS.
 
 |Audit service, audit store
-|Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries. Append-only is enforced by insert-only database permissions and hash chaining (tamper evidence), not by the database itself.
+|Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries. Append-only is enforced by insert-only database permissions and hash chaining (tamper evidence).
 
 |Portal DB (minimal)
 |Preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
@@ -162,49 +141,17 @@ All containers publish audit events to the message broker; these arrows are not 
 |Monitoring, logs and tracing for the operations and security team.
 |===
 
-Containers are separate only where there is a security or trust reason. Identity & access makes
-every authentication and authorization decision (SG-2, SG-4). Agency integration crosses the agency
-trust boundary and isolates each agency's adapter, so agencies can be added without touching the
-rest of the portal (QA-5, R09). Audit is kept apart, and its store runs in a separate environment,
-so that ordinary portal services cannot alter audit evidence (SG-6). The API gateway is the single
-entry point for third-party clients (SG-10). The antivirus scanner is isolated because uploaded
-files are untrusted input (SG-8). Everything else is one modular backend, to keep deployment and
-operations simple.
 
 === Data ownership
 
 The portal holds as little business data as possible. Case content, documents, profile data and
 delegations stay with the owning agencies and registries, and the portal reads them live through
 the agency integration service. The portal stores only its own data: preferences, catalogue
-configuration, API client registrations, sessions, the notification inbox, documents in transit,
+configuration, API client registrations, sessions, the notification inbox, files in transit,
 queued requests in the message broker (which contain personal data), and the audit trail.
 
 The decision is recorded in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
 
-Reading data live keeps the portal from becoming a second copy of agency data (R13), but it makes
-the portal depend on agency availability and load (R15). When an agency is unavailable, the
-portal must show that clearly rather than stale data. Asynchronous submission through the
-message broker lets residents submit requests even while the agency is down. Container
-ownership follows link:ownership_sketch.adoc[ownership_sketch.adoc].
-
-=== Quality attribute scenarios
-
-How the containers handle each scenario in link:qa_scenarios.adoc[qa_scenarios.adoc]:
-
-* *Scenario 1* (delegation registry unavailable): Identity & access verifies each delegation against External registries through Agency integration; if the registry cannot be reached, it denies the delegated request, while the resident's own cases stay available.
-* *Scenario 2* (helpdesk document access): the helpdesk worker opens the document in the Back-office web app; the Portal backend fetches it from the agency through Agency integration and publishes an audit event to the Message broker, which the Audit service writes to the Audit store.
-* *Scenario 3* (delivered documents removed): when Agency integration reports that the agency has received a document, the Portal backend deletes it from the Temporary doc store and publishes a deletion audit event through the Message broker to the Audit service and Audit store. A lifecycle rule in the Temporary doc store deletes any document older than 7 days.
-* *Scenario 4* (agency unavailable during submission): the Message broker queues requests while an agency is down; Agency integration delivers them after recovery.
-* *Scenario 5* (new agency service): Agency integration gets one new adapter and the service is added as catalogue configuration in Portal DB (minimal); the Portal backend and existing adapters do not change.
-
-== Open questions and known inconsistencies
-
-* Container and actor names are not final.
-* No overall availability target is defined yet ("what does available enough mean?", QA-3).
-* Whether a digital fallback login is required for residents without eID (R14).
-* Whether delegation decisions may be cached, and for how long (QA scenario 1).
-* Agency staff document access is not visible in the portal's audit trail (link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002], BG-3).
-* Sections 5-10 are not started yet.
 
 == 5. Components
 

@@ -108,13 +108,13 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |An agency back-end e-service.
 
 |*Environment*
-|Normal operation. The Temporary doc store also holds documents that have not been delivered yet.
+|Normal operation. The Temporary file store also holds documents that have not been delivered yet.
 
 |*Artifact*
-|The Temporary doc store and its deletion rules.
+|The Temporary file store and its deletion rules.
 
 |*Response*
-|Delete the document from the Temporary doc store and record the deletion without recording document content. Documents that are never delivered are deleted when the maximum transit time ends.
+|Delete the document from the Temporary file store and record the deletion without recording document content. Documents that are never delivered are deleted when the maximum transit time ends.
 
 |*Response measure*
 |Every confirmed document in the test set is deleted within 10 minutes of the confirmation and has an audit record of the deletion. A daily check finds zero documents older than 7 days in the store.

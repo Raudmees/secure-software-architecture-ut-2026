@@ -5,7 +5,7 @@
 == Mission goals
 
 The refined business goals for the Citizen Services Portal. Quality attribute scenarios in
-link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals as BG-1 to BG-7.
+link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals.
 
 [cols="1,5",options="header"]
 |===
@@ -43,9 +43,7 @@ link:qa_scenarios.adoc[qa_scenarios.adoc] refer to these goals as BG-1 to BG-7.
 
 == Quality attributes and constraints
 
-The refined, prioritized list of 10-15 quality attributes, constraints and
-security-relevant requirements, including the architecture-critical drivers and the trade-offs
-between them, is maintained in link:quality_attributes.adoc[quality_attributes.adoc].
+Quality attributes are in link:quality_attributes.adoc[quality_attributes.adoc].
 Security goals and trust boundaries are in link:security_goals.adoc[security_goals.adoc].
 
 == Assumptions
@@ -62,5 +60,5 @@ Security goals and trust boundaries are in link:security_goals.adoc[security_goa
 . Which specific services and agencies will be integrated?
 . How many active users are in the country the system will be built?
 . What are the expected peak load scenarios the system must be designed to handle?
-. Which data should the portal store and process itself, and which should remain with the agencies?
+. Which data should the portal store and process itself, and which should remain with the agencies? Decided in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
 . Is there a legally required fallback authentication method for residents who cannot use the national eID?

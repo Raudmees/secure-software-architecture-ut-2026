@@ -3,7 +3,7 @@
 
 Initial ownership assumptions for the containers in
 link:architecture.adoc[architecture.adoc] (section 4). Teams follow the Team Topologies
-types. These are assumptions for a real implementation and may change.
+types.
 
 == Ownership
 
@@ -30,25 +30,33 @@ documents, signing workflow, notifications)
 
 |Platform and Operations Team
 |Platform
-|Message broker, Portal DB (minimal), Temporary doc store, antivirus scanner, observability
+|Message broker, Portal DB (minimal), Temporary file store, antivirus scanner, observability
 |===
 
-The Platform and Operations Team runs the shared stores and the broker; the team that writes
-a given kind of data owns its schema and retention rules.
+The Platform and Operations Team runs the shared stores and the broker.
 
 == Conway check
 
-* *Portal Services and Identity and Access:* every protected operation depends on
-  authorization decisions. Reduced by a stable, versioned authorization API owned by
-  Identity and Access.
-* *Portal Services and Agency Integration:* requests and documents cross to agencies through
-  the integration service. Reduced by the canonical data model, so backend modules do not
-  depend on agency-specific formats.
-* *All teams and Audit and Transparency:* every container must emit consistent audit events.
-  Reduced by a shared audit event schema and client library published by the audit team.
-* *All teams and Platform and Operations:* shared broker and databases. Reduced by
-  self-service provisioning, so teams do not wait on tickets.
+Where teams must coordinate, and what keeps that coordination small.
 
-Earlier versions split the backend between a Citizen Services Team and a Case, Document and
-Signing Team. After the backend became one container, that split would have made two teams
-coordinate on every release of one deployable, so the teams were merged.
+[cols="2,3,3",options="header"]
+|===
+|Teams |Why they coordinate |Reduced by
+
+|Portal Services ↔ Identity and Access
+|Every protected operation needs an authorization decision
+|Identity and Access offers one fixed way to ask "may this user do this?", and changes it only with a new version
+
+|Portal Services ↔ Agency Integration
+|Requests and documents go to agencies. New backend endpoints need API gateway changes
+|Agency data is translated into one common internal format, so the backend never sees agency-specific formats. Portal Services adds its own gateway routes; Agency Integration only reviews changes to the public API
+
+|All teams ↔ Audit and Transparency
+|Every container emits audit events
+|The audit team publishes one audit event format and a ready-made library for sending events
+
+|All teams ↔ Platform and Operations
+|All teams use the message broker and databases that the Platform team runs
+|Teams create their own queues and databases with ready-made templates, so they do not wait for the Platform team
+|===
+
