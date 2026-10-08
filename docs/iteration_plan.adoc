@@ -37,6 +37,10 @@ Agree the scope and initial architecture, and reduce the High/High and structure
 |Define the authorization boundary and validate one delegated-access path.
 |Delegation model and small authorization spike.
 
+|R15
+|Model queued delivery during an agency outage and test it with a stub agency. 
+|Queued-delivery flow and outage test (Workflow and messaging).
+
 |===
 
 == Phase 2. Elaboration
