@@ -111,7 +111,7 @@ Build the system on the validated architecture and integrate the selected mechan
 
 |R05
 |Implement representative document-retention rules.
-|Response measures of QA scenario 3 pass (delivered documents deleted within 10 min, none older than 7 days).
+|Response measures of QA scenario 3 pass (delivered files deleted within 10 min, none older than 7 days).
 
 
 |R06

@@ -86,14 +86,14 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Presenting audit history to residents is outside this scenario.
 |===
 
-== Scenario 3. Delivered documents are removed from the portal
+== Scenario 3. Delivered files are removed from the portal
 
 [cols="1,3",options="header"]
 |===
 |Field |Content
 
 |*Scenario name*
-|Delete the portal's copy of a document once the agency has received it.
+|Delete the portal's copy of a file once the agency has received it.
 
 |*Business goal*
 |*BG-2* - process citizen data lawfully and only for appropriate purposes.
@@ -102,28 +102,28 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Privacy and data minimization (*QA-2*), regulatory compliance (*QA-13*).
 
 |*Stimulus*
-|The receiving agency confirms that it has received a document submitted by a resident.
+|The receiving agency confirms that it has received a file submitted by a resident.
 
 |*Stimulus source*
 |An agency back-end e-service.
 
 |*Environment*
-|Normal operation. The Temporary file store also holds documents that have not been delivered yet.
+|Normal operation. The Temporary file store also holds files that have not been delivered yet.
 
 |*Artifact*
 |The Temporary file store and its deletion rules.
 
 |*Response*
-|Delete the document from the Temporary file store and record the deletion without recording document content. Documents that are never delivered are deleted when the maximum transit time ends.
+|Delete the file from the Temporary file store and record the deletion without recording file content. Files that are never delivered are deleted when the maximum transit time ends.
 
 |*Response measure*
-|Every confirmed document in the test set is deleted within 10 minutes of the confirmation and has an audit record of the deletion. A daily check finds zero documents older than 7 days in the store.
+|Every confirmed file in the test set is deleted within 10 minutes of the confirmation and has an audit record of the deletion. A daily check finds zero files older than 7 days in the store.
 
 |*Questions*
-|Is 7 days an acceptable maximum transit time, and what happens to a queued request whose documents are deleted before delivery (see Scenario 4)?
+|Is 7 days an acceptable maximum transit time, and what happens to a queued request whose files are deleted before delivery (see Scenario 4)?
 
 |*Issues*
-|Copies of documents in backups are outside this scenario.
+|Copies of files in backups are outside this scenario.
 |===
 
 == Scenario 4. Agency unavailable during submission
