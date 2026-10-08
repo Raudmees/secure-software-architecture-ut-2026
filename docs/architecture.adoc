@@ -224,23 +224,24 @@ Workflow: a resident submits a service request (*Scenario 4*).
 
 . Citizen web app sends the form with a new submission ID to the API gateway.
 . API gateway checks the token; Identity & access checks the resident may submit.
-. Portal backend saves the submission ID and case reference in Portal DB and publishes the request to the Message broker in one transaction.
-. Portal backend returns the case reference; the resident sees "Request received".
-. Message broker delivers the request to Agency integration, which sends it with the submission ID to the agency.
-. Portal backend notifies the resident; all steps send audit events through the Message broker to the Audit service.
+. Portal backend saves the submission ID in Portal DB and publishes the request to the Message broker in one transaction.
+. Portal backend confirms the submission; the resident sees "Request received".
+. Message broker delivers the request to Agency integration, which sends it to the agency.
+. The agency returns a case reference; Portal backend saves it with the submission ID in Portal DB.
+. Portal backend notifies the resident with the case reference; all steps send audit events through the Message broker to the Audit service.
 
 *Lost reply*
 
 The request is saved, but the reply to the browser is lost.
 
 * *Resident sees:* after 10 seconds, "Checking whether your request was received". The form is kept and _Submit_ is disabled.
-* *Check:* the web app asks the Portal backend for the status of the same submission ID. If it exists, it shows the saved case reference.
+* *Check:* the web app asks the Portal backend for the status of the same submission ID. If it exists, it shows "Request received" and the case reference, once the agency has given one.
 * *Safe retry:* if not, the web app resends with the same submission ID. The Portal backend returns the existing case for a known ID, so no duplicate case or message is created.
 
 *Test*
 
 Drop the response for 100 submissions with a fault-injection proxy between the API gateway and the web app.
-Expected: each submission ID has exactly one case and one queued message, a stub agency receives each request once, and the resident sees the original case reference.
+Expected: each submission ID has exactly one case and one queued message, a stub agency receives each request once and returns one case reference, and the resident sees that case reference.
 
 === Auditing and logging
 
