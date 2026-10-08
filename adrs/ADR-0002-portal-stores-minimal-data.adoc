@@ -19,7 +19,7 @@ The portal stores as little business data as possible.
 * Case content, decisions, documents, profile data and delegations stay with the agencies and
   registries that own them. The portal reads them live through the Agency integration container.
 * The portal stores only:
-** preferences, catalogue configuration, API client registrations, sessions and the notification inbox (Portal DB (minimal));
+** preferences, catalogue configuration, API client registrations, sessions, the notification inbox and submission records (Portal DB (minimal));
 ** files in transit, until they are scanned and delivered (Temporary file store);
 ** queued requests to agencies (Message broker);
 ** the audit trail (Audit store).

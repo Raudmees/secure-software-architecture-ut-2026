@@ -169,7 +169,7 @@ Action: a resident submits a service request and opens its status page (see Work
 |===
 |Data |Owner (official version) |Notes
 
-|Submission record: submission ID, resident, agency, delivery status (awaiting delivery, delivered, expired), agency reference
+|Submission record: submission ID, resident, agency, delivery status (awaiting delivery, delivered, expired), agency reference, last known case status
 |Portal DB (minimal)
 |Only the portal knows whether a request has reached the agency. Holds no form content.
 
@@ -185,7 +185,7 @@ Action: a resident submits a service request and opens its status page (see Work
 Copies:
 
 * *Notification inbox* (Portal DB): each message records the status at the time it was sent and can be out of date. The status page never reads it.
-* There is no cache of agency case status. If the agency cannot be reached, the status page says the status is temporarily unavailable instead of showing an older value.
+* *Last known case status* (submission record): kept only so a background job can detect status changes and notify the resident. The status page never shows it; it reads the status live, and if the agency cannot be reached it says the status is temporarily unavailable.
 
 *Promise:* when Portal DB is available, the resident sees "Request saved. It will be sent to the
 agency." with a request reference within 3 seconds, even if the agency is down, and the status page shows the request as
