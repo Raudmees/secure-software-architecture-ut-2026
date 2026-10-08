@@ -32,7 +32,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
                 integration = container "Agency integration" "Per-agency adapters, data minimization, retries." "Adapters"
                 audit = container "Audit service" "Audit trail, transparency queries." "Service"
                 portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions and notification inbox." "Relational DB" "Database"
-                docStore = container "Temporary doc store" "Quarantine and transit only." "Object storage" "Database"
+                docStore = container "Temporary file store" "Quarantine and transit only." "Object storage" "Database"
                 scanner = container "Antivirus scanner" "Scans every upload in isolation before it is accepted." "Scan engine"
                 group "Audit environment" {
                     auditStore = container "Audit store" "Append-only, tamper-evident audit records." "Relational DB" "Database"
@@ -84,8 +84,9 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         portal.gateway -> portal.audit "Transparency queries" "HTTPS/JSON" "route"
 
         portal.iam -> portal.integration "Verifies delegations" "HTTPS/JSON" "sync"
-        portal.backend -> portal.integration "Reads profile and case status; delivers and fetches documents" "HTTPS/JSON" "sync"
+        portal.backend -> portal.integration "Reads profile and case status; fetches documents" "HTTPS/JSON" "sync"
         portal.backend -> portal.scanner "Scans uploads" "Scan API" "sync"
+        portal.integration -> portal.backend "Reports delivery" "HTTPS/JSON" "sync"
 
         portal.backend -> portal.bus "Publishes requests and events" "Message queue" "async"
         portal.bus -> portal.integration "Queued delivery" "Message queue" "async"
@@ -99,19 +100,22 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
 
         portal.backend -> portal.portalDb "Reads, writes" "SQL" "store"
         portal.iam -> portal.portalDb "Reads, writes" "SQL" "store"
-        portal.backend -> portal.docStore "Stores documents temporarily" "Object storage API" "store"
+        portal.backend -> portal.docStore "Stores files temporarily" "Object storage API" "store"
+        portal.integration -> portal.docStore "Reads files for delivery" "Object storage API" "store"
         portal.audit -> portal.auditStore "Appends" "SQL" "store"
     }
 
     views {
         systemContext portal "c4_system_context" {
             title "System Context - Citizen Services Portal"
+            description "Who uses the Citizen Services Portal, and which external systems does it depend on or serve? Dashed boxes are trust domains."
             include *
             include agencyStaff
         }
 
         container portal "c4_containers" {
             title "Containers - Citizen Services Portal"
+            description "Which deployable parts make up the portal, where is its data stored, and how do they communicate across trust boundaries?"
             include *
             exclude "notify -> resident"
         }
@@ -128,6 +132,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             element "Person" {
                 shape Person
                 background #08427b
+                height 480
             }
             element "Software System" {
                 background #1168bd

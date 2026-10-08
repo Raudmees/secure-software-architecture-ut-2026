@@ -8,9 +8,6 @@ and risk IDs (Rnn) refer to link:../risk/risk_register.adoc[risk/risk_register.a
 
 == 5.1 Security goals
 
-Each goal is written as a property the system must preserve, and is tied to an asset and a
-threat category.
-
 [cols="1,5,2,2",options="header"]
 |===
 | |Security Goal |Asset |Threat

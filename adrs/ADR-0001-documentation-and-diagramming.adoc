@@ -9,8 +9,7 @@ Accepted
 
 We need a consistent way to visualize and document the structure of the Citizen Services Portal. 
 
-C4 context and container diagrams are the first diagrams we will be required to draw. Diagrams must use consistent names for 
-systems, containers and actors, matching the glossary, drivers and risk register.
+Diagrams must use consistent names for systems, containers and actors, matching the glossary, drivers and risk register.
 
 If every team member draws in a different style or tool, diagrams become inconsistent and hard to 
 review, and names drift between diagrams and documents.

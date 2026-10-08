@@ -2,13 +2,9 @@
 :toc:
 :toclevels: 3
 
-This document contains the prioritized list of quality attributes, constraints and
-security-relevant requirements for the Citizen Services Portal. It refines and prioritizes
-the quality attributes first listed in link:drivers.adoc[drivers.adoc].
+Quality attributes in priority order. Business goals are in link:drivers.adoc[drivers.adoc].
 
 == 1. Prioritized quality attributes, constraints and security requirements
-
-The top 5 drivers (QA-1 to QA-5) are marked as architecture-critical.
 
 [cols="1,1,1,1,4",options="header"]
 |===
@@ -35,7 +31,7 @@ The top 5 drivers (QA-1 to QA-5) are marked as architecture-critical.
 |QA-4
 |4
 |Yes
-|QA
+|Security requirement
 |Auditability and accountability: Security-relevant access and actions must produce reliable audit evidence so that data access and processing can later be reviewed by authorized parties.
 
 |QA-5

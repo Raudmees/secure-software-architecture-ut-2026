@@ -17,22 +17,27 @@ For this project we are using the default scenario of Citizen Services Portal, d
 
 == Current status
 
-* Week: *4*
-* Main focus this week: *Initial architecture*
+* Week: *5*
+* Main focus this week: *Repository review package and presentation*
 * Top architectural driver: *QA-1 Authorization and confidentiality*
 * Biggest open question: *Is a digital fallback login required for residents without eID? (R14)*
-* Biggest technical risk: *No prior eID digital-signing experience*
+* Biggest technical risk: *We cannot take responsibility for the agencies' systems and the availability of their APIs. When they fail, they can disrupt use of our portal, which affects scaling and availability.*
 
 == Important links
 
+* Team contract: link:docs/team_contract.adoc[docs/team_contract.adoc]
+* Iteration plan: link:docs/iteration_plan.adoc[docs/iteration_plan.adoc]
+* Ownership sketch: link:docs/ownership_sketch.adoc[docs/ownership_sketch.adoc]
 * Scenario: link:docs/scenario.adoc[docs/scenario.adoc]
-* Glossary: link:docs/glossary.adoc[docs/glossary.adoc]
-* Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
-* ADRs: link:adrs/README.adoc[adrs/README.adoc]
-* Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
-* Iteration Plan: link:docs/iteration_plan.adoc[docs/iteration_plan.adoc]
-* Diagrams: link:diagrams/[diagrams/]
 * Drivers: link:docs/drivers.adoc[docs/drivers.adoc]
+* Quality attributes (full prioritized list): link:docs/quality_attributes.adoc[docs/quality_attributes.adoc]
+* Quality attribute scenarios: link:docs/qa_scenarios.adoc[docs/qa_scenarios.adoc]
+* Security goals and trust boundaries: link:docs/security_goals.adoc[docs/security_goals.adoc]
+* Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
+* Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
+* C4 diagrams (context and containers): link:diagrams/README.adoc[diagrams/README.adoc]
+* ADRs: link:adrs/README.adoc[adrs/README.adoc]
+* Glossary: link:docs/glossary.adoc[docs/glossary.adoc]
 
 == Course workflow
 

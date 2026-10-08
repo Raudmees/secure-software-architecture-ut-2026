@@ -66,11 +66,11 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Identify the concrete requirements early and design one representative third-party API interaction including authentication, authorization/scopes, auditing and error handling.
 
 |R09
-|External systems may use incompatible identifiers, data formats or interface styles, making integration significantly more complex than estimated and threatening completion of all 2-3 required integrations.
+|Agency and registry systems may not be compatible with the portal (different IDs, data formats or interfaces), so each integration may take much longer than planned and we may not finish all 2-3 required integrations.
 |High
 |High
 |High
-|Compare sample contracts/data models from the target systems; define an internal canonical model or adapter boundary and validate it with at least two different external interfaces.
+|Compare the interfaces of the selected systems, define a common internal data model with one adapter per system, and test it with at least two of them.
 
 |R10
 |Components may appear workable independently but fail when combined into an end-to-end citizen-service flow, revealing incompatible assumptions late in the project.

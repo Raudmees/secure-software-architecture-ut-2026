@@ -20,7 +20,7 @@ The portal stores as little business data as possible.
   registries that own them. The portal reads them live through the Agency integration container.
 * The portal stores only:
 ** preferences, catalogue configuration, API client registrations, sessions and the notification inbox (Portal DB (minimal));
-** documents in transit, until they are scanned and delivered (Temporary doc store);
+** files in transit, until they are scanned and delivered (Temporary file store);
 ** queued requests to agencies (Message broker);
 ** the audit trail (Audit store).
 * Agency staff never use the portal. The portal sends requests and documents to the agencies'
@@ -38,7 +38,7 @@ The portal stores as little business data as possible.
 
 * Positive:
 ** The portal holds less personal data, so a breach of the portal exposes less (QA-2).
-** Agencies stay the system of record for their cases, decisions and documents.
+** The agency keeps the official version of its own cases, decisions and documents
 ** There is no second copy of agency data to keep in sync.
 * Negative or risks:
 ** The portal depends on agency availability for live data: when an agency system is unavailable

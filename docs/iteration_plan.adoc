@@ -3,8 +3,7 @@
 :toclevels: 2
 
 Risk IDs refer to link:../risk/risk_register.adoc[risk/risk_register.adoc]. The phases follow
-the RUP lifecycle and address higher-priority risks first. A risk may appear in more than one
-phase when early validation is followed by implementation or final verification.
+the RUP lifecycle and address higher-priority risks first.
 
 == Phase 1. Inception
 
@@ -82,7 +81,7 @@ The executable architecture will implement these use cases:
 . A resident logs in with eID and views their own cases.
 . A resident submits a request with a document to one agency.
 . A delegate opens a case of the person they represent.
-. An agency sends a status update and the resident is notified.
+. The portal detects a status change at an agency and the resident is notified.
 . A helpdesk worker opens a document and an audit record is written.
 
 
