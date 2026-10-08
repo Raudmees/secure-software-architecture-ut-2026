@@ -121,6 +121,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         styles {
             element "Element" {
                 color #ffffff
+                metadata false
             }
             relationship "Relationship" {
                 width 220
@@ -136,6 +137,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
             }
             element "Boundary" {
                 color #1168bd
+                metadata false
             }
             element "Container" {
                 background #438dd5
