@@ -108,11 +108,11 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Confirm the requirements and model one fallback path. Define which operations require national-eID-level authentication, and carry the login method in the session so authorization can check it.
 
 |R15
-|Because the portal reads agency data live (ADR-0002), an unavailable or slow agency system means requests cannot be delivered and live case status cannot be shown for that agency's services.
-|Medium
+|Because the portal reads agency data live (ADR-0002), an unavailable or slow agency system means requests cannot be delivered and live case status cannot be shown for that agency's services. 
 |High
-|Medium
-|Queue requests in the message broker during outages, timeouts and circuit breakers in the agency integration service, and show residents a clear pending status (QA scenario 4).
+|High
+|High
+|Queue requests in the message broker during outages, timeouts and circuit breakers in the agency integration service, and show residents a clear pending status (QA scenario 4). 
 
 |R16
 |If the portal's public API changes without a versioning and deprecation policy, or an agency changes its API without notice, then third-party clients or agency adapters break.
