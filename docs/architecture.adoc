@@ -96,7 +96,7 @@ Outside the system boundary are the systems the portal integrates with but does 
 
 * *National eID/OIDC identity provider* - authenticates residents. The portal trusts only configured providers, validates every token, and makes all authorization decisions itself.
 * *Digital signing service* - creates and validates legally binding eID signatures.
-* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and receives status updates and decisions. Each agency is a separate trust domain and gets only the minimum data it needs.
+* *Agency back-end e-services* - agency staff process cases here. The portal forwards requests and documents and reads case status and decisions. Each agency is a separate trust domain and gets only the minimum data it needs.
 * *External registries* - authoritative population, business and mandate/delegation data. If a delegation cannot be verified, delegated access is denied.
 * *Third-party service providers* - call the regulated public APIs as authenticated, scoped and rate-limited clients.
 * *Notification providers* - deliver email, SMS and push messages, which carry only minimal content.
