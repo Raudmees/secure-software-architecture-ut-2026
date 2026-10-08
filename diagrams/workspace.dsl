@@ -31,7 +31,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
                 bus = container "Message broker" "Delivery queue for requests to agencies (contains personal data: encrypted, access-controlled, durable) and audit events." "Async messaging" "Queue"
                 integration = container "Agency integration" "Per-agency adapters, data minimization, retries." "Adapters"
                 audit = container "Audit service" "Audit trail, transparency queries." "Service"
-                portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions and notification inbox." "Relational DB" "Database"
+                portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions, notification inbox and submission records." "Relational DB" "Database"
                 docStore = container "Temporary file store" "Quarantine and transit only." "Object storage" "Database"
                 scanner = container "Antivirus scanner" "Scans every upload in isolation before it is accepted." "Scan engine"
                 group "Audit environment" {

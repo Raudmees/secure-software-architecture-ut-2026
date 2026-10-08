@@ -39,7 +39,7 @@ Names exactly as in the C4 container diagram.
 * *Message broker* — Asynchronous delivery queue for requests to agencies and the audit event stream; holds personal data until delivery.
 * *Agency integration* — Adapters for each agency and registry, with data minimization, retries and mutual TLS.
 * *Audit service* — Collects audit events and serves resident transparency and auditor queries.
-* *Portal DB (minimal)* — The portal's own data: preferences, catalogue configuration, API client registrations, sessions and the notification inbox.
+* *Portal DB (minimal)* — The portal's own data: preferences (language, notification channels and contact details), catalogue configuration, API client registrations, sessions, the notification inbox and submission records.
 * *Temporary file store* — Holds uploaded files only until they are scanned and delivered (quarantine and transit).
 * *Antivirus scanner* — Scans every upload in isolation before it is accepted.
 * *Audit store* — Append-only, tamper-evident storage of audit records, in a separate audit environment.
