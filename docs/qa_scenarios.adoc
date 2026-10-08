@@ -6,7 +6,7 @@ Business goal IDs refer to
 link:drivers.adoc[drivers.adoc], and quality attribute IDs refer to
 link:quality_attributes.adoc[quality_attributes.adoc].
 
-== Scenario 1. Delegation registry unavailable
+== Scenario 1. External registries unavailable
 
 [cols="1,3",options="header"]
 |===
@@ -28,7 +28,7 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |An authenticated resident.
 
 |*Environment*
-|The delegation registry is unavailable.
+|External registries are unavailable, so delegations cannot be verified.
 
 |*Artifact*
 |The portal's authorization and delegation checks.
@@ -120,7 +120,7 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Every confirmed file in the test set is deleted within 10 minutes of the confirmation and has an audit record of the deletion. A daily check finds zero files older than 7 days in the store.
 
 |*Questions*
-|Is 7 days an acceptable maximum transit time, and what happens to a queued request whose files are deleted before delivery (see Scenario 4)?
+|Is 7 days an acceptable maximum transit time?
 
 |*Issues*
 |Copies of files in backups are outside this scenario.
@@ -154,13 +154,13 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |The request-submission service and agency-delivery queue.
 
 |*Response*
-|Store the request once, mark it as awaiting delivery, and confirm receipt to the resident.
+|Store the request once, mark it as awaiting delivery, and confirm receipt to the resident. A request that cannot be delivered within 7 days expires together with its files (Scenario 3), and the resident is notified to submit again.
 
 |*Response measure*
 |Every request in the outage test set is confirmed within 3 seconds and is delivered exactly once within 15 minutes after the agency recovers.
 
 |*Questions*
-|Which timestamp is the official submission time, and how long may a request remain queued?
+|Which timestamp is the official submission time?
 
 |*Issues*
 |Services requiring synchronous agency validation need a separate scenario.

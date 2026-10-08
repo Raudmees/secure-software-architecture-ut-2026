@@ -8,7 +8,7 @@
 
 The Citizen Services Portal is a single digital entry point through which residents find,
 request, track, and manage public services. It authenticates residents through a national
-eID/OIDC identity provider, hosts the service catalogue and case workflows, exchanges documents
+eID/OIDC identity provider, hosts the service catalogue, exchanges documents
 and notifications, and integrates the back-end systems of the public agencies that actually
 deliver the services.
 
@@ -25,7 +25,7 @@ The full problem statement is in link:scenario.adoc[scenario.adoc].
 |Agency staff |Process requests that the portal forwards to their agency's own systems; they do not use the portal.
 |Administrators and helpdesk |Support residents and operate the portal, with role-limited access to case data.
 |Auditors and oversight bodies |Verify that citizen data has been accessed and processed lawfully.
-|Service provider organizations |Offer their services through the portal, or consume regulated public APIs as third-party clients.
+|Third-party service providers |Call the portal's regulated public APIs as registered clients.
 |Operations and security teams |Monitor service health and respond to security events.
 |===
 
@@ -117,7 +117,7 @@ image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Service
 |Single entry point for both web apps and third-party API clients: token validation, scopes, rate limiting and API versioning.
 
 |Identity & access
-|eID/OIDC login, sessions, and role and delegation-based authorization checks. Delegations are verified against the mandate registry.
+|eID/OIDC login, sessions, and role and delegation-based authorization checks. Delegations are verified against External registries.
 
 |Portal backend
 |One modular backend service with five modules: *catalogue and preferences* (service catalogue and resident preferences; profile data is read from registries on demand), *cases* (submits requests and shows live case status; stores no case content), *documents* (sends every upload to the antivirus scanner before it is accepted, then delivers it to the agency; downloads are fetched from the agency; the Temporary file store holds files only until they are scanned and delivered), *signing workflow* (runs the eID signing flow with the external signing service) and *notifications* (in-app inbox and dispatch to email, SMS and push providers).
@@ -137,6 +137,9 @@ image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Service
 |Portal DB (minimal)
 |Preferences, catalogue configuration, API client registrations, sessions, the notification inbox and submission records.
 
+|Temporary file store
+|Holds uploaded files in quarantine until the Antivirus scanner accepts them, and in transit until the agency confirms receipt. Files are deleted after delivery and never kept longer than 7 days (Scenario 3).
+
 |Observability
 |Monitoring, logs and tracing for the operations and security team.
 |===
@@ -147,7 +150,7 @@ image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Service
 The portal holds as little business data as possible. Case content, documents, profile data and
 delegations stay with the owning agencies and registries, and the portal reads them live through
 the agency integration service. The portal stores only its own data: preferences, catalogue
-configuration, API client registrations, sessions, the notification inbox, files in transit,
+configuration, API client registrations, sessions, the notification inbox, submission records, files in transit,
 queued requests in the message broker (which contain personal data), and the audit trail.
 
 The decision is recorded in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
@@ -188,7 +191,7 @@ Copies:
 * *Last known case status* (submission record): kept only so a background job can detect status changes and notify the resident. The status page never shows it; it reads the status live, and if the agency cannot be reached it says the status is temporarily unavailable.
 
 *Promise:* when Portal DB is available, the resident sees "Request saved. It will be sent to the
-agency." with a request reference within 3 seconds, even if the agency is down, and the status page shows the request as
+agency." with its submission ID within 3 seconds, even if the agency is down, and the status page shows the request as
 "Awaiting delivery" straight away (Scenario 4, "Agency unavailable during submission", in
 link:qa_scenarios.adoc[qa_scenarios.adoc]). The status page reads the submission record, which is
 written in the same transaction that confirms the request, so it is never behind. Once the agency
@@ -205,23 +208,23 @@ Workflow: a resident submits a service request (*Scenario 4*).
 . Citizen web app sends the form with a new submission ID to the API gateway.
 . API gateway checks the token; Identity & access checks the resident may submit.
 . Portal backend saves the submission ID in Portal DB and publishes the request to the Message broker in one transaction.
-. Portal backend confirms the submission; the resident sees "Request received".
+. Portal backend confirms the submission; the resident sees "Request saved. It will be sent to the agency.".
 . Message broker delivers the request to Agency integration, which sends it to the agency.
-. The agency returns a case reference; Portal backend saves it with the submission ID in Portal DB.
-. Portal backend notifies the resident with the case reference; all steps send audit events through the Message broker to the Audit service.
+. The agency returns an agency reference; Portal backend saves it with the submission ID in Portal DB.
+. Portal backend notifies the resident with the agency reference; all steps send audit events through the Message broker to the Audit service.
 
 *Lost reply*
 
 The request is saved, but the reply to the browser is lost.
 
 * *Resident sees:* after 10 seconds, "Checking whether your request was received". The form is kept and _Submit_ is disabled.
-* *Check:* the web app asks the Portal backend for the status of the same submission ID. If it exists, it shows "Request received" and the case reference, once the agency has given one.
-* *Safe retry:* if not, the web app resends with the same submission ID. The Portal backend returns the existing case for a known ID, so no duplicate case or message is created.
+* *Check:* the web app asks the Portal backend for the status of the same submission ID. If it exists, it shows "Request saved. It will be sent to the agency." and the agency reference, once the agency has given one.
+* *Safe retry:* if not, the web app resends with the same submission ID. The Portal backend returns the existing submission for a known ID, so no duplicate submission or message is created.
 
 *Test*
 
 Drop the response for 100 submissions with a fault-injection proxy between the API gateway and the web app.
-Expected: each submission ID has exactly one case and one queued message, a stub agency receives each request once and returns one case reference, and the resident sees that case reference.
+Expected: each submission ID has exactly one submission record and one queued message, a stub agency receives each request once and returns one agency reference, and the resident sees that agency reference.
 
 === Auditing and logging
 
