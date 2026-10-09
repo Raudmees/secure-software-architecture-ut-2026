@@ -54,6 +54,7 @@ Security goals and trust boundaries are in link:security_goals.adoc[security_goa
 * Agencies are willing to adopt our API/schema defined by the portal.
 * Residents without eID can still reach public services through non-digital channels (for example service offices). Whether the portal must also offer a digital fallback is open (R14).
 * Peak load clusters around known deadlines (for example the tax declaration period). Size is not yet known (see R11).
+* Agency systems are forced by gov desicion to provide us certain way of service integration (for example, a specific API or data format).
 
 == Open questions
 
