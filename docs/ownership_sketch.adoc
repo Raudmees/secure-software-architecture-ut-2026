@@ -11,10 +11,10 @@ types.
 |===
 |Team |Type |Containers owned
 
-|Portal Services Team
+|Portal Services Teams (2 teams)
 |Stream-aligned
 |Citizen web app, back-office web app, Portal backend (catalogue and preferences, cases,
-documents, signing workflow, notifications)
+documents, signing workflow, notifications), API gateway (public and provider APIs, versioning)
 
 |Identity and Access Team
 |Complicated-subsystem
@@ -22,7 +22,7 @@ documents, signing workflow, notifications)
 
 |Agency Integration Team
 |Stream-aligned
-|Agency integration, API gateway (public and provider APIs, versioning)
+|Agency integration
 
 |Audit and Transparency Team
 |Complicated-subsystem
