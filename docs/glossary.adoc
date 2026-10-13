@@ -37,7 +37,7 @@ Names exactly as in the C4 container diagram.
 * *Identity & access* — eID/OIDC login, sessions, and role- and delegation-based authorization decisions.
 * *Portal backend* — Modular backend service for the service catalogue and preferences, cases, documents, the signing workflow and notifications.
 * *Message broker* — Asynchronous delivery queue for requests to agencies and the audit event stream; holds personal data until delivery.
-* *Agency integration* — Adapters for each agency and registry, with data minimization, retries and mutual TLS.
+* *Agency integration* — Calls each agency's endpoint of the agency API and each registry through an adapter, with data minimization, retries and mutual TLS.
 * *Audit service* — Collects audit events and serves resident transparency and auditor queries.
 * *Portal DB (minimal)* — The portal's own data: preferences (language, notification channels and contact details), catalogue configuration, API client registrations, sessions, the notification inbox and submission records.
 * *Temporary file store* — Holds uploaded files only until they are scanned and delivered (quarantine and transit).
@@ -55,8 +55,9 @@ Names exactly as in the C4 container diagram.
 * *Trust domain* — People and systems under one organization's control and trust; shown as dashed boxes in the diagrams (Portal operator, Agency trust domain, National trust services, Audit environment).
 * *System of record* — Authoritative source for a data set; agencies and registries are the systems of record for case content, documents, profile data and delegations (ADR-0002).
 * *Data minimization* — Processing or disclosing only the personal data needed for a given service and purpose (QA-2).
-* *Canonical data model* — Portal-internal data format that agency adapters translate to and from.
-* *Adapter* — Part of Agency integration that connects one agency or registry system to the canonical data model.
+* *Agency API* — API and data format that the portal defines. Every agency implements it on its own endpoint, which the portal calls to send requests and read case status.
+* *Canonical data model* — Portal-internal data format that registry adapters translate to and from.
+* *Adapter* — Part of Agency integration that connects one registry to the canonical data model.
 * *Quarantine* — Holding an upload in the Temporary file store until the Antivirus scanner has accepted it.
 * *eID* — National electronic identity used to authenticate and to sign.
 * *OIDC* — OpenID Connect, the protocol used to authenticate residents through the identity provider.

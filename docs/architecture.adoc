@@ -71,8 +71,7 @@ Assumptions that most shape the design:
 
 * The target country is Estonia.
 * A national eID or equivalent identity provider exists and is available to delegate authentication to.
-* Back-end e-services expose APIs the portal can integrate with.
-* Agencies are willing to adopt the integration contract and schema defined by the portal.
+* Agencies are required by government decision to integrate with the portal through the API and data format that the portal defines.
 
 Full lists, including open questions, are in link:drivers.adoc[drivers.adoc].
 
@@ -129,7 +128,7 @@ image::../diagrams/c4_containers.svg[C4 container diagram of the Citizen Service
 |Asynchronous delivery queue to agencies, plus the audit event stream. It holds queued requests, which contain personal data, until they are delivered to the agency, so it is encrypted, access-controlled and durable.
 
 |Agency integration
-|Adapters for each agency and registry, a canonical data model, data minimization, retries and mutual TLS.
+|Calls each agency's own endpoint, which implements the agency API that the portal defines, and each registry through its own adapter and a canonical data model. Data minimization, retries and mutual TLS.
 
 |Audit service, audit store
 |Collects audit events from all services into append-only, tamper-evident storage, and serves resident transparency and auditor queries. Append-only is enforced by insert-only database permissions and hash chaining (tamper evidence).
