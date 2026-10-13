@@ -122,7 +122,7 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Version the public API with a published deprecation period; isolate each agency behind its own adapter; run contract tests against agency test environments.
 
 |R17
-|Agency references collide. A reference is unique only inside one agency. If the portal looks a case up by reference alone, two agencies using 123 point to the same record and a resident sees the wrong case.
+|Agency references collide. A reference is unique only inside one agency. If the portal looks a case up by reference alone, two agencies using for example CASE-123 point to the same record and a resident sees the wrong case.
 |Medium
 |High
 |Medium
