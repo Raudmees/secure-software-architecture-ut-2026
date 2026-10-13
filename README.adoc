@@ -33,6 +33,7 @@ For this project we are using the default scenario of Citizen Services Portal, d
 * Quality attributes (full prioritized list): link:docs/quality_attributes.adoc[docs/quality_attributes.adoc]
 * Quality attribute scenarios: link:docs/qa_scenarios.adoc[docs/qa_scenarios.adoc]
 * Security goals and trust boundaries: link:docs/security_goals.adoc[docs/security_goals.adoc]
+* Identity model: link:docs/identity_model.adoc[docs/identity_model.adoc]
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
 * Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
 * C4 diagrams (context and containers): link:diagrams/README.adoc[diagrams/README.adoc]
