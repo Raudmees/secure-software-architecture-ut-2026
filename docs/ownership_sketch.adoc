@@ -43,20 +43,28 @@ Where teams must coordinate, and what keeps that coordination small.
 |===
 |Teams |Why they coordinate |Reduced by
 
+|Portal Services team ↔ Portal Services team
+|Both teams change the same Portal backend and API gateway
+|Each team owns whole backend modules and their gateway routes. Modules call each other only through their public interfaces, so one team can change a module's internals without asking the other
+
 |Portal Services ↔ Identity and Access
-|Every protected operation needs an authorization decision
-|Identity and Access offers one fixed way to ask "may this user do this?", and changes it only with a new version
+|Every protected operation needs an authorization decision. Both store data in Portal DB (sessions)
+|Identity and Access offers one fixed way to ask "may this user do this?", and changes it only with a new version. Each team has its own schema in Portal DB and never reads the other's tables
 
 |Portal Services ↔ Agency Integration
-|Requests and documents go to agencies. New backend endpoints need API gateway changes
-|Agency data is translated into one common internal format, so the backend never sees agency-specific formats. Portal Services adds its own gateway routes; Agency Integration only reviews changes to the public API
+|Requests and documents go to agencies through the message broker and the Temporary file store. Agency integration reports delivery and the agency reference back. The backend reads profile data and case status live
+|Agency data is translated into one common internal format, so the backend never sees agency-specific formats. The request message and the delivery report (submission ID, agency reference) are versioned contracts
+
+|Identity and Access ↔ Agency Integration
+|Delegations are verified against External registries through Agency integration
+|Agency Integration offers one fixed "verify delegation" call, and changes it only with a new version
 
 |All teams ↔ Audit and Transparency
-|Every container emits audit events
-|The audit team publishes one audit event format and a ready-made library for sending events
+|Every container emits audit events. Transparency queries go through the API gateway
+|The audit team publishes one audit event format and a ready-made library for sending events, and owns the query API that the gateway routes to
 
 |All teams ↔ Platform and Operations
-|All teams use the message broker and databases that the Platform team runs
-|Teams create their own queues and databases with ready-made templates, so they do not wait for the Platform team
+|All teams use the message broker, Portal DB, Temporary file store and antivirus scanner that the Platform team runs
+|Teams create their own queues and schemas with ready-made templates, so they do not wait for the Platform team. The Platform team enforces the 7-day file limit in the store; Portal Services owns the delete-after-delivery rule (Scenario 3)
 |===
 
