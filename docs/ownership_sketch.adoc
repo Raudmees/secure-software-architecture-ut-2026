@@ -52,7 +52,7 @@ Where teams must coordinate, and what keeps that coordination small.
 |Identity and Access offers one fixed way to ask "may this user do this?", and changes it only with a new version. Each team has its own schema in Portal DB and never reads the other's tables
 
 |Portal Services ↔ Agency Integration
-|Requests and documents go to agencies through the message broker and the Temporary file store. Agency integration reports delivery and the agency reference back. The backend reads profile data and case status live
+|Requests and files go to agencies through the message broker and the Temporary file store. Agency integration reports delivery and the agency reference back. The backend reads profile data and case status live
 |Agency data is translated into one common internal format, so the backend never sees agency-specific formats. The request message and the delivery report (submission ID, agency reference) are versioned contracts
 
 |Identity and Access ↔ Agency Integration
