@@ -1,0 +1,50 @@
+= Identity Model
+:toc:
+
+== Identities
+
+[cols="2,3,3,3",options="header"]
+|===
+| |Person: user |Service: notifications |Object: case submission
+
+|Stable internal ID
+|`USER-1234` (UUID)
+|`SERVICE-Notification`
+|`SUB-1234` (UUID)
+
+|Internal ID created by
+|Identity & access, during first login
+|Portal Services Team, set manually
+|Citizen web app
+
+|External ID
+|`EE12345678910`
+|Email service ID, SMS service ID, notification service ID
+|Agency reference, for example `XXX-123`
+
+|External ID created by
+|Identity provider (government)
+|Email service provider, SMS service provider, notification service provider
+|The agency that handles the request
+
+|What is shown to people
+|User's name
+|Notification data: why the notification is sent, instructions on what to do with it, and the sender
+|"Submission xyz, made on DD/MM/YYYY, ID: SUB-1234"
+
+|Mapping stored in
+|Portal DB
+|Documentation
+|Portal DB
+
+|ID appears in public interface
+|`USER-1234` never leaves the portal. The ID code is sent to the agency in the request
+|The external ID is added to requests to the service providers
+|The submission ID in the status page URL and in the message to the agency, the agency reference on screen
+|===
+
+== Lifecycle changes
+
+* When a user's ID code (`EE...`) changes, the internal ID stays the same and still connects all the submissions the user has made. If the user has two eIDs, both are mapped to the same internal ID. The mapping in Identity & access is updated or extended, `USER-1234` does not change.
+* When a case moves to another agency, the submission ID stays the same. The agency and the agency reference in the submission record are updated.
+* When the notification provider is replaced, `SERVICE-Notification` stays the same and only the provider account ID (the external ID) changes.
