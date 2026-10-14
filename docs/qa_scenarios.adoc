@@ -166,14 +166,14 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Services requiring synchronous agency validation need a separate scenario.
 |===
 
-== Scenario 5. Add a service through an agency API
+== Scenario 5. Add an agency service through the agency API
 
 [cols="1,3",options="header"]
 |===
 |Field |Content
 
 |*Scenario name*
-|Add one agency service without changing the portal core.
+|Add one agency service without changing portal code.
 
 |*Business goal*
 |*BG-4* - onboard agencies without major changes.
@@ -182,28 +182,28 @@ link:quality_attributes.adoc[quality_attributes.adoc].
 |Evolvability and interoperability (*QA-5*).
 
 |*Stimulus*
-|An agency requests integration of one service through its documented REST API.
+|An agency that has implemented the agency API asks to add one service to the portal.
 
 |*Stimulus source*
 |The agency service owner.
 
 |*Environment*
-|Development time, with existing integrations already supported.
+|Development time, with other agencies already connected.
 
 |*Artifact*
-|The agency adapter and service catalogue.
+|Agency integration and the service catalogue.
 
 |*Response*
-|Add an adapter and service configuration without changing the portal core or existing adapters.
+|Register the agency's endpoint and credentials in Agency integration and add the service and its form definition to the catalogue. No portal code changes.
 
 |*Response measure*
-|The integration takes no more than 10 person-days, requires zero changes to the core or existing adapters, and passes the existing integration tests.
+|The agency passes the agency API conformance tests, onboarding takes no more than 2 person-days on the portal side, and zero changes are made to portal code or to other agencies' configuration.
 
 |*Questions*
-|Is the 10 person-day target realistic for the first integrations?
+|Is the form definition for each service part of the agency API, or does the agency supply it?
 
 |*Issues*
-|Non-REST or undocumented agency interfaces require separate scenarios.
+|Agencies that cannot implement the agency API by the required date are outside this scenario.
 |===
 
 == Coverage

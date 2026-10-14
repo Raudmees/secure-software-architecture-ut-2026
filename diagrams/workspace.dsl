@@ -29,7 +29,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
                 iam = container "Identity & access" "eID login, sessions, role and delegation checks." "Service"
                 backend = container "Portal backend" "Service catalogue and preferences, case submission and status, document upload and download, eID signing workflow, notification dispatch and inbox." "Modular backend service"
                 bus = container "Message broker" "Delivery queue for requests to agencies (contains personal data: encrypted, access-controlled, durable) and audit events." "Async messaging" "Queue"
-                integration = container "Agency integration" "Per-agency adapters, data minimization, retries." "Adapters"
+                integration = container "Agency integration" "Agency API, registry adapters, data minimization, retries." "Adapters"
                 audit = container "Audit service" "Audit trail, transparency queries." "Service"
                 portalDb = container "Portal DB (minimal)" "Preferences, catalogue configuration, API client registrations, sessions, notification inbox and submission records." "Relational DB" "Database"
                 docStore = container "Temporary file store" "Quarantine and transit only." "Object storage" "Database"

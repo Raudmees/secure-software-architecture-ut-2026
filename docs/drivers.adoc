@@ -50,10 +50,9 @@ Security goals and trust boundaries are in link:security_goals.adoc[security_goa
 
 * The country in which and for what the system will be designed is Estonia.
 * A national eID or another identity provider exists and is available for the portal to delegate authentication to.
-* Back-end e-services expose APIs that the portal can integrate with.
-* Agencies are willing to adopt our API/schema defined by the portal.
 * Residents without eID can still reach public services through non-digital channels (for example service offices). Whether the portal must also offer a digital fallback is open (R14).
 * Peak load clusters around known deadlines (for example the tax declaration period). Size is not yet known (see R11).
+* Agencies are required by government decision to integrate with the portal through the API and data format that the portal defines, so the portal does not build a separate integration for each agency.
 
 == Open questions
 

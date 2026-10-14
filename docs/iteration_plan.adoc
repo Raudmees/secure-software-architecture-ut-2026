@@ -26,8 +26,8 @@ Agree the scope and initial architecture, and reduce the High/High and structure
 |Signing sequence and technical spike.
 
 |R09
-|Select representative external systems, compare their interfaces and test the adapter approach.
-|Interface comparison and adapter PoC or mock.
+|Draft the agency API with one representative agency, and compare the interfaces of the selected registries to test the adapter approach.
+|Agency API draft with a stub agency; registry interface comparison and adapter PoC or mock.
 
 |R11
 |Estimate users, requests and data volumes, and define the peak-load scenario.
@@ -128,8 +128,8 @@ Build the system on the validated architecture and integrate the selected mechan
 |Authorization test: clients cannot access operations or data outside their granted scopes.
 
 |R09
-|Add the adapters for the selected external systems.
-|Response measures of QA scenario 5 pass (no changes to core or existing adapters).
+|Onboard the selected agencies through the agency API and add the adapters for the selected registries.
+|Response measures of QA scenario 5 pass (no changes to portal code).
 
 |R10
 |Complete the main end-to-end citizen-service flow.
@@ -140,7 +140,7 @@ Build the system on the validated architecture and integrate the selected mechan
 |Response measures of QA scenario 1 pass, and all requests for another resident's data without authorization are denied.
 
 |R16
-|Define the public API versioning and deprecation policy and add contract tests for the public API and one agency adapter.
+|Define the public API versioning and deprecation policy and add contract tests for the public API and the agency API.
 |Published versioning policy; contract tests pass against the current API version and one agency test environment.
 
 |===

@@ -66,11 +66,11 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Identify the concrete requirements early and design one representative third-party API interaction including authentication, authorization/scopes, auditing and error handling.
 
 |R09
-|Agency and registry systems may not be compatible with the portal (different IDs, data formats or interfaces), so each integration may take much longer than planned and we may not finish all 2-3 required integrations.
+|Registry systems may not be compatible with the portal (different IDs, data formats or interfaces), and agencies may implement the agency API late or incorrectly, so each integration may take much longer than planned and we may not finish all 2-3 required integrations.
 |High
 |High
 |High
-|Compare the interfaces of the selected systems, define a common internal data model with one adapter per system, and test it with at least two of them.
+|Compare the interfaces of the selected registries and define a common internal data model with one adapter per registry. Publish the agency API early with conformance tests and a stub agency, and validate it with at least two agencies.
 
 |R10
 |Components may appear workable independently but fail when combined into an end-to-end citizen-service flow, revealing incompatible assumptions late in the project.
@@ -115,7 +115,7 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Queue requests in the message broker during outages, timeouts and circuit breakers in the agency integration service, and show residents a clear pending status (QA scenario 4). 
 
 |R16
-|If the portal's public API changes without a versioning and deprecation policy, or an agency changes its API without notice, then third-party clients or agency adapters break.
+|If the portal's public API or agency API changes without a versioning and deprecation policy, then third-party clients or agency integrations break.
 |Medium
 |High
 |Medium
