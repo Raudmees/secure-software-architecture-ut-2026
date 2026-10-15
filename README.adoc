@@ -17,8 +17,8 @@ For this project we are using the default scenario of Citizen Services Portal, d
 
 == Current status
 
-* Week: *5*
-* Main focus this week: *Repository review package and presentation*
+* Week: *6*
+* Main focus this week: *Identity model: stable internal IDs, external IDs and their mapping*
 * Top architectural driver: *QA-1 Authorization and confidentiality*
 * Biggest open question: *Is a digital fallback login required for residents without eID? (R14)*
 * Biggest technical risk: *We cannot take responsibility for the agencies' systems and the availability of their APIs. When they fail, they can disrupt use of our portal (R15).*
