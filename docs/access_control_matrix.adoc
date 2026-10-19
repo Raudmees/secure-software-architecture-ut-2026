@@ -1,0 +1,26 @@
+= Access Control Matrix
+
+Workflow: a resident submits a service request (Scenario 4, see Workflow and messaging in link:architecture.adoc[architecture.adoc]).
+
+[cols="1,1,2,3,2",options="header"]
+|===
+|Subject |Action |Resource |Condition |Checked by
+
+|Citizen
+|Creates
+|New submission
+|Authenticated with eID and the submission is for themselves
+|Identity & access
+
+|Delegate
+|Creates
+|New submission
+|The registry confirms a mandate for this citizen that covers this service and is valid today
+|Identity & access
+
+|Delegate
+|Creates
+|New submission
+|The mandate does not cover this service → denied (403)
+|Identity & access
+|===
