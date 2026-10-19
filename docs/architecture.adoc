@@ -175,7 +175,8 @@ personal identification code.
 *Who may act*
 
 Anyone who signs in with eID, that is, the residents of the country that runs the portal.
-Identity & access makes every authorization decision.
+Identity & access makes every authorization decision within the boundaries of the services we
+develop and maintain.
 
 *When access is denied*
 
