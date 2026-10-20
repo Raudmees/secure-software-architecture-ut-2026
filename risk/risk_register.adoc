@@ -127,6 +127,13 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |High
 |Medium
 |Key the mapping by agency and reference together; test with the same reference from two stub agencies.
+
+|R18
+|If Identity & access caches delegation decisions (open question in link:../docs/qa_scenarios.adoc[QA scenario 1]), then a delegate whose mandate was revoked in the registry can keep submitting requests for the citizen until the cache expires.
+|Medium
+|High
+|Medium
+|Check the mandate against External registries on every protected action, or cache for at most 5 minutes. Test: revoke the mandate in a stub registry, retry the submission, and expect a 403 and an audit event naming both people.
 |===
 
 == Notes
