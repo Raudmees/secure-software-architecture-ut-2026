@@ -163,6 +163,54 @@ Add at least two component views for important containers.
 
 === Identity and access
 
+*Login*
+
+The resident signs in with eID through the national authentication service (for example TARA).
+The service returns a token with the claims the portal needs for the session, such as the
+personal identification code and name. On first login, Identity & access creates the internal
+ID `USER-1234` and maps the personal identification code to it (see
+link:identity_model.adoc[identity_model.adoc]). The session carries only `USER-1234`, never the
+personal identification code.
+
+*Who may act*
+
+Anyone who signs in with eID, that is, the residents of the country that runs the portal.
+Identity & access makes every authorization decision within the boundaries of the services we
+develop and maintain.
+
+*When access is denied*
+
+* By default the portal returns *404 Not Found*, even when the object or page exists, so the
+  response does not reveal that it exists.
+* Where the user already knows about the restriction, the portal returns *401 Unauthorized*
+  (not signed in, or the session has expired) or *403 Forbidden* (signed in, but not allowed).
+
+*Delegation*
+
+* *Granted by:* the represented person, as a voluntary mandate. Legal representation comes from the registry.
+* *Where it is held:* mandates are held in the External registries, and the portal does not store them. If a user has delegations, Identity & access queries the registry to find whom the user may represent.
+* *What it covers:* agency policy or agreement decides which data a delegate sees and what they may change. The registry confirms for which agency's services the delegate may represent someone. The agency is the custodian of these access rights.
+* *When it ends:* when the mandate expires or is revoked.
+* *How revocation takes effect:* the portal keeps no copy of delegations, so a revocation in the registry applies at the next authorization check. If the registry cannot confirm a delegation, delegated access is denied.
+* *Audit record:* the person who performs the action is recorded as the actor. When they act for someone else, the record also holds a reference to the delegation, depending on the business case.
+
+*Service-to-service identity*
+
+Inside the portal, services call each other by internal URL. If the system grows more complex
+and handles secret data, TLS or mTLS certificates may be needed for data moving between
+containers.
+
+*Access-control approach*
+
+Attribute-based. The _resident_ role only lets a person into the portal. The decision on each
+action uses attributes:
+
+* the owner ID of the object matches the user, or
+* the user holds a mandate that covers the service and is still valid.
+
+Roles alone cannot express "this person's submission". The full rules are in
+link:access_control_matrix.adoc[access_control_matrix.adoc].
+
 === Data management
 
 Action: a resident submits a service request and opens its status page (see Workflow and messaging).
