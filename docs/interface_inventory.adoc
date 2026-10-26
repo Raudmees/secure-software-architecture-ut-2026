@@ -1,0 +1,133 @@
+oka= Interface Inventory
+
+
+[cols="1,3,1,2,2,2,2,2",options="header"]
+|===
+|ID |Interface |Kind |Producer |Consumer |Protocol |Auth mechanism |Versioning (draft)
+
+|IF-1
+|Citizen web app – API gateway
+|API
+|API gateway
+|Citizen web app
+|HTTPS/JSON
+|Resident session token from eID login, checked by API gateway
+|/v1 in URL - only additive changes within v1
+
+|IF-2
+|Third-party API clients – API gateway
+|API
+|API gateway
+|Third-party API clients
+|HTTPS/JSON
+|OAuth 2.0 client credentials
+|/v1 in URL - after /v2 is released, /v1 stays for 6 months (R16)
+
+|IF-3
+|API gateway – Identity & access
+|API
+|Identity & access
+|API gateway
+|HTTPS/JSON
+|mTLS service identity
+|Internal - changed together with the consumer
+
+|IF-4
+|API gateway – Portal backend
+|API
+|Portal backend
+|API gateway
+|HTTPS/JSON
+|mTLS service identity - carries the resident's checked token
+|Internal - changed together with the consumer
+
+|IF-5
+|API gateway – Audit service (transparency queries)
+|API
+|Audit service
+|API gateway
+|HTTPS/JSON
+|mTLS service identity - carries the resident's checked token
+|Internal - changed together with the consumer
+
+|IF-6
+|Identity & access – Agency integration (mandate check)
+|API
+|Agency integration
+|Identity & access
+|HTTPS/JSON
+|mTLS service identity
+|Internal - changed together with the consumer
+
+|IF-7
+|Portal backend – Agency integration (case status)
+|API
+|Agency integration
+|Portal backend
+|HTTPS/JSON
+|mTLS service identity
+|Internal - changed together with the consumer
+
+|IF-8
+|Portal backend – Agency integration (delivery report)
+|API
+|Portal backend
+|Agency integration
+|HTTPS/JSON
+|mTLS service identity
+|Internal - changed together with the consumer
+
+|IF-9
+|Submission queue (Message broker)
+|Event
+|Portal backend
+|Agency integration
+|Message queue
+|mTLS to the broker, only Portal backend may publish, only Agency integration may consume
+|Internal - schemaVersion field in each message
+
+|IF-10
+|Audit events (Message broker)
+|Event
+|All containers
+|Audit service
+|Message queue
+|mTLS to the broker, all containers may publish, only Audit service may consume
+|Internal - schemaVersion field in each message
+
+|IF-11
+|Agency integration – Agency back-end e-services
+|Integration
+|Agency back-end e-services
+|Agency integration
+|HTTPS/JSON
+|mTLS
+|/v1 in URL, defined by the portal - old version kept 6 months so agencies have time to update
+
+|IF-12
+|Agency integration – External registries
+|Integration
+|External registries
+|Agency integration
+|HTTPS, each registry's own API
+|mTLS
+|Set by each registry - adapter isolates changes
+
+|IF-13
+|Portal backend – Notification providers
+|Integration
+|Email, SMS and push providers
+|Portal backend
+|HTTPS, each provider's own API
+|API key per provider account
+|Set by each provider - adapter isolates changes
+
+|IF-14
+|Identity & access – National eID (TARA)
+|Integration
+|TARA
+|Identity & access
+|OpenID Connect (OIDC)
+|OIDC client registration with TARA (client ID and secret)
+|Set by the provider (TARA)
+|===
