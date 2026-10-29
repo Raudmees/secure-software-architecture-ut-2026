@@ -1,0 +1,60 @@
+= ADR-0003: Interface boundaries and specification approach
+:toc:
+
+== Status
+
+Accepted
+
+== Context
+
+The portal has interfaces of several kinds:
+APIs for residents and third parties, an agency API that each agency implements, calls between
+our own containers, queued messages, and the APIs of external providers.
+
+Residents' browsers, third parties and agencies build against some of these interfaces, and we
+cannot make them update when we do. If those interfaces change without a clear rule, their
+systems break (R16). We must decide which interfaces are contracts and how we specify and
+version them.
+
+== Decision
+
+* *Public contracts* are the resident API and the third-party API behind the API gateway, and
+  the agency API. Everything else is internal or belongs to the external provider.
+* Public contracts are written first as OpenAPI 3.1 files in api/, reviewed in pull requests, and only then implemented.
+* Public contracts carry the major version in the path (`/v1`). Within a version only additive
+  changes are allowed. A breaking change creates `/v2`, and `/v1` stays for 6 months.
+* *Internal APIs* between our containers are listed in the inventory but not published. Both
+  sides are changed and deployed together.
+* *Queued messages* carry a `schemaVersion` field, because a message can be read by newer code
+  than the code that wrote it.
+* *External providers' APIs* (registries, TARA, notification and signing services) follow the
+  provider's versions. Each is wrapped in its own adapter.
+* All public endpoints return errors with a stable `code`.
+* Calls that must not happen twice (such as sending a signing prompt) require an
+  `Idempotency-Key`.
+
+== Alternatives considered
+
+* *Code-first*: generate the spec from the code. Not chosen because there is no code yet, and
+  agencies need the agency API before the portal is built.
+
+== Consequences
+
+* Positive:
+** Agencies and third parties can build and test against the spec before the portal exists.
+** Breaking changes are visible in review, because they need a new major version (R16).
+* Negative or risks:
+** The spec and the implementation can drift apart.
+** During the 6 months, two versions must be run and maintained.
+* Follow-up actions:
+** Describe the agency API in `api/`.
+
+
+== References
+
+* link:../docs/interface_inventory.adoc[Interface inventory]
+* link:../api/openapi.yaml[OpenAPI specification]
+* link:../risk/risk_register.adoc[Risk register]: R16
+* link:ADR-0002-portal-stores-minimal-data.adoc[ADR-0002]: agencies keep their data and implement the agency API
+
+
