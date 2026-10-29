@@ -277,7 +277,7 @@ Expected: each submission ID has exactly one submission record and one queued me
 
 == 7. Interfaces
 
-API specification: link:../api/openapi.yaml[api/openapi.yaml] (OpenAPI 3.0). It covers the eID
+API specification: link:../api/openapi.yaml[api/openapi.yaml] (OpenAPI 3.1). It covers the eID
 signing workflow as a two-step sequence, `startSigning` then `completeSigning`, with bearer-token
 authentication, stable error codes and idempotency rules.
 

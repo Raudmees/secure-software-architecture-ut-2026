@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Citizen Services Portal API
-  version: 0.2.0
+  version: 0.1.0
   description: |
     Resident-facing API of the Citizen Services Portal. All calls go through the API gateway.
 
@@ -24,6 +24,13 @@ info:
     **Versioning**: the major version is part of the path (`/v1`). Adding optional response
     fields or new error codes is not a breaking change. A client that receives a `code` it does
     not know treats the response as a generic error for its HTTP status.
+
+    **Idempotency**: `startSigning` creates a new resource and causes a prompt on the
+    resident's phone, so the client supplies an `Idempotency-Key` and the portal replays the
+    first result on retry (rules on the operation). `completeSigning` acts on a session that
+    already has an ID, so the ID is the key and the operation is idempotent by construction.
+    Both follow the principle of the submission flow in architecture.adoc (Workflow and
+    messaging), where the client-generated submission ID plays the same role.
 
     **Errors** are Problem Details (RFC 9457) with a stable `code`. Clients act on `code` and
     the HTTP status, never on `title` or `detail`, which are written for people and may change.
@@ -67,16 +74,25 @@ paths:
         **Limits**: one active signing session per document, and at most 5 starts per resident
         in 10 minutes, so a client cannot flood the resident's phone with prompts.
 
-        **Idempotency**: `Idempotency-Key` is required. A retry with the same key and body
-        returns the first response, with the same `signingSessionId` and verification code,
-        and sends no second prompt. Without this, a lost reply followed by a retry would put
-        two prompts with different codes on the phone, which teaches residents to confirm
-        prompts without checking the code.
+        **Idempotency**: `Idempotency-Key` is required (see the parameter). Without it, a lost
+        reply followed by a retry would put two prompts with different codes on the phone, which
+        teaches residents to confirm prompts without checking the code, the one check that stops
+        a phishing attacker from getting a resident to sign the attacker's document.
 
-        * Keys are kept for 24 hours and are scoped to the resident.
-        * The same key with a different body or document returns `422 IDEMPOTENCY_KEY_REUSED`.
-        * The same key while the first request is still running returns `409 REQUEST_IN_PROGRESS`.
-        * `429` and `5xx` responses are not stored, so a retry after them is processed again.
+        The portal looks the key up as `(resident, key)` in Portal DB (minimal) and decides:
+
+        * *Not seen*: insert the key first, then process. The insert is atomic, so two racing
+          requests cannot both pass as not seen and send two prompts. The record holds a
+          fingerprint (hash of method, path and body, never the body itself) and, once the
+          request finishes, its response.
+        * *Seen, same fingerprint, finished*: return the stored `202` with the same
+          `signingSessionId` and verification code. No second prompt is sent.
+        * *Seen, same fingerprint, still running*: `409 REQUEST_IN_PROGRESS`; retry with the same key.
+        * *Seen, different fingerprint*: `422 IDEMPOTENCY_KEY_REUSED`; use a new key.
+        * `429` and `5xx` results are not stored, because they occur before any prompt is sent,
+          so a retry after them is processed again.
+
+        Keys are kept for 24 hours: long enough for any retry, short enough not to accumulate.
       security:
         - residentToken: []
       parameters:
@@ -198,11 +214,17 @@ paths:
         session does not exist (`404`). A delegate's mandate is checked again, so a mandate
         revoked after `startSigning` stops the signature (`403`).
 
-        **Idempotency**: no `Idempotency-Key` is needed, because the session ID identifies the
-        operation. The change to `COMPLETED` and the queuing of the signed document happen in
-        one transaction, so repeated calls return the same `200` result and the agency receives
-        the signed document once. A rejected or expired session keeps returning the same error,
-        and a new attempt needs a new `startSigning` call with a new key.
+        **Idempotency**: no `Idempotency-Key`, because `signingSessionId` identifies the
+        operation. Three things make repeated calls harmless:
+
+        * The signed document is written to the Temporary file store first; then marking the
+          session `COMPLETED` and publishing the delivery message happen in one transaction, so
+          a retry can never queue the document twice and the agency receives it once.
+        * Terminal states are sticky: a completed session keeps returning the same `200`, a
+          rejected or expired one the same `409` or `410`. A new attempt needs a new
+          `startSigning` call with a new key.
+        * While the resident has not answered, the `202` + `Retry-After` poll is the expected
+          repeat call, so there is no separate retry case to get wrong.
       security:
         - residentToken: []
       parameters:
@@ -331,7 +353,12 @@ components:
       name: Idempotency-Key
       in: header
       required: true
-      description: Client-generated UUID, new for each signing attempt and reused on every retry of that attempt.
+      description: |
+        UUID v4 generated by the client when the resident starts a signing attempt, and resent
+        unchanged on every retry of that attempt (lost reply, timeout, double-click). A new
+        attempt, after a rejected or expired session, gets a new key. The key is not a secret:
+        the portal scopes it to the signed-in resident, so another resident cannot replay or
+        probe it.
       schema:
         type: string
         format: uuid
@@ -342,7 +369,7 @@ components:
       schema:
         type: integer
         minimum: 1
-        example: 2
+        examples: [2]
 
   responses:
     ValidationFailed:
@@ -420,7 +447,7 @@ components:
             Which signing app receives the prompt. The personal identification code comes from
             Identity & access, and for Mobile-ID the phone number comes from the resident's
             contact details in Portal DB (minimal); neither is taken from the request.
-          example: SMART_ID
+          examples: [SMART_ID]
         documentSha256:
           type: string
           pattern: '^[0-9a-f]{64}$'
@@ -429,7 +456,7 @@ components:
             document-download operation (not yet in this specification). If the agency's
             current document does not match, signing is refused with `DOCUMENT_CHANGED`, so
             the resident never signs something they have not seen.
-          example: 2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
+          examples: [2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae]
 
     SigningSession:
       type: object
@@ -438,7 +465,7 @@ components:
         signingSessionId:
           type: string
           format: uuid
-          example: 7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33
+          examples: [7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33]
         status:
           type: string
           enum: [AWAITING_CONFIRMATION]
@@ -446,12 +473,12 @@ components:
           type: string
           pattern: '^[0-9]{4}$'
           description: Shown to the resident, who confirms the prompt only if the signing app shows the same code.
-          example: '4927'
+          examples: ['4927']
         expiresAt:
           type: string
           format: date-time
           description: After this time the session can no longer be completed.
-          example: '2026-10-29T10:05:00Z'
+          examples: ['2026-10-29T10:05:00Z']
 
     SigningResult:
       type: object
@@ -460,7 +487,7 @@ components:
         signingSessionId:
           type: string
           format: uuid
-          example: 7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33
+          examples: [7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33]
         status:
           type: string
           enum: [COMPLETED]
@@ -468,7 +495,7 @@ components:
           type: string
           format: date-time
           description: Signing time taken from the signature's timestamp.
-          example: '2026-10-29T10:01:12Z'
+          examples: ['2026-10-29T10:01:12Z']
         deliveryStatus:
           type: string
           enum: [AWAITING_DELIVERY, DELIVERED]
@@ -486,7 +513,7 @@ components:
             Stable error code from the table in the API description. Its meaning never changes
             within a major version. The list is open, new codes may be added, so it is not an
             enum, and a client treats an unknown code as a generic error for its HTTP status.
-          example: DOCUMENT_CHANGED
+          examples: [DOCUMENT_CHANGED]
         title:
           type: string
           description: Short summary for people. May change and may be localized.
