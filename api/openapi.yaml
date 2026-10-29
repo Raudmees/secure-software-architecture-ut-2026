@@ -1,0 +1,501 @@
+openapi: 3.0.3
+info:
+  title: Citizen Services Portal API
+  version: 0.2.0
+  description: |
+    Resident-facing API of the Citizen Services Portal. All calls go through the API gateway.
+
+    This version covers one workflow: a resident signs, with eID, a document that an agency
+    has sent to their case for signature. It supports the eID means that sign through a prompt
+    on the resident's phone, Smart-ID and Mobile-ID, called the signing app below. ID-card
+    signing, where the browser signs locally through a card reader, needs a different sequence
+    and is left to a later version. Signing is a sequence of two calls:
+
+    1. `startSigning` fetches the document from the agency, checks that it is the version the
+       resident viewed, and asks the Digital signing service to send a signing prompt to the
+       resident's signing app. The response holds a verification code that the resident
+       compares with the code shown in the app.
+    2. `completeSigning` collects the signature after the resident has confirmed it in the app,
+       validates it, and queues the signed document for delivery to the agency.
+
+    Every call, allowed or denied, produces an audit event with the actor, the delegation
+    reference (if any), the resource IDs and the outcome, never document content (QA-4).
+
+    **Versioning**: the major version is part of the path (`/v1`). Adding optional response
+    fields or new error codes is not a breaking change. A client that receives a `code` it does
+    not know treats the response as a generic error for its HTTP status.
+
+    **Errors** are Problem Details (RFC 9457) with a stable `code`. Clients act on `code` and
+    the HTTP status, never on `title` or `detail`, which are written for people and may change.
+
+    | Code | HTTP | Meaning | Client action |
+    |---|---|---|---|
+    | `VALIDATION_FAILED` | 400 | The request is malformed | Fix the request |
+    | `AUTH_REQUIRED` | 401 | Token missing, expired or not issued for this API | Sign in again |
+    | `ACCESS_DENIED` | 403 | The delegate's mandate does not cover, or no longer covers, signing for this service | None |
+    | `NOT_FOUND` | 404 | Does not exist, or is not visible to the caller | None |
+    | `DOCUMENT_CHANGED` | 409 | The agency's document differs from the version the resident viewed | Reopen the document, then start again |
+    | `DOCUMENT_NOT_SIGNABLE` | 409 | The document is not awaiting the resident's signature | None |
+    | `SIGNING_IN_PROGRESS` | 409 | Another signing session for this document is active | Wait until it ends |
+    | `REQUEST_IN_PROGRESS` | 409 | The first request with this `Idempotency-Key` is still running | Retry with the same key |
+    | `SIGNING_REJECTED` | 409 | The resident declined the prompt in the signing app | Start again with a new key |
+    | `SIGNING_EXPIRED` | 410 | The session expired before the resident confirmed | Start again with a new key |
+    | `IDEMPOTENCY_KEY_REUSED` | 422 | The key was already used for a different request | Use a new key |
+    | `SIGNATURE_INVALID` | 422 | The signature or certificate failed validation, or the signer is not the signed-in resident | None |
+    | `RATE_LIMITED` | 429 | Too many requests | Retry after `Retry-After` |
+    | `DELEGATION_UNAVAILABLE` | 503 | The registry cannot confirm the mandate, so delegated access is denied (Scenario 1) | Retry after `Retry-After` |
+    | `AGENCY_UNAVAILABLE` | 503 | The agency cannot provide the document | Retry after `Retry-After` |
+    | `SIGNING_SERVICE_UNAVAILABLE` | 503 | The Digital signing service cannot be reached | Retry after `Retry-After` |
+servers:
+  - url: https://portal.example/api
+    description: API gateway (example host)
+tags:
+  - name: Signing
+    description: eID signing of documents that agencies send to residents' cases
+paths:
+  /v1/submissions/{submissionId}/documents/{documentId}/start-signing:
+    post:
+      tags: [Signing]
+      operationId: startSigning
+      summary: Start signing a document in a case
+      description: |
+        **Who may call**: the resident who owns the submission, or a delegate whose mandate,
+        confirmed live by the External registries, covers signing for this service. The signer
+        is always the signed-in person: the personal identification code sent to the Digital
+        signing service comes from Identity & access, never from the request.
+
+        **Limits**: one active signing session per document, and at most 5 starts per resident
+        in 10 minutes, so a client cannot flood the resident's phone with prompts.
+
+        **Idempotency**: `Idempotency-Key` is required. A retry with the same key and body
+        returns the first response, with the same `signingSessionId` and verification code,
+        and sends no second prompt. Without this, a lost reply followed by a retry would put
+        two prompts with different codes on the phone, which teaches residents to confirm
+        prompts without checking the code.
+
+        * Keys are kept for 24 hours and are scoped to the resident.
+        * The same key with a different body or document returns `422 IDEMPOTENCY_KEY_REUSED`.
+        * The same key while the first request is still running returns `409 REQUEST_IN_PROGRESS`.
+        * `429` and `5xx` responses are not stored, so a retry after them is processed again.
+      security:
+        - residentToken: []
+      parameters:
+        - $ref: '#/components/parameters/SubmissionId'
+        - $ref: '#/components/parameters/DocumentId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartSigningRequest'
+      responses:
+        '202':
+          description: The signing prompt was sent. Show the verification code, then call `completeSigning`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningSession'
+        '400':
+          $ref: '#/components/responses/ValidationFailed'
+        '401':
+          $ref: '#/components/responses/AuthRequired'
+        '403':
+          $ref: '#/components/responses/AccessDenied'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: The request conflicts with the document's state or with an earlier request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                DOCUMENT_CHANGED:
+                  value:
+                    code: DOCUMENT_CHANGED
+                    title: The document has changed since you opened it
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                DOCUMENT_NOT_SIGNABLE:
+                  value:
+                    code: DOCUMENT_NOT_SIGNABLE
+                    title: This document is not waiting for your signature
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                SIGNING_IN_PROGRESS:
+                  value:
+                    code: SIGNING_IN_PROGRESS
+                    title: This document is already being signed
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                REQUEST_IN_PROGRESS:
+                  value:
+                    code: REQUEST_IN_PROGRESS
+                    title: Your previous request is still being processed
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '422':
+          description: The `Idempotency-Key` was already used for a different request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                code: IDEMPOTENCY_KEY_REUSED
+                title: The idempotency key was used for a different request
+                status: 422
+                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          description: A system needed to start signing is unavailable. No prompt was sent, so a retry with the same key is safe.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                DELEGATION_UNAVAILABLE:
+                  value:
+                    code: DELEGATION_UNAVAILABLE
+                    title: Your authorization to act for this person cannot be checked right now
+                    status: 503
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                AGENCY_UNAVAILABLE:
+                  value:
+                    code: AGENCY_UNAVAILABLE
+                    title: The agency's document cannot be retrieved right now
+                    status: 503
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                SIGNING_SERVICE_UNAVAILABLE:
+                  value:
+                    code: SIGNING_SERVICE_UNAVAILABLE
+                    title: Signing is temporarily unavailable
+                    status: 503
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+
+  /v1/signing-sessions/{signingSessionId}/complete:
+    post:
+      tags: [Signing]
+      operationId: completeSigning
+      summary: Complete a signing session
+      description: |
+        Call after `startSigning`, once the resident has confirmed the prompt in the signing
+        app. If the resident has not answered yet, the response is `202` and the client calls
+        again after `Retry-After` seconds, until the session's `expiresAt`. Polling faster than
+        `Retry-After` is rate limited (`429`).
+
+        On success the portal validates the signature and the signer's certificate, including
+        that the certificate belongs to the signed-in resident, stores the signed document in
+        the Temporary file store and queues its delivery to the agency through the Message
+        broker. If the agency is unreachable, signing still succeeds and `deliveryStatus` is
+        `AWAITING_DELIVERY` (Scenario 4).
+
+        **Who may call**: only the resident who started the session. For anyone else the
+        session does not exist (`404`). A delegate's mandate is checked again, so a mandate
+        revoked after `startSigning` stops the signature (`403`).
+
+        **Idempotency**: no `Idempotency-Key` is needed, because the session ID identifies the
+        operation. The change to `COMPLETED` and the queuing of the signed document happen in
+        one transaction, so repeated calls return the same `200` result and the agency receives
+        the signed document once. A rejected or expired session keeps returning the same error,
+        and a new attempt needs a new `startSigning` call with a new key.
+      security:
+        - residentToken: []
+      parameters:
+        - $ref: '#/components/parameters/SigningSessionId'
+      responses:
+        '200':
+          description: The document is signed and queued for delivery to the agency.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningResult'
+        '202':
+          description: The resident has not confirmed yet. Call again after `Retry-After` seconds.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningSession'
+        '400':
+          $ref: '#/components/responses/ValidationFailed'
+        '401':
+          $ref: '#/components/responses/AuthRequired'
+        '403':
+          $ref: '#/components/responses/AccessDenied'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: The resident declined the prompt in the signing app.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                code: SIGNING_REJECTED
+                title: Signing was cancelled in the signing app
+                status: 409
+                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '410':
+          description: The session expired before the resident confirmed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                code: SIGNING_EXPIRED
+                title: The signing request has expired
+                status: 410
+                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '422':
+          description: The signature failed validation. Nothing was sent to the agency.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                code: SIGNATURE_INVALID
+                title: The signature could not be accepted
+                status: 422
+                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '503':
+          description: The signature or the mandate cannot be checked right now. Retrying is safe.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                SIGNING_SERVICE_UNAVAILABLE:
+                  value:
+                    code: SIGNING_SERVICE_UNAVAILABLE
+                    title: Signing is temporarily unavailable
+                    status: 503
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                DELEGATION_UNAVAILABLE:
+                  value:
+                    code: DELEGATION_UNAVAILABLE
+                    title: Your authorization to act for this person cannot be checked right now
+                    status: 503
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+
+components:
+  securitySchemes:
+    residentToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Access token of a resident's portal session, issued by Identity & access after eID
+        login through the national authentication service (for example TARA). The API gateway
+        checks its signature, issuer, audience and expiry. The token identifies the resident
+        only by internal user ID (`USER-…`), never by personal identification code.
+        Tokens of third-party API clients are rejected: these operations are for residents only.
+
+  parameters:
+    SubmissionId:
+      name: submissionId
+      in: path
+      required: true
+      description: Submission ID of the resident's case (see identity_model.adoc).
+      schema:
+        type: string
+        format: uuid
+    DocumentId:
+      name: documentId
+      in: path
+      required: true
+      description: The agency's ID of the document within the case.
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9._-]{1,64}$'
+    SigningSessionId:
+      name: signingSessionId
+      in: path
+      required: true
+      description: ID returned by `startSigning`.
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Client-generated UUID, new for each signing attempt and reused on every retry of that attempt.
+      schema:
+        type: string
+        format: uuid
+
+  headers:
+    RetryAfter:
+      description: Seconds to wait before calling again.
+      schema:
+        type: integer
+        minimum: 1
+        example: 2
+
+  responses:
+    ValidationFailed:
+      description: The request is malformed, for example a missing `Idempotency-Key`, a badly formed digest or a path ID that is not a UUID.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: VALIDATION_FAILED
+            title: The request is not valid
+            status: 400
+            detail: documentSha256 must be 64 lowercase hexadecimal characters.
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    AuthRequired:
+      description: No valid resident access token. It is missing, expired, or not issued for this API.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: AUTH_REQUIRED
+            title: Please sign in again
+            status: 401
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    AccessDenied:
+      description: Signed in, but the delegate's mandate does not cover, or no longer covers, signing for this service (for example revoked between the two calls).
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: ACCESS_DENIED
+            title: Your authorization does not allow signing for this service
+            status: 403
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    NotFound:
+      description: |
+        The resource does not exist or is not visible to the caller. The portal does not say
+        which, so the response does not reveal that someone else's case or session exists.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: NOT_FOUND
+            title: Not found
+            status: 404
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    RateLimited:
+      description: Too many requests. Retry after `Retry-After` seconds.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: RATE_LIMITED
+            title: Too many signing requests, please wait
+            status: 429
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+
+  schemas:
+    StartSigningRequest:
+      type: object
+      additionalProperties: false
+      required: [signingMethod, documentSha256]
+      properties:
+        signingMethod:
+          type: string
+          enum: [SMART_ID, MOBILE_ID]
+          description: |
+            Which signing app receives the prompt. The personal identification code comes from
+            Identity & access, and for Mobile-ID the phone number comes from the resident's
+            contact details in Portal DB (minimal); neither is taken from the request.
+          example: SMART_ID
+        documentSha256:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+          description: |
+            SHA-256 (hex) of the document version the resident viewed, as returned by the
+            document-download operation (not yet in this specification). If the agency's
+            current document does not match, signing is refused with `DOCUMENT_CHANGED`, so
+            the resident never signs something they have not seen.
+          example: 2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
+
+    SigningSession:
+      type: object
+      required: [signingSessionId, status, verificationCode, expiresAt]
+      properties:
+        signingSessionId:
+          type: string
+          format: uuid
+          example: 7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33
+        status:
+          type: string
+          enum: [AWAITING_CONFIRMATION]
+        verificationCode:
+          type: string
+          pattern: '^[0-9]{4}$'
+          description: Shown to the resident, who confirms the prompt only if the signing app shows the same code.
+          example: '4927'
+        expiresAt:
+          type: string
+          format: date-time
+          description: After this time the session can no longer be completed.
+          example: '2026-10-29T10:05:00Z'
+
+    SigningResult:
+      type: object
+      required: [signingSessionId, status, signedAt, deliveryStatus]
+      properties:
+        signingSessionId:
+          type: string
+          format: uuid
+          example: 7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33
+        status:
+          type: string
+          enum: [COMPLETED]
+        signedAt:
+          type: string
+          format: date-time
+          description: Signing time taken from the signature's timestamp.
+          example: '2026-10-29T10:01:12Z'
+        deliveryStatus:
+          type: string
+          enum: [AWAITING_DELIVERY, DELIVERED]
+          description: Delivery of the signed document to the agency. Stays `AWAITING_DELIVERY` while the agency is unreachable.
+
+    Problem:
+      type: object
+      description: Problem Details (RFC 9457) with a stable `code`. Contains no personal data.
+      required: [code, title, status, traceId]
+      properties:
+        code:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]*$'
+          description: |
+            Stable error code from the table in the API description. Its meaning never changes
+            within a major version. The list is open, new codes may be added, so it is not an
+            enum, and a client treats an unknown code as a generic error for its HTTP status.
+          example: DOCUMENT_CHANGED
+        title:
+          type: string
+          description: Short summary for people. May change and may be localized.
+        status:
+          type: integer
+          description: HTTP status code, repeated for convenience.
+        detail:
+          type: string
+          description: Explanation of this occurrence for people.
+        traceId:
+          type: string
+          description: Correlation ID that links the response to logs and audit events, for helpdesk use.
