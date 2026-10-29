@@ -196,9 +196,7 @@ develop and maintain.
 
 *Service-to-service identity*
 
-Inside the portal, services call each other by internal URL. If the system grows more complex
-and handles secret data, TLS or mTLS certificates may be needed for data moving between
-containers.
+Each container has its own service ID and an mTLS certificate for it. When one container calls another, both show their certificates, and the receiver reads the caller's service ID from the certificate and accepts only expected callers. 
 
 *Access-control approach*
 
