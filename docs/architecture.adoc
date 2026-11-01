@@ -277,7 +277,8 @@ Expected: each submission ID has exactly one submission record and one queued me
 
 API specification: link:../api/openapi.yaml[api/openapi.yaml] (OpenAPI 3.1). It covers the eID
 signing workflow as a two-step sequence, `startSigning` then `completeSigning`, with bearer-token
-authentication, stable error codes and idempotency rules.
+authentication, stable error codes and idempotency rules. `cancelSigning` lets the resident end
+a session from the portal before confirming it.
 
 == 8. Security analysis
 

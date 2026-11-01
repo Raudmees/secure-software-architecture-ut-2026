@@ -13,6 +13,14 @@ Use one file per important architecture decision.
 |link:ADR-0002-portal-stores-minimal-data.adoc[ADR-0002]
 |The portal stores minimal data; agencies and registries keep business data
 |Accepted
+
+|link:ADR-0003-interface-boundaries-and-specification-approach.adoc[ADR-0003]
+|Interface boundaries and specification approach
+|Accepted
+
+|link:ADR-0004-cancel-signing-as-new-endpoint.adoc[ADR-0004]
+|Cancelling a signing session is a new endpoint
+|Accepted
 |===
 
 Each ADR should state context, decision, alternatives, consequences, and follow-up actions.
