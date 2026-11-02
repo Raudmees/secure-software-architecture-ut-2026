@@ -1,0 +1,61 @@
+= ADR-0004: Cancelling a signing session is a new endpoint
+:toc:
+
+== Status
+
+Accepted
+
+== Context
+
+Change request: a resident must be able to cancel an ongoing signing session from the portal,
+not only by declining the prompt in the signing app. Today a resident who cannot reach their
+phone must wait until the session's `expiresAt`, and because only one session per document may
+be active, they cannot start a new attempt (for example with Mobile-ID instead of Smart-ID)
+until then.
+
+ADR-0003 allows only additive changes within `/v1`, so the change must not break existing
+clients.
+
+== Decision
+
+* Add a new endpoint, `POST /v1/signing-sessions/{signingSessionId}/cancel` (`cancelSigning`),
+  in link:../api/openapi.yaml[openapi.yaml] version 0.2.0. It stays in `/v1`.
+* Only the resident who started the session may cancel it; anyone else gets `404` (R20).
+* The portal decides the cancellation alone. Cancelling and completing both change the session
+  from awaiting confirmation in one conditional update in Portal DB, so only one succeeds. A
+  signature that arrives for a cancelled session is discarded and audited (R19).
+* After a cancel, `completeSigning` returns `409 SIGNING_CANCELLED`. A `4xx` status is used so
+  that old clients, which do not know the code, stop polling and show a generic error.
+* `cancelSigning` returns a new schema, `SigningCancellation`, instead of adding `CANCELLED` to
+  the status of the existing `SigningSession` response.
+
+== Alternatives considered
+
+* *Keep the timeout only*: no API change. Not chosen because the resident stays blocked until
+  `expiresAt`.
+* *A cancel flag on `completeSigning`*: no new endpoint. Not chosen because it changes the
+  meaning of an endpoint that clients already use, and one endpoint would do opposite things,
+  with mixed authorization, audit and rate limits.
+* *`DELETE /v1/signing-sessions/{id}`*: not chosen because the session is not deleted. It stays
+  with the status cancelled, for the audit trail and so that repeated calls get the same result.
+* *Wait until the signing service withdraws the prompt*: not chosen because not every signing
+  service supports it, and cancelling would then fail when that service is down.
+
+== Consequences
+
+* Positive:
+** The resident can stop and retry at once.
+** Old clients keep working: they never call the new endpoint, and an unknown `409` code ends
+   their polling.
+* Negative or risks:
+** The prompt may stay on the phone after cancelling. A resident who confirms it may believe
+   they signed, so the portal must clearly show that signing was cancelled.
+** One more endpoint to document, test and protect.
+* Follow-up actions:
+** Check whether Smart-ID and Mobile-ID let the portal withdraw a prompt.
+
+== References
+
+* link:../api/openapi.yaml[OpenAPI specification]: `cancelSigning`, `completeSigning`
+* link:ADR-0003-interface-boundaries-and-specification-approach.adoc[ADR-0003]: versioning rules
+* link:../risk/risk_register.adoc[Risk register]: R19, R20

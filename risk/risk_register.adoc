@@ -134,6 +134,20 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |High
 |Medium
 |Check the mandate against External registries on every protected action, or cache for at most 5 minutes. Test: revoke the mandate in a stub registry, retry the submission, and expect a 403 and an audit event naming both people.
+
+|R19
+|If the portal accepts a signature that the signing service returns after the resident cancelled the session in the portal (`cancelSigning`), then a document the resident decided not to sign is delivered to the agency as signed.
+|Medium
+|High
+|Medium
+|Cancelling and completing both change the session from awaiting confirmation in one conditional update in Portal DB, so only one succeeds; a signature for a cancelled session is discarded and audited. Test: start signing against a stub signing service, cancel, then let the stub return a valid signature; expect `409 SIGNING_CANCELLED` from `completeSigning` and nothing queued for the agency.
+
+|R20
+|If `cancelSigning` does not check that the caller started the session, then anyone who obtains a session ID can cancel other residents' signing and learn that the session exists.
+|Low
+|Medium
+|Low
+|Return `404` unless the signed-in user started the session; rate-limit the operation and audit every cancellation. Test: call `cancelSigning` with another resident's token; expect `404` and the session still awaiting confirmation.
 |===
 
 == Notes

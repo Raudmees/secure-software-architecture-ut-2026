@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Citizen Services Portal API
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Resident-facing API of the Citizen Services Portal. All calls go through the API gateway.
 
@@ -9,7 +9,7 @@ info:
     has sent to their case for signature. It supports the eID means that sign through a prompt
     on the resident's phone, Smart-ID and Mobile-ID, called the signing app below. ID-card
     signing, where the browser signs locally through a card reader, needs a different sequence
-    and is left to a later version. Signing is a sequence of two calls:
+    and is left to a later version. Signing is a sequence of two calls, with an optional third:
 
     1. `startSigning` fetches the document from the agency, checks that it is the version the
        resident viewed, and asks the Digital signing service to send a signing prompt to the
@@ -17,6 +17,9 @@ info:
        compares with the code shown in the app.
     2. `completeSigning` collects the signature after the resident has confirmed it in the app,
        validates it, and queues the signed document for delivery to the agency.
+    3. `cancelSigning` (added in 0.2.0) lets the resident end a session from the portal while
+       it still awaits confirmation, for example when they cannot reach their phone, instead of
+       waiting for `expiresAt`.
 
     Every call, allowed or denied, produces an audit event with the actor, the delegation
     reference (if any), the resource IDs and the outcome, never document content (QA-4).
@@ -29,6 +32,7 @@ info:
     resident's phone, so the client supplies an `Idempotency-Key` and the portal replays the
     first result on retry (rules on the operation). `completeSigning` acts on a session that
     already has an ID, so the ID is the key and the operation is idempotent by construction.
+    `cancelSigning` works the same way.
     Both follow the principle of the submission flow in architecture.adoc (Workflow and
     messaging), where the client-generated submission ID plays the same role.
 
@@ -46,6 +50,8 @@ info:
     | `SIGNING_IN_PROGRESS` | 409 | Another signing session for this document is active | Wait until it ends |
     | `REQUEST_IN_PROGRESS` | 409 | The first request with this `Idempotency-Key` is still running | Retry with the same key |
     | `SIGNING_REJECTED` | 409 | The resident declined the prompt in the signing app | Start again with a new key |
+    | `SIGNING_CANCELLED` | 409 | The resident cancelled the session in the portal (`cancelSigning`) | Start again with a new key |
+    | `SIGNING_COMPLETED` | 409 | The session is already signed, so it can no longer be cancelled | None |
     | `SIGNING_EXPIRED` | 410 | The session expired before the resident confirmed | Start again with a new key |
     | `IDEMPOTENCY_KEY_REUSED` | 422 | The key was already used for a different request | Use a new key |
     | `SIGNATURE_INVALID` | 422 | The signature or certificate failed validation, or the signer is not the signed-in resident | None |
@@ -72,7 +78,8 @@ paths:
         signing service comes from Identity & access, never from the request.
 
         **Limits**: one active signing session per document, and at most 5 starts per resident
-        in 10 minutes, so a client cannot flood the resident's phone with prompts.
+        in 10 minutes, so a client cannot flood the resident's phone with prompts. A cancelled,
+        rejected or expired session is no longer active.
 
         **Idempotency**: `Idempotency-Key` is required (see the parameter). Without it, a lost
         reply followed by a retry would put two prompts with different codes on the phone, which
@@ -221,10 +228,15 @@ paths:
           session `COMPLETED` and publishing the delivery message happen in one transaction, so
           a retry can never queue the document twice and the agency receives it once.
         * Terminal states are sticky: a completed session keeps returning the same `200`, a
-          rejected or expired one the same `409` or `410`. A new attempt needs a new
+          rejected, cancelled or expired one the same `409` or `410`. A new attempt needs a new
           `startSigning` call with a new key.
         * While the resident has not answered, the `202` + `Retry-After` poll is the expected
           repeat call, so there is no separate retry case to get wrong.
+
+        **After `cancelSigning`**: the session returns `409 SIGNING_CANCELLED`. If the signing
+        service still returns a signature for it, because the resident confirmed the prompt
+        after cancelling, the portal discards it and records an audit event. It is never
+        attached to the document or sent to the agency.
       security:
         - residentToken: []
       parameters:
@@ -254,27 +266,26 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
         '409':
-          description: The resident declined the prompt in the signing app.
+          description: The session ended without a signature, declined in the signing app or cancelled in the portal.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-              example:
-                code: SIGNING_REJECTED
-                title: Signing was cancelled in the signing app
-                status: 409
-                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+              examples:
+                SIGNING_REJECTED:
+                  value:
+                    code: SIGNING_REJECTED
+                    title: Signing was cancelled in the signing app
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                SIGNING_CANCELLED:
+                  value:
+                    code: SIGNING_CANCELLED
+                    title: You cancelled signing in the portal
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
         '410':
-          description: The session expired before the resident confirmed.
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-              example:
-                code: SIGNING_EXPIRED
-                title: The signing request has expired
-                status: 410
-                traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+          $ref: '#/components/responses/SigningExpired'
         '422':
           description: The signature failed validation. Nothing was sent to the agency.
           content:
@@ -310,6 +321,79 @@ paths:
                     title: Your authorization to act for this person cannot be checked right now
                     status: 503
                     traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+
+  /v1/signing-sessions/{signingSessionId}/cancel:
+    post:
+      tags: [Signing]
+      operationId: cancelSigning
+      summary: Cancel a signing session from the portal
+      description: |
+        Added in 0.2.0. Ends a session that is still awaiting confirmation, so the resident does
+        not have to wait for `expiresAt` when they cannot or do not want to confirm the prompt.
+        The document stays unsigned with the agency, and a new attempt can start at once with a
+        new `startSigning` call and a new key.
+
+        **Who may call**: only the resident who started the session. For anyone else the
+        session does not exist (`404`). The mandate is not checked again: cancelling only stops
+        an action the caller started, so a delegate whose mandate was revoked can still cancel.
+
+        **Cancel or complete, never both**: cancelling and completing both change the session
+        from `AWAITING_CONFIRMATION` in one conditional update in Portal DB (minimal), so only
+        the first one succeeds. If the session was completed first, the response is
+        `409 SIGNING_COMPLETED` and the signed document is delivered as usual. Once a session is
+        cancelled, any signature the signing service still returns for it is discarded (see
+        `completeSigning`).
+
+        **The prompt on the phone**: the portal asks the Digital signing service to withdraw the
+        prompt if the service supports it, but does not wait for it. The cancellation is decided
+        by the portal alone, so this operation needs no `503` case.
+
+        **Idempotency**: no `Idempotency-Key`, because `signingSessionId` identifies the
+        operation. Cancelling an already cancelled session returns the same `200`. A session
+        that already ended in another way keeps its own result: `409 SIGNING_COMPLETED`,
+        `409 SIGNING_REJECTED` or `410 SIGNING_EXPIRED`.
+
+        Every cancellation produces an audit event.
+      security:
+        - residentToken: []
+      parameters:
+        - $ref: '#/components/parameters/SigningSessionId'
+      responses:
+        '200':
+          description: The session is cancelled. Repeated calls return the same result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningCancellation'
+        '400':
+          $ref: '#/components/responses/ValidationFailed'
+        '401':
+          $ref: '#/components/responses/AuthRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: The session already ended in another way and cannot be cancelled.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                SIGNING_COMPLETED:
+                  value:
+                    code: SIGNING_COMPLETED
+                    title: This document is already signed
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+                SIGNING_REJECTED:
+                  value:
+                    code: SIGNING_REJECTED
+                    title: Signing was cancelled in the signing app
+                    status: 409
+                    traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+        '410':
+          $ref: '#/components/responses/SigningExpired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
 
 components:
   securitySchemes:
@@ -356,7 +440,7 @@ components:
       description: |
         UUID v4 generated by the client when the resident starts a signing attempt, and resent
         unchanged on every retry of that attempt (lost reply, timeout, double-click). A new
-        attempt, after a rejected or expired session, gets a new key. The key is not a secret:
+        attempt, after a rejected, cancelled or expired session, gets a new key. The key is not a secret:
         the portal scopes it to the signed-in resident, so another resident cannot replay or
         probe it.
       schema:
@@ -418,6 +502,17 @@ components:
             code: NOT_FOUND
             title: Not found
             status: 404
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+    SigningExpired:
+      description: The session expired before the resident confirmed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            code: SIGNING_EXPIRED
+            title: The signing request has expired
+            status: 410
             traceId: 4bf92f3577b34da6a3ce929d0e0e4736
     RateLimited:
       description: Too many requests. Retry after `Retry-After` seconds.
@@ -500,6 +595,22 @@ components:
           type: string
           enum: [AWAITING_DELIVERY, DELIVERED]
           description: Delivery of the signed document to the agency. Stays `AWAITING_DELIVERY` while the agency is unreachable.
+
+    SigningCancellation:
+      type: object
+      required: [signingSessionId, status, cancelledAt]
+      properties:
+        signingSessionId:
+          type: string
+          format: uuid
+          examples: [7d3f6a2e-8c1b-4e5a-9f0d-2b6c4a1e9d33]
+        status:
+          type: string
+          enum: [CANCELLED]
+        cancelledAt:
+          type: string
+          format: date-time
+          examples: ['2026-10-29T10:01:40Z']
 
     Problem:
       type: object
