@@ -1,0 +1,95 @@
+= API Evolution Strategy
+:toc:
+
+== What changed
+
+Residents can now cancel an ongoing signing session from the portal, not only by declining the
+prompt on their phone, so they do not have to wait for the session to expire.
+
+link:../api/openapi.yaml[openapi.yaml] went from version 0.1.0 to 0.2.0, and the API stays in `/v1`.
+
+[cols="2,3",options="header"]
+|===
+|Change |Detail
+
+|New endpoint
+|`POST /v1/signing-sessions/{signingSessionId}/cancel` (`cancelSigning`)
+
+|New schema
+|`SigningCancellation`, returned only by `cancelSigning`
+
+|New error codes
+|`SIGNING_CANCELLED` (`completeSigning`, after a cancel in the portal) and `SIGNING_COMPLETED` (`cancelSigning`, when the session is already signed)
+
+|===
+
+== How old clients continue to work
+
+An old client is a version of the Citizen web app that does not know `cancelSigning`, for example
+a browser tab opened before the release. These operations reject third-party tokens, so the
+web app is their only client.
+
+[cols="2,3",options="header"]
+|===
+|Situation |What happens
+
+|The old client signs a document
+|Nothing changes. It never calls `cancelSigning`, and the session ends as before: confirmed, declined in mobile app or expired.
+
+|The old client reads `startSigning` or `completeSigning` responses
+|`SigningSession` and `SigningResult` are unchanged. `CANCELLED` appears only in the new schema, so no existing response gets a new status value.
+
+|The old client is polling a session that was cancelled elsewhere, for example in a newer tab
+|It gets `409 SIGNING_CANCELLED`. It does not know the code, so it follows the rule in the specification and treats the response as a generic `409` error: it stops polling and never shows the document as signed.
+
+|The old client starts a new attempt after that cancel
+|`startSigning` works as before, because a cancelled session is no longer active.
+|===
+
+== Deprecation timeline
+
+This change deprecates nothing. The timeline below is hypothetical and shows how we would handle
+a breaking change.
+
+*Example:* `/v2` replaces the three separate responses (`SigningSession`, `SigningResult`,
+`SigningCancellation`) with one session resource that has a single `status` field. `/v1` then has
+to be retired.
+
+[cols="1,4",options="header"]
+|===
+|When |Step
+
+|2 months before release
+|Announce the change in the changelog with the `/v2` specification, a migration guide, and the release and sunset dates. Email the owners of registered API clients and the agencies that the change affects.
+
+|Release of `/v2`
+|`/v1` becomes deprecated: its operations get `deprecated: true` in the specification, and every `/v1` response carries the `Deprecation` and `Sunset` headers. From now on `/v1` gets security fixes only.
+
+|3 months after release
+|Send a reminder. The API gateway logs `/v1` calls per client, so we contact the clients that still use it and ask what is blocking them.
+
+|5 months after release
+|Send the last reminder to the clients that still use `/v1`.
+
+|6 months after release (sunset)
+|`/v1` is switched off and returns `410 Gone` with the stable code `API_VERSION_RETIRED` and a link to the migration guide.
+|===
+
+Headers on every `/v1` response during this period:
+
+----
+Deprecation: @<release of /v2, as Unix time>
+Sunset: <sunset date, as HTTP date>
+----
+
+*Changing the dates:*
+
+* The sunset date moves later only if `/v2` lacks something a client needs. If a client just needs more time, we offer help and keep the date.
+* A new date is announced the same way as the original one and updated in the `Sunset` header.
+* The sunset date moves earlier only for a security problem in `/v1` that cannot be fixed.
+
+== References
+
+* https://www.rfc-editor.org/rfc/rfc9745.html[RFC 9745]: the `Deprecation` header
+* https://www.rfc-editor.org/rfc/rfc8594.html[RFC 8594]: the `Sunset` header
+* https://www.mintlify.com/library/api-deprecation[Mintlify: API deprecation]: the process this timeline follows
