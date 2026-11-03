@@ -17,8 +17,8 @@ For this project we are using the default scenario of Citizen Services Portal, d
 
 == Current status
 
-* Week: *8*
-* Main focus this week: *Interfaces: interface inventory (producers, consumers, protocols, authentication, versioning) and the OpenAPI specification of the resident API for the eID signing workflow*
+* Week: *9*
+* Main focus this week: *API security: authorization checks per endpoint and the top 5 API security risks of the resident API, and the requested API change adding `cancelSigning` (ADR-0004)*
 * Top architectural driver: *QA-1 Authorization and confidentiality*
 * Biggest open question: *Is a digital fallback login required for residents without eID? (R14)*
 * Biggest technical risk: *We cannot take responsibility for the agencies' systems and the availability of their APIs. When they fail, they can disrupt use of our portal (R15).*
@@ -39,6 +39,7 @@ For this project we are using the default scenario of Citizen Services Portal, d
 * Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
 * Interface inventory: link:docs/interface_inventory.adoc[docs/interface_inventory.adoc]
 * API specification (OpenAPI): link:api/openapi.yaml[api/openapi.yaml]
+* API security review: link:docs/api_security_review.adoc[docs/api_security_review.adoc]
 * C4 diagrams (context and containers): link:diagrams/README.adoc[diagrams/README.adoc]
 * ADRs: link:adrs/README.adoc[adrs/README.adoc]
 * Glossary: link:docs/glossary.adoc[docs/glossary.adoc]
