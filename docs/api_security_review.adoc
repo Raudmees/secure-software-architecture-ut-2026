@@ -2,9 +2,6 @@
 :toc:
 :toclevels: 2
 
-Security review of the resident API in link:../api/openapi.yaml[api/openapi.yaml], version
-0.2.0: `startSigning`, `completeSigning` and `cancelSigning`.
-
 == 1. Authorization checks per endpoint
 
 On every call the API gateway validates the bearer token (signature, issuer, audience, expiry)
@@ -46,8 +43,6 @@ Every decision, allowed or denied, is audited.
 |===
 
 == 2. Top 5 API security risks
-
-Categories refer to the OWASP API Security Top 10 (2023) unless noted.
 
 [cols="1,4,3,6",options="header"]
 |===
