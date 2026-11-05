@@ -1,0 +1,75 @@
+= API Security Review
+:toc:
+:toclevels: 2
+
+== 1. Authorization checks per endpoint
+
+On every call the API gateway validates the bearer token (signature, issuer, audience, expiry)
+and rejects tokens of third-party clients with `401 AUTH_REQUIRED`. The caller is the `USER-…`
+ID in the token. Identities in the request are ignored. Access is checked before state, and a
+caller without access gets `404 NOT_FOUND`, the same as for a resource that does not exist.
+Every decision, allowed or denied, is audited.
+
+[cols="2,5,3",options="header"]
+|===
+|Endpoint |Check |If it fails
+
+.4+|`startSigning`
+|The caller owns the submission, or holds a mandate from the owner that covers signing for this service, confirmed live in External registries.
+|`404 NOT_FOUND`, `403 ACCESS_DENIED`, `503 DELEGATION_UNAVAILABLE`
+
+|The document belongs to the submission's case and awaits signature.
+|`404 NOT_FOUND`, `409 DOCUMENT_NOT_SIGNABLE`
+
+|The document's SHA-256 equals `documentSha256`, the version the resident viewed.
+|`409 DOCUMENT_CHANGED`
+
+|The signer and phone number come from the caller's identity, never from the request.
+|`400 VALIDATION_FAILED`
+
+.3+|`completeSigning`
+|The caller started the session.
+|`404 NOT_FOUND`
+
+|For a delegate, the mandate is confirmed again, so a mandate revoked after `startSigning` stops the signature.
+|`403 ACCESS_DENIED`
+
+|The signer's certificate belongs to the caller, and the signature covers the session's `documentSha256` (not yet stated in the specification).
+|`422 SIGNATURE_INVALID`
+
+|`cancelSigning`
+|The caller started the session.
+|`404 NOT_FOUND`
+|===
+
+== 2. Top 5 API security risks
+
+[cols="1,4,3,6",options="header"]
+|===
+|# |Risk |OWASP category |Mitigation
+
+|1
+|A caller acts on another person's submission, document or signing session.
+|API1:2023 Broken Object Level Authorization
+|Ownership or a live-confirmed mandate is checked on every call, sessions are bound to the resident who started them, and resources the caller may not see return `404` (section 1).
+
+|2
+|A stolen or forged access token lets an attacker act as another resident.
+|API2:2023 Broken Authentication
+|Strict token validation in the API gateway (fixed algorithm and keys, issuer, audience, expiry), short-lived tokens, and the signer's certificate must belong to the signed-in resident.
+
+|3
+|Request floods exhaust the signing service, agencies or the portal.
+|API4:2023 Unrestricted Resource Consumption
+|A web application firewall in front of the API gateway drops floods, bot traffic and oversized requests, and limits requests per client IP. Behind it, the API gateway allows at most 5 `startSigning` calls per resident in 10 minutes and answers `429` with `Retry-After`.
+
+|4
+|Security events are not recorded, are lost, or logs leak personal data.
+|API10:2019 Insufficient Logging & Monitoring
+|Every call writes an audit event with the actor, delegation reference, resource IDs and outcome, in the same transaction as the change. Tokens, personal identification codes and document content are never logged.
+
+|5
+|The portal accepts a signature or document it should not trust.
+|API10:2023 Unsafe Consumption of APIs
+|The signed document must match `documentSha256`, the signer's certificate must be valid and belong to the resident, and a signature returned for a cancelled session is discarded.
+|===
