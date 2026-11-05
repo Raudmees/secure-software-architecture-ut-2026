@@ -66,7 +66,7 @@ Categories refer to the OWASP API Security Top 10 (2023) unless noted.
 |3
 |Request floods exhaust the signing service, agencies or the portal.
 |API4:2023 Unrestricted Resource Consumption
-|At most 5 `startSigning` calls per resident in 10 minutes, one active session per document, `Idempotency-Key` against duplicate prompts, and `429` with `Retry-After`.
+|A web application firewall in front of the API gateway drops floods, bot traffic and oversized requests, and limits requests per client IP. Behind it, the API gateway allows at most 5 `startSigning` calls per resident in 10 minutes and answers `429` with `Retry-After`.
 
 |4
 |Security events are not recorded, are lost, or logs leak personal data.
