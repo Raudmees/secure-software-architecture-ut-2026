@@ -140,7 +140,7 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Medium
 |High
 |Medium
-|Cancelling and completing both change the session from awaiting confirmation in one conditional update in Portal DB, so only one succeeds; a signature for a cancelled session is discarded and audited. Test: start signing against a stub signing service, cancel, then let the stub return a valid signature; expect `409 SIGNING_CANCELLED` from `completeSigning` and nothing queued for the agency.
+|Cancelling and completing both change the session from awaiting confirmation in one conditional update in Portal DB, so only one succeeds; a signature for a cancelled session is discarded and audited. Test: start signing against a stub signing service, cancel, then let the stub return a valid signature; expect `410 SIGNING_ENDED` from `completeSigning` and nothing queued for the agency.
 
 |R20
 |If `cancelSigning` does not check that the caller started the session, then anyone who obtains a session ID can cancel other residents' signing and learn that the session exists.

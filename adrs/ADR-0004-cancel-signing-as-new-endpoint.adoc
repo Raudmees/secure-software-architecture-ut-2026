@@ -1,5 +1,4 @@
 = ADR-0004: Cancelling a signing session is a new endpoint
-:toc:
 
 == Status
 
@@ -24,8 +23,9 @@ clients.
 * The portal decides the cancellation alone. Cancelling and completing both change the session
   from awaiting confirmation in one conditional update in Portal DB, so only one succeeds. A
   signature that arrives for a cancelled session is discarded and audited (R19).
-* After a cancel, `completeSigning` returns `409 SIGNING_CANCELLED`. A `4xx` status is used so
-  that old clients, which do not know the code, stop polling and show a generic error.
+* After a cancel, `completeSigning` returns `410 SIGNING_ENDED`, the same code as for a
+  declined or expired session, so the response does not reveal why the session ended. A `4xx`
+  status is used so that old clients stop polling and show a generic error.
 * `cancelSigning` returns a new schema, `SigningCancellation`, instead of adding `CANCELLED` to
   the status of the existing `SigningSession` response.
 
@@ -45,8 +45,7 @@ clients.
 
 * Positive:
 ** The resident can stop and retry at once.
-** Old clients keep working: they never call the new endpoint, and an unknown `409` code ends
-   their polling.
+** Old clients keep working: they never call the new endpoint, and a `410` ends their polling.
 * Negative or risks:
 ** The prompt may stay on the phone after cancelling. A resident who confirms it may believe
    they signed, so the portal must clearly show that signing was cancelled.

@@ -1,5 +1,5 @@
 = ADR-0002: The portal stores minimal data; agencies and registries keep business data
-:toc:
+
 
 == Status
 
