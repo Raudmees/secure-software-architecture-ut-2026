@@ -17,7 +17,7 @@ service.
 |Portal DB (minimal) for who owns the submission. The agency for which documents belong to the case. External registries for the mandate.
 
 |Which component checks it
-|The signing workflow module of the Portal backend, with Identity & access, on `startSigning` and again on `completeSigning`.
+|Identity & access decides whether the caller may act. The signing workflow module of the Portal backend enforces it and also checks that the document belongs to the case, on `startSigning` and again on `completeSigning`.
 
 |What happens if that component cannot get a reliable answer
 |Deny. `404` when ownership cannot be shown, `503` when a delegate's mandate cannot be confirmed. No session is created and nothing is signed.

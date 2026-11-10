@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Citizen Services Portal API
-  version: 0.3.0
+  version: 0.2.0
   description: |
     Resident-facing API of the Citizen Services Portal. All calls go through the API gateway.
 

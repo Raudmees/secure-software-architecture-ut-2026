@@ -275,8 +275,7 @@ Expected: each submission ID has exactly one submission record and one queued me
 
 Workflow: a resident signs a document that an agency has sent to their case. The signing
 workflow module of the Portal backend runs the sequence `startSigning`, `completeSigning` and
-`cancelSigning` (see link:../api/openapi.yaml[openapi.yaml]). The rule that this timeline
-protects is rule 2 in link:security_invariants.adoc[security_invariants.adoc]: a cancelled session
+`cancelSigning`. The rule that this timeline protects is rule 2 in link:security_invariants.adoc[security_invariants.adoc]: a cancelled session
 never produces a delivered signature.
 
 The resident cancels in the portal, then confirms the prompt on the phone anyway. The portal
