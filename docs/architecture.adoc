@@ -271,6 +271,52 @@ The request is saved, but the reply to the browser is lost.
 Drop the response for 100 submissions with a fault-injection proxy between the API gateway and the web app.
 Expected: each submission ID has exactly one submission record and one queued message, a stub agency receives each request once and returns one agency reference, and the resident sees that agency reference.
 
+*Late signature after a cancellation*
+
+Workflow: a resident signs a document that an agency has sent to their case. The signing
+workflow module of the Portal backend runs the sequence `startSigning`, `completeSigning` and
+`cancelSigning`. The rule that this timeline protects is rule 2 in link:security_invariants.adoc[security_invariants.adoc]: a cancelled session
+never produces a delivered signature.
+
+The resident cancels in the portal, then confirms the prompt on the phone anyway. The portal
+decides the cancellation alone and only asks the Digital signing service to withdraw the prompt,
+so the two systems disagree for a while.
+
+[cols="1,3,2,2,2",options="header"]
+|===
+|# |Event |Session in Portal DB |Digital signing service |Resident's phone
+
+|1
+|`startSigning`
+|`AWAITING_CONFIRMATION`
+|Prompt created
+|Shows the prompt and code
+
+|2
+|The resident cancels in the portal
+|`CANCELLED`
+|Prompt still pending (withdrawal is only requested)
+|Still shows the prompt
+
+|3
+|The resident confirms the prompt anyway
+|`CANCELLED`
+|Holds a valid signature
+|Shows the prompt as confirmed
+
+|4
+|`completeSigning`
+3+|*Decision:* the session is `CANCELLED`, so the portal discards the signature, returns `410 SIGNING_ENDED` and writes an audit event. Nothing is stored in the Temporary file store or published to the Message broker.
+|===
+
+*Resident sees:* after step 2 the portal shows "Signing cancelled". At step 3 the phone shows the
+prompt as confirmed, which can mislead the resident, so the portal keeps showing "cancelled" and says
+that the document is not signed (ADR-0004, negative consequences).
+
+If `completeSigning` wins the race at step 3, the conditional update in Portal DB succeeds first
+and `cancelSigning` returns `410`. The signed document is then delivered once, and the portal shows
+"signed".
+
 === Auditing and logging
 
 == 7. Interfaces

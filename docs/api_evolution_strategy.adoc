@@ -18,8 +18,8 @@ link:../api/openapi.yaml[openapi.yaml] went from version 0.1.0 to 0.2.0, and the
 |New schema
 |`SigningCancellation`, returned only by `cancelSigning`
 
-|New error codes
-|`SIGNING_CANCELLED` (`completeSigning`, after a cancel in the portal) and `SIGNING_COMPLETED` (`cancelSigning`, when the session is already signed)
+|Error codes
+|No new code. `completeSigning` after a cancel, and `cancelSigning` on a session that already ended, return the existing `410 SIGNING_ENDED`
 
 |===
 
@@ -40,7 +40,7 @@ web app is their only client.
 |`SigningSession` and `SigningResult` are unchanged. `CANCELLED` appears only in the new schema, so no existing response gets a new status value.
 
 |The old client is polling a session that was cancelled elsewhere, for example in a newer tab
-|It gets `409 SIGNING_CANCELLED`. It does not know the code, so it follows the rule in the specification and treats the response as a generic `409` error: it stops polling and never shows the document as signed.
+|It gets `410 SIGNING_ENDED`, the same response as for a declined or expired session: it stops polling and never shows the document as signed.
 
 |The old client starts a new attempt after that cancel
 |`startSigning` works as before, because a cancelled session is no longer active.

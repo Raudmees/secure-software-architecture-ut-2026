@@ -1,5 +1,4 @@
 = ADR-0001: C4 model with Structurizr for architecture diagrams, AsciiDoc for documentation
-:toc:
 
 == Status
 

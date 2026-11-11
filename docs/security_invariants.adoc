@@ -1,0 +1,55 @@
+= Security Invariants
+
+== 1. A resident signs only documents in their own cases
+
+A signing session is created, and a signature accepted, only for a document that belongs to a
+case the caller owns, or to a case where the caller holds a mandate that covers signing for that
+service.
+
+[cols="2,5",options="header"]
+|===
+|Question |Answer
+
+|When it starts to apply
+|The agency adds the document to the case.
+
+|Which system owns the fact needed to enforce it
+|Portal DB (minimal) for who owns the submission. The agency for which documents belong to the case. External registries for the mandate.
+
+|Which component checks it
+|Identity & access decides whether the caller may act. The signing workflow module of the Portal backend enforces it and also checks that the document belongs to the case, on `startSigning` and again on `completeSigning`.
+
+|What happens if that component cannot get a reliable answer
+|Deny. `404` when ownership cannot be shown, `503` when a delegate's mandate cannot be confirmed. No session is created and nothing is signed.
+
+|One failure test and the result you expect
+|Resident B calls `startSigning` with the `submissionId` of resident A. Expected: `404`, no signing session is created, and an audit event records the denied call.
+|===
+
+== 2. A cancelled session never produces a delivered signature
+
+A signature that the signing service returns after the resident cancelled the session in the
+portal is never attached to the document or sent to the agency.
+
+[cols="2,5",options="header"]
+|===
+|Question |Answer
+
+|When it starts to apply
+|The `cancelSigning` call succeeds, which is when the session status in Portal DB becomes `CANCELLED`.
+
+|Which system owns the fact needed to enforce it
+|Portal DB (minimal), in the status of the signing session. The Digital signing service does not know about the cancellation, because withdrawing the prompt is only requested, not awaited.
+
+|Which component checks it
+|The signing workflow module of the Portal backend. Cancelling and completing both change the session from `AWAITING_CONFIRMATION` in one conditional update, so only the first one succeeds.
+
+|What happens if that component cannot get a reliable answer
+|If Portal DB cannot be read or written, `completeSigning` fails with `503`. Nothing is stored in the Temporary file store or published to the Message broker.
+
+|One failure test and the result you expect
+a|
+. Start signing against a stub signing service and call `cancelSigning`.
+. Let the stub return a valid signature for the session, then call `completeSigning`.
+. Expected: `410 SIGNING_ENDED`, nothing in the Temporary file store or the Message broker, a stub agency receives nothing, and an audit event records the discarded signature.
+|===
