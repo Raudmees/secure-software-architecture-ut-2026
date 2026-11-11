@@ -17,8 +17,8 @@ For this project we are using the default scenario of Citizen Services Portal, d
 
 == Current status
 
-* Week: *9*
-* Main focus this week: *API security: authorization checks per endpoint and the top 5 API security risks of the resident API, and the requested API change adding `cancelSigning` (ADR-0004)*
+* Week: *10*
+* Main focus this week: *Security invariants and a failure timeline for eID signing; after feedback (issue https://github.com/Raudmees/secure-software-architecture-ut-2026/issues/49[#49]), unified interface names and more general API error codes*
 * Top architectural driver: *QA-1 Authorization and confidentiality*
 * Biggest open question: *Is a digital fallback login required for residents without eID? (R14)*
 * Biggest technical risk: *We cannot take responsibility for the agencies' systems and the availability of their APIs. When they fail, they can disrupt use of our portal (R15).*
