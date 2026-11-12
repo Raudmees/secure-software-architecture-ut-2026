@@ -150,18 +150,18 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Return `404` unless the signed-in user started the session; rate-limit the operation and audit every cancellation. Test: call `cancelSigning` with another resident's token; expect `404` and the session still awaiting confirmation.
 
 |R21
-|If the resident confirms the prompt on the phone after cancelling in the portal (step 3 of "Late signature after a cancellation" in link:../docs/architecture.adoc[architecture.adoc]), then the phone shows the prompt as confirmed while the portal has discarded the signature. The resident may believe the document is signed and not sign again, so the agency never receives a signature.
+|If the resident confirms the prompt on the phone after cancelling in the portal, then the phone shows the prompt as confirmed while the portal has discarded the signature. The resident may believe the document is signed and not sign again, so the agency never receives a signature.
 |Medium
 |Medium
 |Low
-|The portal decides the cancellation alone and keeps showing "Signing cancelled" and that the document is not signed, whatever the phone shows. `completeSigning` returns `410 SIGNING_ENDED`, which tells the client to reload the document; the document still awaits a signature and a new attempt can start at once (link:../adrs/ADR-0004-cancel-signing-as-new-endpoint.adoc[ADR-0004]). The portal also asks the signing service to withdraw the prompt, but does not rely on it. Test: start signing against a stub signing service, cancel, let the stub confirm the prompt, call `completeSigning` and reload the document; expect `410 SIGNING_ENDED`, the document shown as not signed and still awaiting a signature, and a new `startSigning` with a new key returning `202`.
+|The portal keeps showing "Signing cancelled" and that the document is not signed, whatever the phone shows, and a new attempt can start at once (link:../adrs/ADR-0004-cancel-signing-as-new-endpoint.adoc[ADR-0004]). Test: start signing against a stub signing service, cancel, let the stub confirm the prompt, then call `completeSigning`; expect `410 SIGNING_ENDED`, the document shown as not signed, and a new `startSigning` with a new key returning `202`.
 
 |R22
-|If `cancelSigning` and `completeSigning` reach the portal at almost the same moment (the race at step 3 of the same timeline) and both are accepted, then the resident is told "Signing cancelled" while the signed document is delivered to the agency.
+|If `cancelSigning` and `completeSigning` reach the portal at the same moment and both are accepted, then the resident is told "Signing cancelled" while the signed document is delivered to the agency.
 |Low
 |High
 |Low
-|Both operations change the session from `AWAITING_CONFIRMATION` in one conditional update in Portal DB, so only the first one succeeds and the other gets `410 SIGNING_ENDED`. If completing wins, the portal shows "signed" and the document is delivered once. Test: with a stub signing service that already holds a valid signature, send `cancelSigning` and `completeSigning` at the same time for 100 sessions. Expect each session to end in exactly one of two ways: cancelled, with no signed document in the Temporary file store, nothing in the Message broker and nothing received by a stub agency; or completed, with `cancelSigning` returning `410` and the stub agency receiving the document once. In both cases the document page shows the same result as the session in Portal DB.
+|The conditional update in R19 lets only the first call succeed, and the other gets `410 SIGNING_ENDED`. Test: with a stub signing service that already holds a valid signature, send `cancelSigning` and `completeSigning` at the same time; expect exactly one outcome, cancelled with nothing delivered or completed with the document delivered once, and the portal showing that outcome.
 |===
 
 == Notes
