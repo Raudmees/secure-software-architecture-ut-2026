@@ -78,7 +78,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
         thirdParty -> portal.gateway "Portal Third-party API" "HTTPS, OAuth 2.0 client credentials" "user"
         ops -> portal.observability "Monitors" "HTTPS" "user"
         portal.web -> portal.gateway "Portal Citizen API" "HTTPS/JSON" "user"
-        portal.backoffice -> portal.gateway "API calls" "HTTPS/JSON" "user"
+        portal.backoffice -> portal.gateway "Portal Back-office API" "HTTPS/JSON" "user"
 
         portal.gateway -> portal.iam "Identity & Access API" "HTTPS/JSON" "route"
         portal.gateway -> portal.backend "Portal Backend API" "HTTPS/JSON" "route"

@@ -142,4 +142,13 @@ on that diagram.
 |HTTPS, provider's API
 |Relying-party account issued by the signing service
 |Set by the provider - adapter isolates changes
+
+|IF-16
+|Portal Back-office API
+|API
+|API gateway
+|Back-office web app
+|HTTPS/JSON
+|Staff session token with role (helpdesk, admin, auditor), checked by API gateway
+|Internal - changed together with the consumer
 |===
