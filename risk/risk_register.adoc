@@ -148,6 +148,20 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |Medium
 |Low
 |Return `404` unless the signed-in user started the session; rate-limit the operation and audit every cancellation. Test: call `cancelSigning` with another resident's token; expect `404` and the session still awaiting confirmation.
+
+|R21
+|If the resident confirms the prompt on the phone after cancelling in the portal, then the phone shows the prompt as confirmed while the portal has discarded the signature. The resident may believe the document is signed and not sign again, so the agency never receives a signature.
+|Medium
+|Medium
+|Low
+|The portal keeps showing "Signing cancelled" and that the document is not signed, whatever the phone shows, and a new attempt can start at once (link:../adrs/ADR-0004-cancel-signing-as-new-endpoint.adoc[ADR-0004]). Test: start signing against a stub signing service, cancel, let the stub confirm the prompt, then call `completeSigning`; expect `410 SIGNING_ENDED`, the document shown as not signed, and a new `startSigning` with a new key returning `202`.
+
+|R22
+|If `cancelSigning` and `completeSigning` reach the portal at the same moment and both are accepted, then the resident is told "Signing cancelled" while the signed document is delivered to the agency.
+|Low
+|High
+|Low
+|The conditional update in R19 lets only the first call succeed, and the other gets `410 SIGNING_ENDED`. Test: with a stub signing service that already holds a valid signature, send `cancelSigning` and `completeSigning` at the same time; expect exactly one outcome, cancelled with nothing delivered or completed with the document delivered once, and the portal showing that outcome.
 |===
 
 == Notes
