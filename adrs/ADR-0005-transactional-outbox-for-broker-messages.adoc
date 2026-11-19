@@ -20,14 +20,14 @@ QA scenario 4 requires each request to be delivered exactly once.
 == Decision
 
 * In one Portal DB transaction, the Portal backend saves the submission record (or marks the
-  signing session `COMPLETED`) and an outbox row with the message ID, type and content. The
-  message ID is the submission ID, or the signing session ID for a signed document.
+  signing session `COMPLETED`) and an outbox row with the request type and content, keyed by the
+  submission ID (the signing session ID for a signed document).
 * The resident gets the confirmation after this commit.
 * A relay in the Portal backend publishes new outbox rows every second and deletes each row once
   the broker confirms it.
 * If the relay stops between publishing and deleting, the row is published again. Agency
-  integration drops repeats by message ID and keeps delivered IDs for 7 days, the time after which
-  an undelivered request expires.
+  integration drops repeats by submission ID (signing session ID for a signed document) and keeps
+  delivered IDs for 7 days, the time after which an undelivered request expires.
 
 == Alternatives considered
 
