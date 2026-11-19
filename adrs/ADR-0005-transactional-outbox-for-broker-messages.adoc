@@ -1,0 +1,58 @@
+= ADR-0005: Transactional outbox between Portal DB and the Message broker
+
+== Status
+
+Proposed
+
+== Context
+
+Step 3 of Workflow and messaging (link:../docs/architecture.adoc[architecture.adoc]) and
+`completeSigning` (link:../api/openapi.yaml[openapi.yaml]) say the Portal backend writes Portal DB
+and publishes to the Message broker "in one transaction". No transaction covers two systems, so
+each developer picks an order (R23):
+
+* commit first: if the publish fails, the request is lost while the resident sees "Request saved";
+* publish first: if the commit fails, the resident submits again and the agency gets the request
+  twice.
+
+QA scenario 4 requires each request to be delivered exactly once.
+
+== Decision
+
+* In one Portal DB transaction, the Portal backend saves the submission record (or marks the
+  signing session `COMPLETED`) and an outbox row with the request type and content, keyed by the
+  submission ID (the signing session ID for a signed document).
+* The resident gets the confirmation after this commit.
+* A relay in the Portal backend publishes new outbox rows every second and deletes each row once
+  the broker confirms it.
+* If the relay stops between publishing and deleting, the row is published again. Agency
+  integration drops repeats by submission ID (signing session ID for a signed document) and keeps
+  delivered IDs for 7 days, the time after which an undelivered request expires.
+
+== Alternatives considered
+
+* *Commit, then publish* or *publish, then commit*: loses or duplicates requests (see Context).
+* *Two-phase commit across Portal DB and the broker*: not every broker supports it, and a broker
+  outage would block submissions.
+* *Change data capture from the Portal DB log*: one more component to run. It can replace the
+  relay later.
+
+== Consequences
+
+* Positive:
+** Everyone implements the same order, and no request is lost.
+** Residents can submit and sign while the broker is down.
+* Negative or risks:
+** Portal DB holds request content until it is published, which ADR-0002 does not allow today.
+** Every consumer must drop duplicates.
+* Follow-up actions:
+** Replace "in one transaction" in architecture.adoc and openapi.yaml with this decision.
+** Add the outbox to the data-management table in architecture.adoc and to ADR-0002.
+** Audit events have the same problem (link:../docs/api_security_review.adoc[api_security_review.adoc],
+   row 4); send them through the outbox too.
+
+== References
+
+* link:../docs/qa_scenarios.adoc[qa_scenarios.adoc]: Scenario 4
+* link:ADR-0002-portal-stores-minimal-data.adoc[ADR-0002]
+* link:../risk/risk_register.adoc[Risk register]: R23

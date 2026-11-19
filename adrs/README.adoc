@@ -21,6 +21,10 @@ Use one file per important architecture decision.
 |link:ADR-0004-cancel-signing-as-new-endpoint.adoc[ADR-0004]
 |Cancelling a signing session is a new endpoint
 |Accepted
+
+|link:ADR-0005-transactional-outbox-for-broker-messages.adoc[ADR-0005]
+|Transactional outbox between Portal DB and the Message broker
+|Proposed
 |===
 
 Each ADR should state context, decision, alternatives, consequences, and follow-up actions.

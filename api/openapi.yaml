@@ -163,9 +163,11 @@ paths:
         **Idempotency**: no `Idempotency-Key`, because `signingSessionId` identifies the
         operation. Three things make repeated calls harmless:
 
-        * The signed document is written to the Temporary file store first; then marking the
-          session `COMPLETED` and publishing the delivery message happen in one transaction, so
-          a retry can never queue the document twice and the agency receives it once.
+        * The signed document is written to the Temporary file store first. Then marking the
+          session `COMPLETED` and writing the delivery message to the outbox happen in one
+          Portal DB transaction, and a relay publishes it to the Message broker (ADR-0005). A
+          retry finds the session `COMPLETED` and writes nothing, and Agency integration drops
+          a repeated message by `signingSessionId`, so the agency receives the document once.
         * Terminal states are sticky: a completed session keeps returning the same `200`, a
           rejected, cancelled or expired one the same `410`. A new attempt needs a new
           `startSigning` call with a new key.

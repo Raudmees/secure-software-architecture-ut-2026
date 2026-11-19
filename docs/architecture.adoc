@@ -150,7 +150,7 @@ The portal holds as little business data as possible. Case content, documents, p
 delegations stay with the owning agencies and registries, and the portal reads them live through
 the agency integration service. The portal stores only its own data: preferences, catalogue
 configuration, API client registrations, sessions, the notification inbox, submission records, files in transit,
-queued requests in the message broker (which contain personal data), and the audit trail.
+queued requests in the Portal DB outbox and the message broker (which contain personal data), and the audit trail.
 
 The decision is recorded in link:../adrs/ADR-0002-portal-stores-minimal-data.adoc[ADR-0002].
 
@@ -222,8 +222,8 @@ Action: a resident submits a service request and opens its status page (see Work
 |Only the portal knows whether a request has reached the agency. Holds no form content.
 
 |Request content and attached documents, until the agency confirms receipt
-|Portal, in the Message broker queue, documents in the Temporary file store
-|Removed after the agency confirms receipt. Files are deleted within 10 minutes (Scenario 3, "Delivered files are removed from the portal").
+|Portal, in the Portal DB outbox until published, then in the Message broker queue; documents in the Temporary file store
+|The outbox row is deleted once the broker has stored the request (ADR-0005). Removed from the queue after the agency confirms receipt. Files are deleted within 10 minutes (Scenario 3, "Delivered files are removed from the portal").
 
 |The case after delivery: content, case status, decision
 |Agency back-end e-service
@@ -252,9 +252,10 @@ Workflow: a resident submits a service request (*Scenario 4*).
 
 . Citizen web app sends the form with a new submission ID to the API gateway.
 . API gateway checks the token; Identity & access checks the resident may submit.
-. Portal backend saves the submission ID in Portal DB and publishes the request to the Message broker in one transaction.
+. Portal backend saves the submission record and an outbox row holding the request in one Portal DB transaction (link:../adrs/ADR-0005-transactional-outbox-for-broker-messages.adoc[ADR-0005]).
 . Portal backend confirms the submission; the resident sees "Request saved. It will be sent to the agency.".
-. Message broker delivers the request to Agency integration, which sends it to the agency.
+. The outbox relay in Portal backend publishes the request to the Message broker and deletes the row once the broker has stored it.
+. Message broker delivers the request to Agency integration, which drops a repeat by submission ID and sends the request to the agency.
 . The agency returns an agency reference; Portal backend saves it with the submission ID in Portal DB.
 . Portal backend notifies the resident with the agency reference; all steps send audit events through the Message broker to the Audit service.
 
