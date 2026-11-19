@@ -1,0 +1,83 @@
+= Architectural Risk Analysis
+
+== 1. Attack resistance analysis
+
+[cols="2,3,3,3",options="header"]
+|===
+|Category |How is applicable in our system |How can attacker try to achieve this |Are there measures for counter
+
+|Spoofing
+|Identity and access, resident token at the API gateway
+|Stolen or forged access token
+|Token with short TTL, token checks in API gateway
+
+|Tampering
+|Forging documents in the flow or user info in portal DB
+|Changes files in temporary file storage or message broker
+|Hash check for documents, hash chaining on the audit store, access control on the message broker
+
+|Repudiation
+|Audit store
+|Resident denies signing, back-office user denies admin action, agency denies a document
+|Logging all actions in the portal, eID signature and certificate (resident), Delivery Report API (agency)
+
+|Information Disclosure
+|Authorization failures, error codes
+|Attacker can access other peoples files through guessing or changing ID-s in URL
+
+|Attacker can look at error responses to reverse engineer the system
+|Access is checked first (404 for no access), general error codes (real reason in audit events)
+
+|Denial of Service
+|Through API gateway or an agency
+|Overloading our system with requests
+|Rate limiting, checking uploads, firewall, webfirewall (WAF)
+
+|Elevation of privilege
+|Signing, back-office
+|Sign someone else's document or use a back-office role
+|Gateway checks the token, ownership and mandate checks in the signing workflow (Identity and access)
+|===
+
+== 2. Ambiguity analysis
+
+Portal:
+
+Step 3 in "Workflow and messaging": portal backend saves the submission ID in the portal DB and publishes the request to the Message broker in one transaction. It is also stated in the openapi file, under "Complete a signing session" endpoint.
+
+It could cause confusion for different readers. Portal DB and the Message broker are separate systems, so no single transaction can cover both, and the text can be read in different ways. One developer commits to the DB and then publishes. If the publish fails, the request is saved but never delivered, and the resident still sees "Request saved". Another publishes first and then commits. If the commit fails, the resident submits again and the agency receives the request twice.
+
+The design must define one way to keep the DB and the broker consistent, and both documents must describe it the same way. For example: a transactional outbox. The request and an outbox row are written in one Portal DB transaction, and a relay publishes the row to the Message broker. Agency integration drops duplicates by submission ID.
+
+API:
+
+documentSha256 in the openapi file is described as the SHA-256 of the document version the resident viewed, as returned by the document-download operation. This operation is not in the specification, so the client and the service can read it in different ways: which bytes are hashed (the file as the agency returns it, or a version prepared by the portal), who computes the first hash, and how it is written. If the client sends a hash of one version and the service computes a hash of another, every signing fails with 410 SIGNING_ENDED, or the check no longer proves that the resident signed what they saw. The specification must describe the document-view operation and say that the hash is computed over the exact bytes the agency returns.
+
+== 3. Weakness analysis
+
+External systems:
+
+[cols="1,2",options="header"]
+|===
+|Service |Risk
+
+|National eID provider
+|Outage means no logging in, compromised provider breaks identity for everything
+
+|External registries
+|Mandate info is not available (delegates are denied if we don't cache info, no updates about mandates coming from the registry, stale (cached) info means users could access things not meant for them)
+
+|Agency services
+|Users are not able to access their cases. We depend on agency services to implement our API-s correctly, also depend on them to keep their services functional, we rely on agencies to delete documents. Agency staff access is not logged in audit trail
+
+|Notification service
+|Notification providers could see personal data in message content, we do not control what they store in their systems
+
+|Signing service
+|Unavailability means no signing for anyone, it does not know about our cancel feature
+
+|Third-party clients
+|If they get hacked, they could call the public API within their scope
+|===
+
+No frameworks or libraries are chosen yet
