@@ -22,6 +22,7 @@ The portal stores as little business data as possible.
 ** preferences, catalogue configuration, API client registrations, sessions, the notification inbox and submission records (Portal DB (minimal));
 ** files in transit, until they are scanned and delivered (Temporary file store);
 ** queued requests to agencies (Message broker);
+** outbox rows holding a request until it is published to the Message broker;
 ** the audit trail (Audit store).
 * Agency staff never use the portal. The portal sends requests and documents to the agencies'
   own systems (Agency back-end e-services), and agency staff work there.

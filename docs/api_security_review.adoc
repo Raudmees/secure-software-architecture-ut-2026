@@ -60,7 +60,7 @@ Every decision, allowed or denied, is audited.
 
 |4
 |Security events are not recorded, are lost, or logs leak personal data.
-|Every call writes an audit event with the actor, delegation reference, resource IDs and outcome, in the same transaction as the change. Tokens, personal identification codes and document content are never logged.
+|Every call writes an audit event with the actor, delegation reference, resource IDs and outcome, in the same transaction as the change (outbox). Tokens, personal identification codes and document content are never logged.
 
 |5
 |The portal accepts a signature or document it should not trust.
