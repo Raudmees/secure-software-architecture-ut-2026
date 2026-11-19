@@ -162,6 +162,13 @@ Risks to completing the project itself: gaps in team knowledge, unvalidated tech
 |High
 |Low
 |The conditional update in R19 lets only the first call succeed, and the other gets `410 SIGNING_ENDED`. Test: with a stub signing service that already holds a valid signature, send `cancelSigning` and `completeSigning` at the same time; expect exactly one outcome, cancelled with nothing delivered or completed with the document delivered once, and the portal showing that outcome.
+
+|R23
+|Step 3 of Workflow and messaging (link:../docs/architecture.adoc[architecture.adoc]) and `completeSigning` in link:../api/openapi.yaml[openapi.yaml] say the portal writes Portal DB and publishes to the Message broker "in one transaction". No transaction can cover two separate systems, so developers will pick different orders. If the portal commits and the publish fails, then the request is never delivered while the resident sees "Request saved". If it publishes and the commit fails, then the resident submits again and the agency receives the request twice.
+|Medium
+|High
+|Medium
+|Use a transactional outbox: write the submission record (or the `COMPLETED` signing session) and an outbox row in one Portal DB transaction, and a relay publishes the row to the Message broker. Agency integration drops duplicates by submission ID (signing session ID for a signed document). Replace "in one transaction" in both documents with this (link:../adrs/ADR-0005-transactional-outbox-for-broker-messages.adoc[ADR-0005]). Test: stop the broker after the commit, then restore it; expect each request delivered once. Stop the relay after it publishes but before it deletes the row; expect the agency to receive the request once.
 |===
 
 == Notes
