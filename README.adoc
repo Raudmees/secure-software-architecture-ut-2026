@@ -38,6 +38,7 @@ For this project we are using the default scenario of Citizen Services Portal, d
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
 * Architectural risk analysis: link:docs/risk_analysis.adoc[docs/risk_analysis.adoc]
 * Architecture: link:docs/architecture.adoc[docs/architecture.adoc]
+* Deployment model (development, test, production): link:docs/deployment_model.adoc[docs/deployment_model.adoc]
 * Interface inventory: link:docs/interface_inventory.adoc[docs/interface_inventory.adoc]
 * API specification (OpenAPI): link:api/openapi.yaml[api/openapi.yaml]
 * API evolution strategy: link:docs/api_evolution_strategy.adoc[docs/api_evolution_strategy.adoc]
