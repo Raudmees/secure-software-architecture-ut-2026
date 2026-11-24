@@ -1,0 +1,26 @@
+= SLO candidates
+
+[cols="1,3,2,3",options="header"]
+|===
+|ID |Objective |Window |What we will measure
+
+|SLO-1
+|Resident login and request submission succeed for 99% of attempts.
+|30 days
+|Share of login and submission requests that do not fail with a server error or timeout, counted at the API gateway.
+
+|SLO-2
+|99% of portal responses are returned within 500 ms.
+|30 days
+|Response time of requests at the API gateway.
+
+|SLO-3
+|99% of submissions are delivered to the agency within 15 minutes (assuming the agency is functional).
+|30 days
+|Time from the submission record to the agency's confirmation, using the submission ID in the Portal backend and Agency integration.
+
+|SLO-4
+|99.9% of access events have an audit record available within 5 seconds.
+|30 days
+|Time from the access event to the record being readable in the Audit store.
+|===
