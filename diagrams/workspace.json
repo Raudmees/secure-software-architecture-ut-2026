@@ -1369,7 +1369,7 @@
           "tags" : "Element,Deployment Node",
           "technology" : "Kubernetes pod"
         } ],
-        "description" : "Same images, configuration, network policies and mTLS service identities as production. Each service runs 2 small pods, the fewest that still show faults between instances, and does not scale out.",
+        "description" : "Same images, network policies and mTLS service identities as production. Each service runs 2 small pods, the fewest that still show faults between instances, and does not scale out.",
         "environment" : "Test",
         "id" : "170",
         "infrastructureNodes" : [ {

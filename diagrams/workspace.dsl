@@ -263,7 +263,7 @@ workspace "Citizen Services Portal" "Architecture model of the Citizen Services 
                     egress = infrastructureNode "Egress proxy" "The only way out. Same rules as production, but each service reaches only the test environments of its external systems; production endpoints are blocked." "HTTPS forward proxy"
                 }
 
-                cluster = deploymentNode "Portal application cluster" "Same images, configuration, network policies and mTLS service identities as production. Each service runs 2 small pods, the fewest that still show faults between instances, and does not scale out." "Kubernetes" {
+                cluster = deploymentNode "Portal application cluster" "Same images, network policies and mTLS service identities as production. Each service runs 2 small pods, the fewest that still show faults between instances, and does not scale out." "Kubernetes" {
                     gatewayPod = deploymentNode "API gateway pod" "" "Kubernetes pod" "" 2 {
                         gateway = containerInstance portal.gateway
                     }

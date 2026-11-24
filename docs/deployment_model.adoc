@@ -208,7 +208,7 @@ Zones, redundancy, the firewall, the VPN, egress rules and network policies exis
 * The portal runs in the Estonian Government Cloud (Riigipilv), so all data stays in Estonia (QA-13). We assume three availability zones. With only two data centres, the broker quorum and the database failover need a witness in a third location.
 * The technologies on the deployment nodes (Kubernetes, PostgreSQL, RabbitMQ, S3-compatible object storage, nginx, OpenTelemetry, Prometheus, Loki, Tempo, Grafana, Docker Compose) are working assumptions. The container diagram keeps generic technologies.
 * Production instance counts are minimums. Peak capacity is sized once the load estimates for R11 exist.
-* Staff and auditors reach the Back-office web app only through the Staff VPN gateway.
+* Staff and auditors reach the Back-office web app only through the Staff VPN gateway. The public load balancer forwards only Citizen API and Third-party API routes.
 * Service images are built once and promoted unchanged from Test to Production. Only configuration and secrets differ, and each environment has its own secrets.
 * Test cannot show the loss of a zone or of a database or broker node (QA-3, QA-8). We assume Test can be scaled to the production counts for a failover or load test, from the same infrastructure code.
 * The identity provider, signing service, registries and agencies offer test environments. R06 notes that a signing test environment may be hard to get; until then Test uses the stub from Development for that system.
