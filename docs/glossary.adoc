@@ -45,11 +45,37 @@ Names exactly as in the C4 container diagram.
 * *Audit store* — Append-only, tamper-evident storage of audit records, in a separate audit environment.
 * *Observability* — Monitoring, logs, tracing and security events for the operations and security team.
 
+== Deployment
+
+Names exactly as in the C4 deployment diagrams. Production and Test use the same names; the last
+five entries appear only in Test or Development.
+
+* *Estonian Government Cloud* — State private cloud (Riigipilv) that hosts the portal; assumed to have three availability zones in Estonia.
+* *Edge network (DMZ)* — The only network zone reachable from the internet; holds no personal data.
+* *Web application firewall* — Drops floods, bot traffic and oversized requests, and limits requests per client IP, before the API gateway.
+* *Public load balancer* — Terminates public TLS and spreads requests over the availability zones.
+* *Staff VPN gateway* — The only entry for staff and auditors to the Back-office web app.
+* *Web content server* — Serves the files of the two web apps; holds no data.
+* *Portal application cluster* — Kubernetes cluster that runs the portal's stateless services, at least one pod per zone.
+* *Telemetry collector* — Collects metrics, logs and traces in the cluster and drops tokens and personal identification codes.
+* *Data zone* — Network zone of Portal DB, the Temporary file store and the Message broker; reachable only from the cluster.
+* *Egress zone* / *Egress proxy* — The only way out of the portal network; each service reaches only its own external systems.
+* *Operations zone* — Network zone of Observability, reached by the Operations / Security team through the staff VPN.
+* *Tester's workstation* — Device of a developer, tester or product owner; reaches Test only from an allow-listed IP address.
+* *Developer's computer* — Runs the whole portal for one developer in Development; every port listens on localhost only.
+* *Local Docker environment* — Docker Compose project on the Developer's computer that starts every container once.
+* *Web dev server* — Serves the files of the two web apps in Development and reloads them when the code changes.
+* *Stub external systems* — Scripted stand-ins for the external systems in Development, so no call leaves the Developer's computer.
+
 == Architecture and security
 
 * *C4 context view* — Portal, users, external systems, and their relationships.
 * *C4 container* — Application or data store running as a separate process or service.
 * *C4 component* — Code elements inside one container implementing a technical function.
+* *C4 deployment view* — Which infrastructure runs each container in one deployment environment.
+* *Deployment environment* — One complete installation of the portal. There are three: Development (a developer's computer), Test (staging; same structure as Production, smaller) and Production.
+* *Deployment node* — Where software runs: a device, browser, Kubernetes pod, virtual machine, cloud or network zone. Deployment nodes can be nested.
+* *Infrastructure node* — Supporting infrastructure on a deployment view, such as a firewall, load balancer, VPN gateway or proxy.
 * *System boundary* — Separates the portal from external people and systems.
 * *Trust boundary* — Separates trust or privilege domains; crossing it requires explicit checks.
 * *Trust domain* — People and systems under one organization's control and trust; shown as dashed boxes in the diagrams (Portal operator, Agency trust domain, National trust services, Audit environment).

@@ -13,5 +13,9 @@ For each diagram, include:
 
 * link:c4_context.svg[System context]: who uses the portal, and which external systems it depends on or serves. Dashed boxes are trust domains.
 * link:c4_containers.svg[Containers]: which deployable parts make up the portal, where its data is stored, and how they communicate.
+* link:c4_deployment_production.svg[Deployment (production)]: where each container runs in production, which network zones and infrastructure traffic crosses, and how each part is made redundant.
+* link:c4_deployment_test.svg[Deployment (test)]: where each container runs in the test (staging) environment, and how it differs from production: same zones, infrastructure and security controls, with fewer and smaller instances, synthetic data and the test environments of the external systems.
+* link:c4_deployment_development.svg[Deployment (development)]: what runs on a developer's computer, and what stands in for the production infrastructure and the external systems.
+* link:c4_deployment_key.svg[Deployment key]: one key for all three deployment diagrams.
 
 Editable source: link:workspace.dsl[workspace.dsl] (Structurizr DSL; the layout is in `workspace.json`).

@@ -333,7 +333,207 @@ Link to threat model and risk register artifacts.
 
 == 9. Deployment and operations
 
-Link to deployment, observability, and recovery notes in link:../ops/[ops/].
+The portal runs in three deployment environments. A release moves from Development to Test to
+Production.
+
+[cols="2,3,3,3",options="header"]
+|===
+| |Development |Test (staging) |Production
+
+|Purpose
+|Write and debug code, and run the automated tests against stubs.
+|Check a release and its integration with the external systems before it reaches production.
+|Serve residents.
+
+|Runs on
+|One developer's computer, in Docker Compose.
+|Estonian Government Cloud, in a separate test tenant, in one zone.
+|Estonian Government Cloud, in three zones.
+
+|Size
+|Every container once.
+|2 pods per service (1 for the Antivirus scanner); one node each for Portal DB, the Message broker and the Audit store.
+|3 pods per service; Portal DB 2, Message broker 3, Audit store 2.
+
+|Data
+|Synthetic, from a seed script.
+|Synthetic only, never a copy of production data.
+|Real personal data.
+
+|External systems
+|Stubs on the same computer.
+|The test environments of the providers.
+|The real systems.
+
+|Who reaches it
+|The developer, on localhost.
+|Testers and third-party test clients from allow-listed IP addresses; the back office through the Staff VPN gateway.
+|Residents and third-party clients through the Web application firewall; staff and auditors through the Staff VPN gateway.
+|===
+
+The three diagrams share one key: link:../diagrams/c4_deployment_key.svg[c4_deployment_key.svg].
+On each diagram, white boxes with rounded corners are deployment nodes (where something runs),
+white boxes with square corners are infrastructure nodes, and xN is the number of instances of a
+node. Blue lines enter the portal, red lines leave it, brown lines carry telemetry, and the other
+colours are the calls between containers from the container diagram.
+
+=== 9.1 Production
+
+.Deployment of the Citizen Services Portal in production (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
+image::../diagrams/c4_deployment_production.svg[C4 deployment diagram of the Citizen Services Portal in production]
+
+Each trust boundary in link:security_goals.adoc[security_goals.adoc] (section 5.2) is crossed in one
+place: residents and third-party clients at the Web application firewall, staff and auditors at the
+Staff VPN gateway, every external system at the Egress proxy, and audit records at the edge of the
+Audit environment.
+
+[cols="2,3,1,4",options="header"]
+|===
+|Deployment node |Runs |Instances |Why
+
+|Edge network (DMZ)
+|Web application firewall, Public load balancer, Staff VPN gateway, Web content server
+|-
+|The only zone reachable from the internet, and it holds no personal data. The firewall drops floods and oversized requests before they reach the API gateway (risk 3 in link:api_security_review.adoc[api_security_review.adoc]). Back-office traffic has its own entry, the VPN.
+
+|Portal application cluster
+|API gateway, Identity & access, Portal backend (with the outbox relay), Agency integration, Audit service, Antivirus scanner, Telemetry collector
+|3 pods per service
+|One pod per zone, so losing a zone or a pod leaves every service running (QA-3). Network policies allow only the calls on the container diagram, and each pod has its own mTLS service identity (section 6). The scanner runs on its own node pool with no outbound network access (SG-8).
+
+|Data zone
+|Portal DB, Temporary file store, Message broker
+|DB 2, broker 3
+|Reachable only from the cluster. A confirmed request survives the loss of a zone: Portal DB has a synchronous standby and the broker keeps every message on three nodes (QA-8, Scenario 4). The Temporary file store is replicated over the zones but not backed up, and it deletes files after 7 days, so a deleted file leaves no copy (Scenario 3).
+
+|Egress zone
+|Egress proxy
+|-
+|Each service may reach only its own external systems, from fixed IP addresses that agencies and registries can allow (QA-12, SG-5). TLS passes through the proxy, so mTLS with agencies and registries ends in Agency integration.
+
+|Audit environment
+|Audit store
+|2
+|A separate cloud tenant with its own administrators, so portal administrators cannot change or delete audit records. The Audit service may only insert, and backups go to write-once storage (SG-6, QA-4).
+
+|Operations zone
+|Observability
+|1
+|Telemetry arrives through the Telemetry collector, which drops tokens and personal identification codes (trade-off 3.1 in link:quality_attributes.adoc[quality_attributes.adoc]).
+|===
+
+=== 9.2 Test (staging)
+
+.Deployment of the Citizen Services Portal in the test environment (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
+image::../diagrams/c4_deployment_test.svg[C4 deployment diagram of the Citizen Services Portal in the test environment]
+
+Test has the same zones, infrastructure nodes, technologies and security controls as production.
+A release that passes in Test has therefore already met the same firewall rules, network policies,
+mTLS service identities, egress rules and insert-only audit permissions. Test differs from
+production only in the rows below.
+
+[cols="2,3,3,4",options="header"]
+|===
+|What |Production |Test |Why
+
+|Availability zones
+|3
+|1
+|Losing a zone is not tested here (see the assumptions).
+
+|Pods per service
+|3, one per zone, scaling out on load
+|2 small pods, no scaling out; 1 for the Antivirus scanner
+|Two is the fewest that still shows faults between instances, such as two outbox relays publishing the same row (ADR-0005) or a rolling update that drops requests.
+
+|Portal DB
+|Primary and synchronous standby, point-in-time backups
+|One small instance
+|The test data can be recreated from seed scripts.
+
+|Message broker
+|3 nodes, every message on all three
+|1 node
+|Same queues and per-queue permissions, so access to the queues is tested.
+
+|Temporary file store
+|Replicated over the zones
+|Not replicated
+|Same 7-day lifecycle rule, so deletion is tested (Scenario 3).
+
+|Audit store
+|Primary and standby, write-once backups
+|One instance, no write-once backups
+|Still a separate tenant with insert-only access, so the separation is tested (SG-6).
+
+|Observability
+|Full retention
+|Same stack, small disks, short retention
+|Enough to debug a test run.
+
+|Data
+|Real personal data
+|Synthetic only
+|No personal data leaves production (QA-2, QA-13).
+
+|External systems
+|The real systems
+|Test environments of the identity provider, signing service, registries and agencies; notification sandboxes
+|The Egress proxy blocks production endpoints, so a test never reaches a real agency or sends a message to a real resident.
+
+|Who reaches it
+|Open to the internet
+|Allow-listed IP addresses only
+|Unreleased versions are closed to the public. Third-party providers test their API clients here.
+|===
+
+=== 9.3 Development
+
+.Deployment of the Citizen Services Portal on a developer's computer (source: link:../diagrams/workspace.dsl[workspace.dsl], Structurizr DSL)
+image::../diagrams/c4_deployment_development.svg[C4 deployment diagram of the Citizen Services Portal in the development environment]
+
+The whole portal runs on one developer's computer. Docker Compose starts every container once,
+with the same database, broker and object storage products as production. Every port listens on
+localhost only, and the computer holds no secrets of the test or production environment.
+
+[cols="2,3,4",options="header"]
+|===
+|In production |In development |Notes
+
+|Edge network (DMZ)
+|Web dev server
+|No firewall, load balancer or VPN. The Web dev server serves both web apps and reloads them when the code changes.
+
+|Portal application cluster, 3 pods per service
+|Local Docker environment, each service once
+|Network policies are not reproduced. Services get certificates from a local development CA that exists only on this computer, so the checks on the caller's service identity (section 6) run locally too.
+
+|Data zone and Audit environment
+|One container each for Portal DB, the Audit store, the Message broker and the Temporary file store
+|The Audit store keeps its own server and credentials, and the Audit service may only insert. The Temporary file store keeps the 7-day lifecycle rule. Portal DB is filled with synthetic data by a seed script.
+
+|Egress proxy and the external systems
+|Stub external systems
+|Scripted answers stand in for the identity provider, signing service, registries, agencies and notification providers. No call leaves the computer and no real credentials are needed. A test can make a stub fail or answer late, which is how the tests with a stub agency, stub registry and stub signing service run (link:../risk/risk_register.adoc[risk register], link:security_invariants.adoc[security_invariants.adoc]).
+
+|Operations zone
+|Observability stack in one container, optional
+|Telemetry passes the same Telemetry collector rules, so tokens and personal identification codes are dropped here too.
+|===
+
+Zones, redundancy, the firewall, the VPN, egress rules and network policies exist only from Test onwards.
+
+=== 9.4 Assumptions to confirm
+
+* The portal runs in the Estonian Government Cloud (Riigipilv), so all data stays in Estonia (QA-13). We assume three availability zones. With only two data centres, the broker quorum and the database failover need a witness in a third location.
+* The technologies on the deployment nodes (Kubernetes, PostgreSQL, RabbitMQ, S3-compatible object storage, nginx, OpenTelemetry, Prometheus, Loki, Tempo, Grafana, Docker Compose) are working assumptions. The container diagram keeps generic technologies.
+* Production instance counts are minimums. Peak capacity is sized once the load estimates for R11 exist.
+* Staff and auditors reach the Back-office web app only through the Staff VPN gateway.
+* Service images are built once and promoted unchanged from Test to Production. Only configuration and secrets differ, and each environment has its own secrets.
+* Test cannot show the loss of a zone or of a database or broker node (QA-3, QA-8). We assume Test can be scaled to the production counts for a failover or load test, from the same infrastructure code.
+* The identity provider, signing service, registries and agencies offer test environments. R06 notes that a signing test environment may be hard to get; until then Test uses the stub from Development for that system.
+
+Observability, backup and recovery, and incident-response notes go in link:../ops/[ops/].
 
 == 10. Evolution plan
 
