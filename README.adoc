@@ -17,8 +17,8 @@ For this project we are using the default scenario of Citizen Services Portal, d
 
 == Current status
 
-* Week: *10*
-* Main focus this week: *Security invariants and a failure timeline for eID signing; after feedback (issue https://github.com/Raudmees/secure-software-architecture-ut-2026/issues/49[#49]), unified interface names and more general API error codes*
+* Week: *12*
+* Main focus this week: *Deployment model for development, test and production, trust boundaries with the authentication and authorization at each crossing, and SLO candidates*
 * Top architectural driver: *QA-1 Authorization and confidentiality*
 * Biggest open question: *Is a digital fallback login required for residents without eID? (R14)*
 * Biggest technical risk: *We cannot take responsibility for the agencies' systems and the availability of their APIs. When they fail, they can disrupt use of our portal (R15).*
@@ -32,7 +32,9 @@ For this project we are using the default scenario of Citizen Services Portal, d
 * Drivers: link:docs/drivers.adoc[docs/drivers.adoc]
 * Quality attributes (full prioritized list): link:docs/quality_attributes.adoc[docs/quality_attributes.adoc]
 * Quality attribute scenarios: link:docs/qa_scenarios.adoc[docs/qa_scenarios.adoc]
-* Security goals and trust boundaries: link:docs/security_goals.adoc[docs/security_goals.adoc]
+* SLO candidates: link:docs/slo_candidates.adoc[docs/slo_candidates.adoc]
+* Security goals: link:docs/security_goals.adoc[docs/security_goals.adoc]
+* Trust boundaries: link:docs/trust_boundaries.adoc[docs/trust_boundaries.adoc]
 * Identity model: link:docs/identity_model.adoc[docs/identity_model.adoc]
 * Access-control matrix: link:docs/access_control_matrix.adoc[docs/access_control_matrix.adoc]
 * Risk register: link:risk/risk_register.adoc[risk/risk_register.adoc]
