@@ -1,0 +1,109 @@
+= Trust Boundaries
+:toc:
+
+This document refines the trust-boundary list in link:security_goals.adoc[security_goals.adoc]
+(section 5.2).
+
+== 1. Trust boundaries and what crosses them
+
+[cols="1,2,4",options="header"]
+|===
+|ID |Boundary |What crosses it
+
+|TB-1
+|Resident or delegate ↔ portal
+|In: form data, uploaded files, signing actions and the resident's session token. Out: request and case status, documents, notifications and the resident's access log.
+
+|TB-2
+|Staff ↔ portal
+|In: back-office requests and the staff session token. Out: resident data needed for support, and audit records.
+
+|TB-3
+|Third-party service providers ↔ portal
+|In: Third-party API requests and the client's access token. Out: service data within the client's scopes.
+
+|TB-4
+|Portal ↔ National eID provider (TARA)
+|The resident's browser is redirected to TARA and back with a code. Identity & access exchanges the code for an ID token with the personal identification code and name.
+
+|TB-5
+|Portal ↔ Digital signing service
+|Out: signing requests for a document and prompt withdrawals. In: signatures and validation results.
+
+|TB-6
+|Portal ↔ Agency back-end e-services
+|Out: submissions (filled-in forms) and attached documents. In: agency references, case status and decisions.
+
+|TB-7
+|Portal ↔ External registries
+|Out: personal identification codes for lookups. In: profile data and mandates (delegations).
+
+|TB-8
+|Portal → Notification providers
+|Out: recipient address and message text.
+
+|TB-9
+|Container ↔ container inside the portal
+|Internal API calls and Message broker messages. Each container is treated as a separate trust zone, so taking over one container does not give access to the others.
+
+|TB-10
+|Portal → Audit environment
+|Audit records, written by the Audit service to the Audit store, which has its own administrators.
+|===
+
+== 2. Authentication and authorization at each crossing
+
+[cols="1,2,3,4",options="header"]
+|===
+|ID |Boundary |Authentication |Authorization
+
+|TB-1
+|Resident or delegate ↔ portal
+|Resident session token from eID login, checked by the API gateway: fixed algorithm and keys, issuer, audience and expiry.
+|Identity & access decides each action by attributes: the object's owner is the user, or the registry confirms a valid mandate for the service. Denied access returns 404 by default.
+
+|TB-2
+|Staff ↔ portal
+|Staff session token with a role (helpdesk, admin, auditor), checked by the API gateway.
+|The role decides which operations are allowed.
+
+|TB-3
+|Third-party service providers ↔ portal
+|OAuth 2.0 client credentials.
+|The API gateway allows only the scopes granted to the client.
+
+|TB-4
+|Portal ↔ TARA
+|OIDC client registration with TARA (client ID and secret). Identity & access validates the ID token's signature, issuer, audience and expiry.
+|Only the configured provider is trusted.
+
+|TB-5
+|Portal ↔ Digital signing service
+|Account issued by the signing service.
+|A resident signs only documents in their own cases, and the signer's certificate must belong to the signed-in resident.
+
+|TB-6
+|Portal ↔ Agency back-end e-services
+|mTLS in both directions.
+|Each agency receives only the data for its own service.
+
+|TB-7
+|Portal ↔ External registries
+|mTLS.
+|If a registry cannot confirm a mandate, delegated access is denied.
+
+|TB-8
+|Portal → Notification providers
+|API key per provider account.
+|-
+
+|TB-9
+|Container ↔ container
+|mTLS service identity for every container.
+|The receiver accepts only the callers on the container diagram. Calls from the API gateway to Portal backend and the Audit service also carry the resident's checked token. On the Message broker, only Portal backend may publish to the Submission Queue and only Agency integration may consume it; all containers may publish audit events and only the Audit service may consume them.
+
+|TB-10
+|Portal → Audit environment
+|Database credentials of the Audit service, separate from those of Portal DB.
+|The Audit service may insert and read, never update or delete.
+|===
