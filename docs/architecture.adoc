@@ -339,7 +339,6 @@ the Estonian Government Cloud across three zones. The deployment diagrams, the d
 the environments and the assumptions behind them are in
 link:deployment_model.adoc[deployment_model.adoc].
 
-Observability, backup and recovery, and incident-response notes go in link:../ops/[ops/].
 
 == 10. Evolution plan
 
