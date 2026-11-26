@@ -3,8 +3,2126 @@
   "description" : "Architecture model of the Citizen Services Portal.",
   "documentation" : { },
   "id" : 1,
-  "lastModifiedDate" : "2026-11-12T21:38:59Z",
+  "lastModifiedDate" : "2026-11-23T19:57:42Z",
   "model" : {
+    "deploymentNodes" : [ {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "6",
+          "environment" : "Production",
+          "id" : "67",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.residentDevice.browser.webApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Citizen API",
+            "destinationId" : "83",
+            "id" : "84",
+            "linkedRelationshipId" : "43",
+            "sourceId" : "67",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files, calls Portal Citizen API",
+            "destinationId" : "75",
+            "id" : "139",
+            "sourceId" : "67",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "id" : "66",
+        "instances" : "1",
+        "name" : "Web browser",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.residentDevice.browser"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Chrome, Firefox, Safari or Edge"
+      } ],
+      "description" : "Computer, tablet or phone of a resident or delegate.",
+      "environment" : "Production",
+      "id" : "65",
+      "instances" : "1",
+      "name" : "Resident's device",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.residentDevice"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Windows, macOS, Linux, Android or iOS"
+    }, {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "7",
+          "environment" : "Production",
+          "id" : "70",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.staffDevice.browser.backofficeApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Back-office API",
+            "destinationId" : "83",
+            "id" : "85",
+            "linkedRelationshipId" : "44",
+            "sourceId" : "70",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files, calls Portal Back-office API",
+            "destinationId" : "77",
+            "id" : "144",
+            "sourceId" : "70",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS over IPsec"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Production",
+        "id" : "69",
+        "instances" : "1",
+        "name" : "Web browser",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.staffDevice.browser"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Chrome, Firefox or Edge"
+      } ],
+      "description" : "Device of a helpdesk worker, administrator or auditor. Reaches the portal only through the staff VPN.",
+      "environment" : "Production",
+      "id" : "68",
+      "instances" : "1",
+      "name" : "Staff or auditor workstation",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.staffDevice"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Windows or macOS with VPN client"
+    }, {
+      "description" : "Run by each registered API client, outside the portal operator's control.",
+      "environment" : "Production",
+      "id" : "71",
+      "instances" : "1",
+      "name" : "Third-party provider hosting",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.thirdPartyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Production",
+        "id" : "72",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.thirdPartyHosting.thirdPartyClient"
+        },
+        "relationships" : [ {
+          "description" : "Portal Third-party API",
+          "destinationId" : "83",
+          "id" : "86",
+          "linkedRelationshipId" : "41",
+          "sourceId" : "72",
+          "technology" : "HTTPS, OAuth 2.0 client credentials"
+        }, {
+          "description" : "Portal Third-party API",
+          "destinationId" : "75",
+          "id" : "140",
+          "sourceId" : "72",
+          "tags" : "Relationship,ingress",
+          "technology" : "HTTPS, OAuth 2.0 client credentials"
+        } ],
+        "softwareSystemId" : "24",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Provider's own infrastructure"
+    }, {
+      "children" : [ {
+        "description" : "The only zone reachable from the internet. Holds no personal data.",
+        "environment" : "Production",
+        "id" : "74",
+        "infrastructureNodes" : [ {
+          "description" : "Drops floods, bot traffic and oversized requests, and limits requests per client IP.",
+          "environment" : "Production",
+          "id" : "75",
+          "name" : "Web application firewall",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.edge.waf"
+          },
+          "relationships" : [ {
+            "description" : "Forwards allowed requests",
+            "destinationId" : "76",
+            "id" : "141",
+            "sourceId" : "75",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "WAF with DDoS protection"
+        }, {
+          "description" : "Terminates public TLS and spreads requests over the zones.",
+          "environment" : "Production",
+          "id" : "76",
+          "name" : "Public load balancer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.edge.lb"
+          },
+          "relationships" : [ {
+            "description" : "Forwards app file requests",
+            "destinationId" : "78",
+            "id" : "142",
+            "sourceId" : "76",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards API requests",
+            "destinationId" : "83",
+            "id" : "143",
+            "sourceId" : "76",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "HTTPS load balancer"
+        }, {
+          "description" : "Admits only staff and auditor devices with a VPN certificate. Back-office traffic never uses the public entry.",
+          "environment" : "Production",
+          "id" : "77",
+          "name" : "Staff VPN gateway",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.edge.vpn"
+          },
+          "relationships" : [ {
+            "description" : "Forwards app file requests",
+            "destinationId" : "78",
+            "id" : "145",
+            "sourceId" : "77",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards back-office API requests",
+            "destinationId" : "83",
+            "id" : "146",
+            "sourceId" : "77",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "IPsec VPN gateway"
+        }, {
+          "description" : "Serves the files of the Citizen web app and the Back-office web app. Holds no data.",
+          "environment" : "Production",
+          "id" : "78",
+          "name" : "Web content server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.edge.webContent"
+          },
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "nginx"
+        } ],
+        "instances" : "1",
+        "name" : "Edge network (DMZ)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.edge"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "description" : "Outbound traffic only.",
+        "environment" : "Production",
+        "id" : "79",
+        "infrastructureNodes" : [ {
+          "description" : "The only way out. Lets each service reach only its own external destinations, from fixed IP addresses that agencies and registries allow. TLS passes through, so mTLS ends in the calling pod.",
+          "environment" : "Production",
+          "id" : "80",
+          "name" : "Egress proxy",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.egressZone.egress"
+          },
+          "relationships" : [ {
+            "description" : "eID Login API",
+            "destinationId" : "127",
+            "id" : "150",
+            "sourceId" : "80",
+            "tags" : "Relationship,egress",
+            "technology" : "OIDC"
+          }, {
+            "description" : "Digital Signing API",
+            "destinationId" : "129",
+            "id" : "151",
+            "sourceId" : "80",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "External Registry APIs",
+            "destinationId" : "131",
+            "id" : "152",
+            "sourceId" : "80",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS, mTLS"
+          }, {
+            "description" : "Agency API",
+            "destinationId" : "134",
+            "id" : "153",
+            "sourceId" : "80",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS, mTLS"
+          }, {
+            "description" : "Notification Provider APIs",
+            "destinationId" : "137",
+            "id" : "154",
+            "sourceId" : "80",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "HTTPS forward proxy"
+        } ],
+        "instances" : "1",
+        "name" : "Egress zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.egressZone"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "8",
+            "environment" : "Production",
+            "id" : "83",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.gatewayPod.gateway"
+            },
+            "relationships" : [ {
+              "description" : "Identity & Access API",
+              "destinationId" : "88",
+              "id" : "89",
+              "linkedRelationshipId" : "45",
+              "sourceId" : "83",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Portal Backend API",
+              "destinationId" : "91",
+              "id" : "92",
+              "linkedRelationshipId" : "46",
+              "sourceId" : "83",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Audit Transparency API",
+              "destinationId" : "99",
+              "id" : "100",
+              "linkedRelationshipId" : "47",
+              "sourceId" : "83",
+              "technology" : "HTTPS/JSON"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "82",
+          "instances" : "3",
+          "name" : "API gateway pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.gatewayPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "9",
+            "environment" : "Production",
+            "id" : "88",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.iamPod.iam"
+            },
+            "relationships" : [ {
+              "description" : "Mandate Check API",
+              "destinationId" : "94",
+              "id" : "95",
+              "linkedRelationshipId" : "48",
+              "sourceId" : "88",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Reads, writes",
+              "destinationId" : "107",
+              "id" : "108",
+              "linkedRelationshipId" : "61",
+              "sourceId" : "88",
+              "technology" : "SQL"
+            }, {
+              "description" : "eID Login API",
+              "destinationId" : "127",
+              "id" : "128",
+              "linkedRelationshipId" : "55",
+              "sourceId" : "88",
+              "technology" : "OIDC"
+            }, {
+              "description" : "eID Login API",
+              "destinationId" : "80",
+              "id" : "147",
+              "sourceId" : "88",
+              "tags" : "Relationship,egress",
+              "technology" : "OIDC"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "87",
+          "instances" : "3",
+          "name" : "Identity & access pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.iamPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "10",
+            "environment" : "Production",
+            "id" : "91",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.backendPod.backend"
+            },
+            "relationships" : [ {
+              "description" : "Integration Data API",
+              "destinationId" : "94",
+              "id" : "97",
+              "linkedRelationshipId" : "49",
+              "sourceId" : "91",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Scans uploads",
+              "destinationId" : "102",
+              "id" : "103",
+              "linkedRelationshipId" : "50",
+              "sourceId" : "91",
+              "technology" : "Scan API"
+            }, {
+              "description" : "Reads, writes",
+              "destinationId" : "107",
+              "id" : "109",
+              "linkedRelationshipId" : "60",
+              "sourceId" : "91",
+              "technology" : "SQL"
+            }, {
+              "description" : "Stores files temporarily",
+              "destinationId" : "111",
+              "id" : "112",
+              "linkedRelationshipId" : "62",
+              "sourceId" : "91",
+              "technology" : "Object storage API"
+            }, {
+              "description" : "Submission Queue, Audit Event Stream",
+              "destinationId" : "115",
+              "id" : "116",
+              "linkedRelationshipId" : "52",
+              "sourceId" : "91",
+              "technology" : "Message queue"
+            }, {
+              "description" : "Digital Signing API",
+              "destinationId" : "129",
+              "id" : "130",
+              "linkedRelationshipId" : "56",
+              "sourceId" : "91",
+              "technology" : "HTTPS API"
+            }, {
+              "description" : "Notification Provider APIs",
+              "destinationId" : "137",
+              "id" : "138",
+              "linkedRelationshipId" : "59",
+              "sourceId" : "91",
+              "technology" : "HTTPS provider APIs"
+            }, {
+              "description" : "Digital Signing API, Notification Provider APIs",
+              "destinationId" : "80",
+              "id" : "148",
+              "sourceId" : "91",
+              "tags" : "Relationship,egress",
+              "technology" : "HTTPS"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Also runs the outbox relay (ADR-0005).",
+          "environment" : "Production",
+          "id" : "90",
+          "instances" : "3",
+          "name" : "Portal backend pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.backendPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "12",
+            "environment" : "Production",
+            "id" : "94",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.integrationPod.integration"
+            },
+            "relationships" : [ {
+              "description" : "Delivery Report API",
+              "destinationId" : "91",
+              "id" : "96",
+              "linkedRelationshipId" : "51",
+              "sourceId" : "94",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Reads files for delivery",
+              "destinationId" : "111",
+              "id" : "113",
+              "linkedRelationshipId" : "63",
+              "sourceId" : "94",
+              "technology" : "Object storage API"
+            }, {
+              "description" : "External Registry APIs",
+              "destinationId" : "131",
+              "id" : "132",
+              "linkedRelationshipId" : "58",
+              "sourceId" : "94",
+              "technology" : "HTTPS API, mTLS"
+            }, {
+              "description" : "Agency API",
+              "destinationId" : "134",
+              "id" : "135",
+              "linkedRelationshipId" : "57",
+              "sourceId" : "94",
+              "technology" : "HTTPS API, mTLS"
+            }, {
+              "description" : "Agency API, External Registry APIs",
+              "destinationId" : "80",
+              "id" : "149",
+              "sourceId" : "94",
+              "tags" : "Relationship,egress",
+              "technology" : "HTTPS, mTLS"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "93",
+          "instances" : "3",
+          "name" : "Agency integration pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.integrationPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "13",
+            "environment" : "Production",
+            "id" : "99",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.auditPod.audit"
+            },
+            "relationships" : [ {
+              "description" : "Appends",
+              "destinationId" : "121",
+              "id" : "122",
+              "linkedRelationshipId" : "64",
+              "sourceId" : "99",
+              "technology" : "SQL"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Production",
+          "id" : "98",
+          "instances" : "3",
+          "name" : "Audit service pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.auditPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "16",
+            "environment" : "Production",
+            "id" : "102",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.cluster.scannerPod.scanner"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Separate node pool with no outbound network access. Virus signatures are updated by rolling out a new image.",
+          "environment" : "Production",
+          "id" : "101",
+          "instances" : "3",
+          "name" : "Antivirus scanner pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.scannerPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        } ],
+        "description" : "Stateless services. Each runs at least 3 pods, one per zone, and scales out on load. Network policies allow only the calls on the container diagram; every pod has its own mTLS service identity.",
+        "environment" : "Production",
+        "id" : "81",
+        "infrastructureNodes" : [ {
+          "description" : "Collects metrics, logs and traces from every pod and drops tokens and personal identification codes.",
+          "environment" : "Production",
+          "id" : "104",
+          "name" : "Telemetry collector",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.cluster.collector"
+          },
+          "relationships" : [ {
+            "description" : "Sends metrics, logs and traces",
+            "destinationId" : "125",
+            "id" : "155",
+            "sourceId" : "104",
+            "tags" : "Relationship,telemetry",
+            "technology" : "OTLP over TLS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "OpenTelemetry Collector"
+        } ],
+        "instances" : "1",
+        "name" : "Portal application cluster",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.cluster"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Kubernetes"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "14",
+            "environment" : "Production",
+            "id" : "107",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.data.dbServer.portalDb"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Primary and synchronous standby in different zones, with automatic failover and encrypted point-in-time backups.",
+          "environment" : "Production",
+          "id" : "106",
+          "instances" : "2",
+          "name" : "Portal DB server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.data.dbServer"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "PostgreSQL on Linux VM"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "15",
+            "environment" : "Production",
+            "id" : "111",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.data.objectStorage.docStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Replicated over the zones and not backed up, so a deleted file leaves no copy. A lifecycle rule deletes files older than 7 days.",
+          "environment" : "Production",
+          "id" : "110",
+          "instances" : "1",
+          "name" : "Object storage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.data.objectStorage"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "S3-compatible object storage"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "11",
+            "environment" : "Production",
+            "id" : "115",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.data.brokerNode.bus"
+            },
+            "relationships" : [ {
+              "description" : "Submission Queue",
+              "destinationId" : "94",
+              "id" : "117",
+              "linkedRelationshipId" : "53",
+              "sourceId" : "115",
+              "technology" : "Message queue"
+            }, {
+              "description" : "Audit Event Stream (all containers)",
+              "destinationId" : "99",
+              "id" : "118",
+              "linkedRelationshipId" : "54",
+              "sourceId" : "115",
+              "technology" : "Message queue"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "One node per zone. Quorum queues keep every message on all three nodes on encrypted disks; per-queue permissions enforce IF-9 and IF-10.",
+          "environment" : "Production",
+          "id" : "114",
+          "instances" : "3",
+          "name" : "Message broker node",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.data.brokerNode"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "RabbitMQ on Linux VM"
+        } ],
+        "description" : "Reachable only from the application cluster. All storage is encrypted at rest.",
+        "environment" : "Production",
+        "id" : "105",
+        "instances" : "1",
+        "name" : "Data zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.data"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "17",
+            "environment" : "Production",
+            "id" : "121",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.auditEnv.auditDbServer.auditStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Primary and standby in different zones. The Audit service may only insert; daily backups go to write-once (WORM) storage.",
+          "environment" : "Production",
+          "id" : "120",
+          "instances" : "2",
+          "name" : "Audit store server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.auditEnv.auditDbServer"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "PostgreSQL on Linux VM"
+        } ],
+        "description" : "Separate cloud tenant and network with its own administrators. Portal administrators cannot change or delete audit records.",
+        "environment" : "Production",
+        "id" : "119",
+        "instances" : "1",
+        "name" : "Audit environment",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.auditEnv"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Separate Government Cloud tenant"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "18",
+            "environment" : "Production",
+            "id" : "125",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "production.govCloud.opsZone.obsStack.observability"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Keeps no tokens, personal identification codes or document content.",
+          "environment" : "Production",
+          "id" : "124",
+          "instances" : "1",
+          "name" : "Observability stack",
+          "properties" : {
+            "structurizr.dsl.identifier" : "production.govCloud.opsZone.obsStack"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Prometheus, Loki, Tempo, Grafana"
+        } ],
+        "description" : "Reached by the Operations / Security team through the staff VPN.",
+        "environment" : "Production",
+        "id" : "123",
+        "instances" : "1",
+        "name" : "Operations zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.govCloud.opsZone"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      } ],
+      "description" : "State private cloud (Riigipilv). Assumed to have three availability zones (zones) in Estonia, so all data stays in the country.",
+      "environment" : "Production",
+      "id" : "73",
+      "instances" : "1",
+      "name" : "Estonian Government Cloud",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.govCloud"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Private cloud (IaaS), 3 zones"
+    }, {
+      "description" : "Run by the state and by trust service providers, outside the portal operator's control.",
+      "environment" : "Production",
+      "id" : "126",
+      "instances" : "1",
+      "name" : "National trust services",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.nationalTrust"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Production",
+        "id" : "127",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.nationalTrust.idpService"
+        },
+        "softwareSystemId" : "21",
+        "tags" : "Software System Instance"
+      }, {
+        "environment" : "Production",
+        "id" : "129",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.nationalTrust.signingService"
+        },
+        "softwareSystemId" : "22",
+        "tags" : "Software System Instance"
+      }, {
+        "environment" : "Production",
+        "id" : "131",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.nationalTrust.registryServices"
+        },
+        "softwareSystemId" : "23",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Providers' own infrastructure"
+    }, {
+      "description" : "Each agency hosts its own endpoint of the Agency API.",
+      "environment" : "Production",
+      "id" : "133",
+      "instances" : "1",
+      "name" : "Agency data centres",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.agencyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Production",
+        "id" : "134",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.agencyHosting.agencyServices"
+        },
+        "softwareSystemId" : "20",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Agencies' own infrastructure"
+    }, {
+      "description" : "Outside the portal operator's control.",
+      "environment" : "Production",
+      "id" : "136",
+      "instances" : "1",
+      "name" : "Notification provider hosting",
+      "properties" : {
+        "structurizr.dsl.identifier" : "production.notifyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Production",
+        "id" : "137",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "production.notifyHosting.notifyServices"
+        },
+        "softwareSystemId" : "25",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Providers' own infrastructure"
+    }, {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "7",
+          "environment" : "Test",
+          "id" : "158",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.testerDevice.browser.backofficeApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Back-office API",
+            "destinationId" : "172",
+            "id" : "173",
+            "linkedRelationshipId" : "44",
+            "sourceId" : "158",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files, calls Portal Back-office API",
+            "destinationId" : "166",
+            "id" : "233",
+            "sourceId" : "158",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS over IPsec"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "6",
+          "environment" : "Test",
+          "id" : "159",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.testerDevice.browser.webApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Citizen API",
+            "destinationId" : "172",
+            "id" : "174",
+            "linkedRelationshipId" : "43",
+            "sourceId" : "159",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files, calls Portal Citizen API",
+            "destinationId" : "164",
+            "id" : "228",
+            "sourceId" : "159",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Test",
+        "id" : "157",
+        "instances" : "1",
+        "name" : "Web browser",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.testerDevice.browser"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Chrome, Firefox, Safari or Edge"
+      } ],
+      "description" : "Device of a developer, tester or product owner. Reaches the test environment only from an allow-listed IP address; the back office also needs the staff VPN.",
+      "environment" : "Test",
+      "id" : "156",
+      "instances" : "1",
+      "name" : "Tester's workstation",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.testerDevice"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Windows, macOS or Linux with VPN client"
+    }, {
+      "description" : "Test systems of registered third-party providers and the team's own test client, admitted by IP address.",
+      "environment" : "Test",
+      "id" : "160",
+      "instances" : "1",
+      "name" : "Third-party provider hosting",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.thirdPartyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Test",
+        "id" : "161",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.thirdPartyHosting.thirdPartyClient"
+        },
+        "relationships" : [ {
+          "description" : "Portal Third-party API",
+          "destinationId" : "172",
+          "id" : "175",
+          "linkedRelationshipId" : "41",
+          "sourceId" : "161",
+          "technology" : "HTTPS, OAuth 2.0 client credentials"
+        }, {
+          "description" : "Portal Third-party API",
+          "destinationId" : "164",
+          "id" : "229",
+          "sourceId" : "161",
+          "tags" : "Relationship,ingress",
+          "technology" : "HTTPS, OAuth 2.0 client credentials"
+        } ],
+        "softwareSystemId" : "24",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Provider's own infrastructure"
+    }, {
+      "children" : [ {
+        "description" : "The only zone reachable from outside. Holds no data.",
+        "environment" : "Test",
+        "id" : "163",
+        "infrastructureNodes" : [ {
+          "description" : "Same rules as production. Also admits only allow-listed IP addresses, so the test environment is closed to the public.",
+          "environment" : "Test",
+          "id" : "164",
+          "name" : "Web application firewall",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.edge.waf"
+          },
+          "relationships" : [ {
+            "description" : "Forwards allowed requests",
+            "destinationId" : "165",
+            "id" : "230",
+            "sourceId" : "164",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "WAF with DDoS protection"
+        }, {
+          "description" : "Terminates TLS and spreads requests over the pods.",
+          "environment" : "Test",
+          "id" : "165",
+          "name" : "Public load balancer",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.edge.lb"
+          },
+          "relationships" : [ {
+            "description" : "Forwards app file requests",
+            "destinationId" : "167",
+            "id" : "231",
+            "sourceId" : "165",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards API requests",
+            "destinationId" : "172",
+            "id" : "232",
+            "sourceId" : "165",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "HTTPS load balancer"
+        }, {
+          "description" : "Admits only tester and staff devices with a VPN certificate. Back-office traffic never uses the public entry.",
+          "environment" : "Test",
+          "id" : "166",
+          "name" : "Staff VPN gateway",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.edge.vpn"
+          },
+          "relationships" : [ {
+            "description" : "Forwards app file requests",
+            "destinationId" : "167",
+            "id" : "234",
+            "sourceId" : "166",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "Forwards back-office API requests",
+            "destinationId" : "172",
+            "id" : "235",
+            "sourceId" : "166",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "IPsec VPN gateway"
+        }, {
+          "description" : "Serves the files of the Citizen web app and the Back-office web app. Holds no data.",
+          "environment" : "Test",
+          "id" : "167",
+          "name" : "Web content server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.edge.webContent"
+          },
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "nginx"
+        } ],
+        "instances" : "1",
+        "name" : "Edge network (DMZ)",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.edge"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "description" : "Outbound traffic only.",
+        "environment" : "Test",
+        "id" : "168",
+        "infrastructureNodes" : [ {
+          "description" : "The only way out. Same rules as production, but each service reaches only the test environments of its external systems; production endpoints are blocked.",
+          "environment" : "Test",
+          "id" : "169",
+          "name" : "Egress proxy",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.egressZone.egress"
+          },
+          "relationships" : [ {
+            "description" : "eID Login API",
+            "destinationId" : "216",
+            "id" : "239",
+            "sourceId" : "169",
+            "tags" : "Relationship,egress",
+            "technology" : "OIDC"
+          }, {
+            "description" : "Digital Signing API",
+            "destinationId" : "218",
+            "id" : "240",
+            "sourceId" : "169",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS"
+          }, {
+            "description" : "External Registry APIs",
+            "destinationId" : "220",
+            "id" : "241",
+            "sourceId" : "169",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS, mTLS"
+          }, {
+            "description" : "Agency API",
+            "destinationId" : "223",
+            "id" : "242",
+            "sourceId" : "169",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS, mTLS"
+          }, {
+            "description" : "Notification Provider APIs",
+            "destinationId" : "226",
+            "id" : "243",
+            "sourceId" : "169",
+            "tags" : "Relationship,egress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "HTTPS forward proxy"
+        } ],
+        "instances" : "1",
+        "name" : "Egress zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.egressZone"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "8",
+            "environment" : "Test",
+            "id" : "172",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.gatewayPod.gateway"
+            },
+            "relationships" : [ {
+              "description" : "Identity & Access API",
+              "destinationId" : "177",
+              "id" : "178",
+              "linkedRelationshipId" : "45",
+              "sourceId" : "172",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Portal Backend API",
+              "destinationId" : "180",
+              "id" : "181",
+              "linkedRelationshipId" : "46",
+              "sourceId" : "172",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Audit Transparency API",
+              "destinationId" : "188",
+              "id" : "189",
+              "linkedRelationshipId" : "47",
+              "sourceId" : "172",
+              "technology" : "HTTPS/JSON"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Test",
+          "id" : "171",
+          "instances" : "2",
+          "name" : "API gateway pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.gatewayPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "9",
+            "environment" : "Test",
+            "id" : "177",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.iamPod.iam"
+            },
+            "relationships" : [ {
+              "description" : "Mandate Check API",
+              "destinationId" : "183",
+              "id" : "184",
+              "linkedRelationshipId" : "48",
+              "sourceId" : "177",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Reads, writes",
+              "destinationId" : "196",
+              "id" : "197",
+              "linkedRelationshipId" : "61",
+              "sourceId" : "177",
+              "technology" : "SQL"
+            }, {
+              "description" : "eID Login API",
+              "destinationId" : "216",
+              "id" : "217",
+              "linkedRelationshipId" : "55",
+              "sourceId" : "177",
+              "technology" : "OIDC"
+            }, {
+              "description" : "eID Login API",
+              "destinationId" : "169",
+              "id" : "236",
+              "sourceId" : "177",
+              "tags" : "Relationship,egress",
+              "technology" : "OIDC"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Test",
+          "id" : "176",
+          "instances" : "2",
+          "name" : "Identity & access pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.iamPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "10",
+            "environment" : "Test",
+            "id" : "180",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.backendPod.backend"
+            },
+            "relationships" : [ {
+              "description" : "Integration Data API",
+              "destinationId" : "183",
+              "id" : "186",
+              "linkedRelationshipId" : "49",
+              "sourceId" : "180",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Scans uploads",
+              "destinationId" : "191",
+              "id" : "192",
+              "linkedRelationshipId" : "50",
+              "sourceId" : "180",
+              "technology" : "Scan API"
+            }, {
+              "description" : "Reads, writes",
+              "destinationId" : "196",
+              "id" : "198",
+              "linkedRelationshipId" : "60",
+              "sourceId" : "180",
+              "technology" : "SQL"
+            }, {
+              "description" : "Stores files temporarily",
+              "destinationId" : "200",
+              "id" : "201",
+              "linkedRelationshipId" : "62",
+              "sourceId" : "180",
+              "technology" : "Object storage API"
+            }, {
+              "description" : "Submission Queue, Audit Event Stream",
+              "destinationId" : "204",
+              "id" : "205",
+              "linkedRelationshipId" : "52",
+              "sourceId" : "180",
+              "technology" : "Message queue"
+            }, {
+              "description" : "Digital Signing API",
+              "destinationId" : "218",
+              "id" : "219",
+              "linkedRelationshipId" : "56",
+              "sourceId" : "180",
+              "technology" : "HTTPS API"
+            }, {
+              "description" : "Notification Provider APIs",
+              "destinationId" : "226",
+              "id" : "227",
+              "linkedRelationshipId" : "59",
+              "sourceId" : "180",
+              "technology" : "HTTPS provider APIs"
+            }, {
+              "description" : "Digital Signing API, Notification Provider APIs",
+              "destinationId" : "169",
+              "id" : "237",
+              "sourceId" : "180",
+              "tags" : "Relationship,egress",
+              "technology" : "HTTPS"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Also runs the outbox relay (ADR-0005). Two pods show whether two relays publish the same row twice.",
+          "environment" : "Test",
+          "id" : "179",
+          "instances" : "2",
+          "name" : "Portal backend pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.backendPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "12",
+            "environment" : "Test",
+            "id" : "183",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.integrationPod.integration"
+            },
+            "relationships" : [ {
+              "description" : "Delivery Report API",
+              "destinationId" : "180",
+              "id" : "185",
+              "linkedRelationshipId" : "51",
+              "sourceId" : "183",
+              "technology" : "HTTPS/JSON"
+            }, {
+              "description" : "Reads files for delivery",
+              "destinationId" : "200",
+              "id" : "202",
+              "linkedRelationshipId" : "63",
+              "sourceId" : "183",
+              "technology" : "Object storage API"
+            }, {
+              "description" : "External Registry APIs",
+              "destinationId" : "220",
+              "id" : "221",
+              "linkedRelationshipId" : "58",
+              "sourceId" : "183",
+              "technology" : "HTTPS API, mTLS"
+            }, {
+              "description" : "Agency API",
+              "destinationId" : "223",
+              "id" : "224",
+              "linkedRelationshipId" : "57",
+              "sourceId" : "183",
+              "technology" : "HTTPS API, mTLS"
+            }, {
+              "description" : "Agency API, External Registry APIs",
+              "destinationId" : "169",
+              "id" : "238",
+              "sourceId" : "183",
+              "tags" : "Relationship,egress",
+              "technology" : "HTTPS, mTLS"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Test",
+          "id" : "182",
+          "instances" : "2",
+          "name" : "Agency integration pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.integrationPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "13",
+            "environment" : "Test",
+            "id" : "188",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.auditPod.audit"
+            },
+            "relationships" : [ {
+              "description" : "Appends",
+              "destinationId" : "210",
+              "id" : "211",
+              "linkedRelationshipId" : "64",
+              "sourceId" : "188",
+              "technology" : "SQL"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "environment" : "Test",
+          "id" : "187",
+          "instances" : "2",
+          "name" : "Audit service pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.auditPod"
+          },
+          "tags" : "Element,Deployment Node,",
+          "technology" : "Kubernetes pod"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "16",
+            "environment" : "Test",
+            "id" : "191",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.cluster.scannerPod.scanner"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Separate node pool with no outbound network access, as in production.",
+          "environment" : "Test",
+          "id" : "190",
+          "instances" : "1",
+          "name" : "Antivirus scanner pod",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.scannerPod"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Kubernetes pod"
+        } ],
+        "description" : "Same images, network policies and mTLS service identities as production. Each service runs 2 small pods, the fewest that still show faults between instances, and does not scale out.",
+        "environment" : "Test",
+        "id" : "170",
+        "infrastructureNodes" : [ {
+          "description" : "Collects metrics, logs and traces from every pod and drops tokens and personal identification codes.",
+          "environment" : "Test",
+          "id" : "193",
+          "name" : "Telemetry collector",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.cluster.collector"
+          },
+          "relationships" : [ {
+            "description" : "Sends metrics, logs and traces",
+            "destinationId" : "214",
+            "id" : "244",
+            "sourceId" : "193",
+            "tags" : "Relationship,telemetry",
+            "technology" : "OTLP over TLS"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "OpenTelemetry Collector"
+        } ],
+        "instances" : "1",
+        "name" : "Portal application cluster",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.cluster"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Kubernetes"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "14",
+            "environment" : "Test",
+            "id" : "196",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.data.dbServer.portalDb"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "One small instance without a standby or point-in-time backups. The data is recreated from seed scripts.",
+          "environment" : "Test",
+          "id" : "195",
+          "instances" : "1",
+          "name" : "Portal DB server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.data.dbServer"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "PostgreSQL on Linux VM"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "15",
+            "environment" : "Test",
+            "id" : "200",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.data.objectStorage.docStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Not replicated. Same 7-day lifecycle rule as production.",
+          "environment" : "Test",
+          "id" : "199",
+          "instances" : "1",
+          "name" : "Object storage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.data.objectStorage"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "S3-compatible object storage"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "11",
+            "environment" : "Test",
+            "id" : "204",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.data.brokerNode.bus"
+            },
+            "relationships" : [ {
+              "description" : "Submission Queue",
+              "destinationId" : "183",
+              "id" : "206",
+              "linkedRelationshipId" : "53",
+              "sourceId" : "204",
+              "technology" : "Message queue"
+            }, {
+              "description" : "Audit Event Stream (all containers)",
+              "destinationId" : "188",
+              "id" : "207",
+              "linkedRelationshipId" : "54",
+              "sourceId" : "204",
+              "technology" : "Message queue"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "One node with the same queues and per-queue permissions as production. Messages are kept on one encrypted disk.",
+          "environment" : "Test",
+          "id" : "203",
+          "instances" : "1",
+          "name" : "Message broker node",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.data.brokerNode"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "RabbitMQ on Linux VM"
+        } ],
+        "description" : "Reachable only from the application cluster. All storage is encrypted at rest. Holds synthetic test data only, never a copy of production data.",
+        "environment" : "Test",
+        "id" : "194",
+        "instances" : "1",
+        "name" : "Data zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.data"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "17",
+            "environment" : "Test",
+            "id" : "210",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.auditEnv.auditDbServer.auditStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "One instance. The Audit service may only insert, as in production. No write-once backups.",
+          "environment" : "Test",
+          "id" : "209",
+          "instances" : "1",
+          "name" : "Audit store server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.auditEnv.auditDbServer"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "PostgreSQL on Linux VM"
+        } ],
+        "description" : "Separate tenant with its own administrators, as in production, so the separation is tested too.",
+        "environment" : "Test",
+        "id" : "208",
+        "instances" : "1",
+        "name" : "Audit environment",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.auditEnv"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Separate Government Cloud tenant"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "18",
+            "environment" : "Test",
+            "id" : "214",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "test.govCloud.opsZone.obsStack.observability"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Same stack as production, with small disks and short retention.",
+          "environment" : "Test",
+          "id" : "213",
+          "instances" : "1",
+          "name" : "Observability stack",
+          "properties" : {
+            "structurizr.dsl.identifier" : "test.govCloud.opsZone.obsStack"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Prometheus, Loki, Tempo, Grafana"
+        } ],
+        "description" : "Reached through the staff VPN.",
+        "environment" : "Test",
+        "id" : "212",
+        "instances" : "1",
+        "name" : "Operations zone",
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.govCloud.opsZone"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Network zone"
+      } ],
+      "description" : "Same cloud as production, in a separate test tenant with its own network, accounts and secrets. Uses one zone.",
+      "environment" : "Test",
+      "id" : "162",
+      "instances" : "1",
+      "name" : "Estonian Government Cloud",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.govCloud"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "Private cloud (IaaS), test tenant, 1 zone"
+    }, {
+      "description" : "Test environments of the state and the trust service providers. They issue test identities and test signatures only.",
+      "environment" : "Test",
+      "id" : "215",
+      "instances" : "1",
+      "name" : "National trust services (test)",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.nationalTrust"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Test",
+        "id" : "216",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.nationalTrust.idpService"
+        },
+        "softwareSystemId" : "21",
+        "tags" : "Software System Instance"
+      }, {
+        "environment" : "Test",
+        "id" : "218",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.nationalTrust.signingService"
+        },
+        "softwareSystemId" : "22",
+        "tags" : "Software System Instance"
+      }, {
+        "environment" : "Test",
+        "id" : "220",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.nationalTrust.registryServices"
+        },
+        "softwareSystemId" : "23",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Providers' test environments"
+    }, {
+      "description" : "Each agency hosts a test endpoint of the Agency API.",
+      "environment" : "Test",
+      "id" : "222",
+      "instances" : "1",
+      "name" : "Agency test environments",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.agencyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Test",
+        "id" : "223",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.agencyHosting.agencyServices"
+        },
+        "softwareSystemId" : "20",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Agencies' test environments"
+    }, {
+      "description" : "Sandbox accounts that deliver messages only to test recipients.",
+      "environment" : "Test",
+      "id" : "225",
+      "instances" : "1",
+      "name" : "Notification provider sandboxes",
+      "properties" : {
+        "structurizr.dsl.identifier" : "test.notifyHosting"
+      },
+      "softwareSystemInstances" : [ {
+        "environment" : "Test",
+        "id" : "226",
+        "instanceId" : 1,
+        "properties" : {
+          "structurizr.dsl.identifier" : "test.notifyHosting.notifyServices"
+        },
+        "softwareSystemId" : "25",
+        "tags" : "Software System Instance"
+      } ],
+      "tags" : "Element,Deployment Node",
+      "technology" : "Providers' test environments"
+    }, {
+      "children" : [ {
+        "containerInstances" : [ {
+          "containerId" : "7",
+          "environment" : "Development",
+          "id" : "248",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.browser.backofficeApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Back-office API",
+            "destinationId" : "251",
+            "id" : "252",
+            "linkedRelationshipId" : "44",
+            "sourceId" : "248",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files",
+            "destinationId" : "246",
+            "id" : "297",
+            "sourceId" : "248",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "6",
+          "environment" : "Development",
+          "id" : "249",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.browser.webApp"
+          },
+          "relationships" : [ {
+            "description" : "Portal Citizen API",
+            "destinationId" : "251",
+            "id" : "253",
+            "linkedRelationshipId" : "43",
+            "sourceId" : "249",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Loads app files",
+            "destinationId" : "246",
+            "id" : "296",
+            "sourceId" : "249",
+            "tags" : "Relationship,ingress",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Container Instance"
+        } ],
+        "environment" : "Development",
+        "id" : "247",
+        "instances" : "1",
+        "name" : "Web browser",
+        "properties" : {
+          "structurizr.dsl.identifier" : "development.devComputer.browser"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Chrome, Firefox, Safari or Edge"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "14",
+            "environment" : "Development",
+            "id" : "268",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.dbServer.portalDb"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Filled with synthetic test data by a seed script.",
+          "environment" : "Development",
+          "id" : "267",
+          "instances" : "1",
+          "name" : "Portal DB server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.dbServer"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "PostgreSQL in Docker"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "15",
+            "environment" : "Development",
+            "id" : "272",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.objectStorage.docStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Same 7-day lifecycle rule as production.",
+          "environment" : "Development",
+          "id" : "271",
+          "instances" : "1",
+          "name" : "Object storage",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.objectStorage"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "S3-compatible storage in Docker"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "11",
+            "environment" : "Development",
+            "id" : "276",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.brokerNode.bus"
+            },
+            "relationships" : [ {
+              "description" : "Submission Queue",
+              "destinationId" : "258",
+              "id" : "278",
+              "linkedRelationshipId" : "53",
+              "sourceId" : "276",
+              "technology" : "Message queue"
+            }, {
+              "description" : "Audit Event Stream (all containers)",
+              "destinationId" : "262",
+              "id" : "279",
+              "linkedRelationshipId" : "54",
+              "sourceId" : "276",
+              "technology" : "Message queue"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "One node with the same queues and per-queue permissions as production.",
+          "environment" : "Development",
+          "id" : "275",
+          "instances" : "1",
+          "name" : "Message broker node",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.brokerNode"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "RabbitMQ in Docker"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "17",
+            "environment" : "Development",
+            "id" : "281",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.auditDbServer.auditStore"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Its own server and credentials, as in production. The Audit service may only insert.",
+          "environment" : "Development",
+          "id" : "280",
+          "instances" : "1",
+          "name" : "Audit store server",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.auditDbServer"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "PostgreSQL in Docker"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "18",
+            "environment" : "Development",
+            "id" : "284",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.obsStack.observability"
+            },
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Optional. Started only when the developer needs dashboards or traces.",
+          "environment" : "Development",
+          "id" : "283",
+          "instances" : "1",
+          "name" : "Observability stack",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.obsStack"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Prometheus, Loki, Tempo, Grafana in Docker"
+        }, {
+          "description" : "Stand in for every external system with scripted answers, so no call leaves the computer and no real credentials are needed. A test can make a stub fail or answer late.",
+          "environment" : "Development",
+          "id" : "285",
+          "instances" : "1",
+          "name" : "Stub external systems",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.stubs"
+          },
+          "softwareSystemInstances" : [ {
+            "environment" : "Development",
+            "id" : "286",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.stubs.idpStub"
+            },
+            "softwareSystemId" : "21",
+            "tags" : "Software System Instance"
+          }, {
+            "environment" : "Development",
+            "id" : "288",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.stubs.signingStub"
+            },
+            "softwareSystemId" : "22",
+            "tags" : "Software System Instance"
+          }, {
+            "environment" : "Development",
+            "id" : "290",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.stubs.registryStub"
+            },
+            "softwareSystemId" : "23",
+            "tags" : "Software System Instance"
+          }, {
+            "environment" : "Development",
+            "id" : "292",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.stubs.agencyStub"
+            },
+            "softwareSystemId" : "20",
+            "tags" : "Software System Instance"
+          }, {
+            "environment" : "Development",
+            "id" : "294",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "development.devComputer.docker.stubs.notifyStub"
+            },
+            "softwareSystemId" : "25",
+            "tags" : "Software System Instance"
+          } ],
+          "tags" : "Element,Deployment Node",
+          "technology" : "Mock server in Docker"
+        } ],
+        "containerInstances" : [ {
+          "containerId" : "8",
+          "environment" : "Development",
+          "id" : "251",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.gateway"
+          },
+          "relationships" : [ {
+            "description" : "Identity & Access API",
+            "destinationId" : "254",
+            "id" : "255",
+            "linkedRelationshipId" : "45",
+            "sourceId" : "251",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Portal Backend API",
+            "destinationId" : "256",
+            "id" : "257",
+            "linkedRelationshipId" : "46",
+            "sourceId" : "251",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Audit Transparency API",
+            "destinationId" : "262",
+            "id" : "263",
+            "linkedRelationshipId" : "47",
+            "sourceId" : "251",
+            "technology" : "HTTPS/JSON"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "9",
+          "environment" : "Development",
+          "id" : "254",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.iam"
+          },
+          "relationships" : [ {
+            "description" : "Mandate Check API",
+            "destinationId" : "258",
+            "id" : "259",
+            "linkedRelationshipId" : "48",
+            "sourceId" : "254",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Reads, writes",
+            "destinationId" : "268",
+            "id" : "269",
+            "linkedRelationshipId" : "61",
+            "sourceId" : "254",
+            "technology" : "SQL"
+          }, {
+            "description" : "eID Login API",
+            "destinationId" : "286",
+            "id" : "287",
+            "linkedRelationshipId" : "55",
+            "sourceId" : "254",
+            "technology" : "OIDC"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "10",
+          "environment" : "Development",
+          "id" : "256",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.backend"
+          },
+          "relationships" : [ {
+            "description" : "Integration Data API",
+            "destinationId" : "258",
+            "id" : "261",
+            "linkedRelationshipId" : "49",
+            "sourceId" : "256",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Scans uploads",
+            "destinationId" : "264",
+            "id" : "265",
+            "linkedRelationshipId" : "50",
+            "sourceId" : "256",
+            "technology" : "Scan API"
+          }, {
+            "description" : "Reads, writes",
+            "destinationId" : "268",
+            "id" : "270",
+            "linkedRelationshipId" : "60",
+            "sourceId" : "256",
+            "technology" : "SQL"
+          }, {
+            "description" : "Stores files temporarily",
+            "destinationId" : "272",
+            "id" : "273",
+            "linkedRelationshipId" : "62",
+            "sourceId" : "256",
+            "technology" : "Object storage API"
+          }, {
+            "description" : "Submission Queue, Audit Event Stream",
+            "destinationId" : "276",
+            "id" : "277",
+            "linkedRelationshipId" : "52",
+            "sourceId" : "256",
+            "technology" : "Message queue"
+          }, {
+            "description" : "Digital Signing API",
+            "destinationId" : "288",
+            "id" : "289",
+            "linkedRelationshipId" : "56",
+            "sourceId" : "256",
+            "technology" : "HTTPS API"
+          }, {
+            "description" : "Notification Provider APIs",
+            "destinationId" : "294",
+            "id" : "295",
+            "linkedRelationshipId" : "59",
+            "sourceId" : "256",
+            "technology" : "HTTPS provider APIs"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "12",
+          "environment" : "Development",
+          "id" : "258",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.integration"
+          },
+          "relationships" : [ {
+            "description" : "Delivery Report API",
+            "destinationId" : "256",
+            "id" : "260",
+            "linkedRelationshipId" : "51",
+            "sourceId" : "258",
+            "technology" : "HTTPS/JSON"
+          }, {
+            "description" : "Reads files for delivery",
+            "destinationId" : "272",
+            "id" : "274",
+            "linkedRelationshipId" : "63",
+            "sourceId" : "258",
+            "technology" : "Object storage API"
+          }, {
+            "description" : "External Registry APIs",
+            "destinationId" : "290",
+            "id" : "291",
+            "linkedRelationshipId" : "58",
+            "sourceId" : "258",
+            "technology" : "HTTPS API, mTLS"
+          }, {
+            "description" : "Agency API",
+            "destinationId" : "292",
+            "id" : "293",
+            "linkedRelationshipId" : "57",
+            "sourceId" : "258",
+            "technology" : "HTTPS API, mTLS"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "13",
+          "environment" : "Development",
+          "id" : "262",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.audit"
+          },
+          "relationships" : [ {
+            "description" : "Appends",
+            "destinationId" : "281",
+            "id" : "282",
+            "linkedRelationshipId" : "64",
+            "sourceId" : "262",
+            "technology" : "SQL"
+          } ],
+          "tags" : "Container Instance"
+        }, {
+          "containerId" : "16",
+          "environment" : "Development",
+          "id" : "264",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.scanner"
+          },
+          "tags" : "Container Instance"
+        } ],
+        "description" : "Starts everything below from one Compose file, each part once. A local development CA, which exists only on this computer, issues the TLS and mTLS certificates.",
+        "environment" : "Development",
+        "id" : "250",
+        "infrastructureNodes" : [ {
+          "description" : "Same rules as production: drops tokens and personal identification codes.",
+          "environment" : "Development",
+          "id" : "266",
+          "name" : "Telemetry collector",
+          "properties" : {
+            "structurizr.dsl.identifier" : "development.devComputer.docker.collector"
+          },
+          "relationships" : [ {
+            "description" : "Sends metrics, logs and traces",
+            "destinationId" : "284",
+            "id" : "298",
+            "sourceId" : "266",
+            "tags" : "Relationship,telemetry",
+            "technology" : "OTLP"
+          } ],
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "OpenTelemetry Collector"
+        } ],
+        "instances" : "1",
+        "name" : "Local Docker environment",
+        "properties" : {
+          "structurizr.dsl.identifier" : "development.devComputer.docker"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "Docker Compose"
+      } ],
+      "description" : "Runs the whole portal for one developer. Every port listens on localhost only. Holds synthetic test data and no secrets of the test or production environment.",
+      "environment" : "Development",
+      "id" : "245",
+      "infrastructureNodes" : [ {
+        "description" : "Serves the files of both web apps and reloads them when the code changes.",
+        "environment" : "Development",
+        "id" : "246",
+        "name" : "Web dev server",
+        "properties" : {
+          "structurizr.dsl.identifier" : "development.devComputer.webDevServer"
+        },
+        "tags" : "Element,Infrastructure Node",
+        "technology" : "Local development server"
+      } ],
+      "instances" : "1",
+      "name" : "Developer's computer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "development.devComputer"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "macOS, Linux or Windows"
+    } ],
     "people" : [ {
       "description" : "Finds, requests and tracks public services; exchanges documents and messages; signs documents; sees who accessed their data. May act as a delegate for another person within a given scope.",
       "id" : "1",
@@ -530,8 +2648,8 @@
   },
   "name" : "Citizen Services Portal",
   "properties" : {
-    "structurizr.inspection.error" : "17",
-    "structurizr.dsl" : "LyoKICogQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwgLSBDNCBtb2RlbCAoU3RydWN0dXJpenIgRFNMKQogKiBDNCBMZXZlbCAxIC0gU3lzdGVtIENvbnRleHQ6IHdobyB1c2VzIHRoZSBwb3J0YWwsIGFuZCB3aGljaCBleHRlcm5hbCBzeXN0ZW1zIGRvZXMgaXQgZGVwZW5kIG9uIG9yIHNlcnZlPwogKiBDNCBMZXZlbCAyIC0gQ29udGFpbmVyczogd2hpY2ggZGVwbG95YWJsZSBwYXJ0cyBtYWtlIHVwIHRoZSBwb3J0YWwsIHdoYXQgZG9lcyBlYWNoIG93biwgYW5kIGhvdyBkbyB0aGV5IHRhbGs/CiAqICAgQnVzaW5lc3MgZGF0YSAoY2FzZXMsIGRvY3VtZW50cywgcHJvZmlsZSwgZGVsZWdhdGlvbnMpIHN0YXlzIHdpdGggYWdlbmNpZXMgYW5kIHJlZ2lzdHJpZXMgYW5kIGlzIHJlYWQgbGl2ZQogKiAgIHRocm91Z2ggdGhlIEFnZW5jeSBpbnRlZ3JhdGlvbiBzZXJ2aWNlOyB0aGUgcG9ydGFsIGtlZXBzIG9ubHkgYSBtaW5pbWFsIGRhdGFiYXNlLgogKiBFZGl0IG9ubGluZTogcGFzdGUgaW50byBodHRwczovL3N0cnVjdHVyaXpyLmNvbS9kc2wKICogRXhwb3J0IFNWRzogIHJlbmRlciB3aXRoIFN0cnVjdHVyaXpyIChkb2NrZXIgcnVuIC1pdCAtLXJtIC0tdXNlciAiJChpZCAtdSk6JChpZCAtZykiIC1wIDgwODA6ODA4MAogKiAgICAgICAgICAgICAgLXYgPHJlcG8+L2RpYWdyYW1zOi91c3IvbG9jYWwvc3RydWN0dXJpenIgc3RydWN0dXJpenIvc3RydWN0dXJpenIgbG9jYWwpLAogKiAgICAgICAgICAgICAgb3BlbiBodHRwOi8vbG9jYWxob3N0OjgwODAsIGFycmFuZ2UgZWFjaCBkaWFncmFtLCBleHBvcnQgaXQgYXMgU1ZHIGFuZCBzYXZlIGl0IGFzCiAqICAgICAgICAgICAgICBkaWFncmFtcy88dmlldyBrZXk+LnN2Zy4gQ29tbWl0IHdvcmtzcGFjZS5qc29uIHRvZ2V0aGVyIHdpdGggd29ya3NwYWNlLmRzbCwKICogICAgICAgICAgICAgIGJlY2F1c2UgaXQgc3RvcmVzIHRoZSBtYW51YWwgbGF5b3V0LgogKi8Kd29ya3NwYWNlICJDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIgIkFyY2hpdGVjdHVyZSBtb2RlbCBvZiB0aGUgQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwuIiB7CgogICAgIWlkZW50aWZpZXJzIGhpZXJhcmNoaWNhbAoKICAgIG1vZGVsIHsKICAgICAgICByZXNpZGVudCA9IHBlcnNvbiAiUmVzaWRlbnQgLyBDaXRpemVuIiAiRmluZHMsIHJlcXVlc3RzIGFuZCB0cmFja3MgcHVibGljIHNlcnZpY2VzOyBleGNoYW5nZXMgZG9jdW1lbnRzIGFuZCBtZXNzYWdlczsgc2lnbnMgZG9jdW1lbnRzOyBzZWVzIHdobyBhY2Nlc3NlZCB0aGVpciBkYXRhLiBNYXkgYWN0IGFzIGEgZGVsZWdhdGUgZm9yIGFub3RoZXIgcGVyc29uIHdpdGhpbiBhIGdpdmVuIHNjb3BlLiIKICAgICAgICBhdWRpdG9yID0gcGVyc29uICJBdWRpdG9yIC8gT3ZlcnNpZ2h0IGJvZHkiICJWZXJpZmllcyB0aGF0IGNpdGl6ZW4gZGF0YSB3YXMgYWNjZXNzZWQgYW5kIHByb2Nlc3NlZCBsYXdmdWxseS4iCgogICAgICAgIGdyb3VwICJQb3J0YWwgb3BlcmF0b3IiIHsKICAgICAgICAgICAgYWRtaW4gPSBwZXJzb24gIkFkbWluaXN0cmF0b3IgLyBIZWxwZGVzayIgIlN1cHBvcnRzIHJlc2lkZW50cyBhbmQgb3BlcmF0ZXMgdGhlIHBvcnRhbCB3aXRoIHJvbGUtbGltaXRlZCBhY2Nlc3MgdG8gY2FzZSBkYXRhLiIKICAgICAgICAgICAgb3BzID0gcGVyc29uICJPcGVyYXRpb25zIC8gU2VjdXJpdHkgdGVhbSIgIk1vbml0b3JzIHNlcnZpY2UgaGVhbHRoIGFuZCByZXNwb25kcyB0byBpbmNpZGVudHMgYW5kIHNlY3VyaXR5IGV2ZW50cy4iCiAgICAgICAgICAgIHBvcnRhbCA9IHNvZnR3YXJlU3lzdGVtICJDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIgIlNpbmdsZSBkaWdpdGFsIGVudHJ5IHBvaW50IGZvciBwdWJsaWMgc2VydmljZXM6IHNlcnZpY2UgY2F0YWxvZ3VlLCBjYXNlIG1hbmFnZW1lbnQsIGRvY3VtZW50IGV4Y2hhbmdlLCBzaWduaW5nIHdvcmtmbG93LCBub3RpZmljYXRpb25zLCBkZWxlZ2F0aW9uLCBhdWRpdCBhbmQgdHJhbnNwYXJlbmN5LCByZWd1bGF0ZWQgcHVibGljIEFQSXMuIiB7CiAgICAgICAgICAgICAgICB3ZWIgPSBjb250YWluZXIgIkNpdGl6ZW4gd2ViIGFwcCIgIkxvY2FsaXplZCBjaXRpemVuIFVJLiIgIldlYiBTUEEiCiAgICAgICAgICAgICAgICBiYWNrb2ZmaWNlID0gY29udGFpbmVyICJCYWNrLW9mZmljZSB3ZWIgYXBwIiAiSGVscGRlc2ssIGFkbWluIGFuZCBhdWRpdCByZXZpZXcuIiAiV2ViIFNQQSIKICAgICAgICAgICAgICAgIGdhdGV3YXkgPSBjb250YWluZXIgIkFQSSBnYXRld2F5IiAiVG9rZW4gdmFsaWRhdGlvbiwgc2NvcGVzLCByYXRlIGxpbWl0cywgQVBJIHZlcnNpb25pbmcuIiAiR2F0ZXdheSIKICAgICAgICAgICAgICAgIGlhbSA9IGNvbnRhaW5lciAiSWRlbnRpdHkgJiBhY2Nlc3MiICJlSUQgbG9naW4sIHNlc3Npb25zLCByb2xlIGFuZCBkZWxlZ2F0aW9uIGNoZWNrcy4iICJTZXJ2aWNlIgogICAgICAgICAgICAgICAgYmFja2VuZCA9IGNvbnRhaW5lciAiUG9ydGFsIGJhY2tlbmQiICJTZXJ2aWNlIGNhdGFsb2d1ZSBhbmQgcHJlZmVyZW5jZXMsIGNhc2Ugc3VibWlzc2lvbiBhbmQgc3RhdHVzLCBkb2N1bWVudCB1cGxvYWQgYW5kIGRvd25sb2FkLCBlSUQgc2lnbmluZyB3b3JrZmxvdywgbm90aWZpY2F0aW9uIGRpc3BhdGNoIGFuZCBpbmJveC4iICJNb2R1bGFyIGJhY2tlbmQgc2VydmljZSIKICAgICAgICAgICAgICAgIGJ1cyA9IGNvbnRhaW5lciAiTWVzc2FnZSBicm9rZXIiICJEZWxpdmVyeSBxdWV1ZSBmb3IgcmVxdWVzdHMgdG8gYWdlbmNpZXMgKGNvbnRhaW5zIHBlcnNvbmFsIGRhdGE6IGVuY3J5cHRlZCwgYWNjZXNzLWNvbnRyb2xsZWQsIGR1cmFibGUpIGFuZCBhdWRpdCBldmVudHMuIiAiQXN5bmMgbWVzc2FnaW5nIiAiUXVldWUiCiAgICAgICAgICAgICAgICBpbnRlZ3JhdGlvbiA9IGNvbnRhaW5lciAiQWdlbmN5IGludGVncmF0aW9uIiAiQWdlbmN5IEFQSSwgcmVnaXN0cnkgYWRhcHRlcnMsIGRhdGEgbWluaW1pemF0aW9uLCByZXRyaWVzLiIgIkFkYXB0ZXJzIgogICAgICAgICAgICAgICAgYXVkaXQgPSBjb250YWluZXIgIkF1ZGl0IHNlcnZpY2UiICJBdWRpdCB0cmFpbCwgdHJhbnNwYXJlbmN5IHF1ZXJpZXMuIiAiU2VydmljZSIKICAgICAgICAgICAgICAgIHBvcnRhbERiID0gY29udGFpbmVyICJQb3J0YWwgREIgKG1pbmltYWwpIiAiUHJlZmVyZW5jZXMsIGNhdGFsb2d1ZSBjb25maWd1cmF0aW9uLCBBUEkgY2xpZW50IHJlZ2lzdHJhdGlvbnMsIHNlc3Npb25zLCBub3RpZmljYXRpb24gaW5ib3ggYW5kIHN1Ym1pc3Npb24gcmVjb3Jkcy4iICJSZWxhdGlvbmFsIERCIiAiRGF0YWJhc2UiCiAgICAgICAgICAgICAgICBkb2NTdG9yZSA9IGNvbnRhaW5lciAiVGVtcG9yYXJ5IGZpbGUgc3RvcmUiICJRdWFyYW50aW5lIGFuZCB0cmFuc2l0IG9ubHkuIiAiT2JqZWN0IHN0b3JhZ2UiICJEYXRhYmFzZSIKICAgICAgICAgICAgICAgIHNjYW5uZXIgPSBjb250YWluZXIgIkFudGl2aXJ1cyBzY2FubmVyIiAiU2NhbnMgZXZlcnkgdXBsb2FkIGluIGlzb2xhdGlvbiBiZWZvcmUgaXQgaXMgYWNjZXB0ZWQuIiAiU2NhbiBlbmdpbmUiCiAgICAgICAgICAgICAgICBncm91cCAiQXVkaXQgZW52aXJvbm1lbnQiIHsKICAgICAgICAgICAgICAgICAgICBhdWRpdFN0b3JlID0gY29udGFpbmVyICJBdWRpdCBzdG9yZSIgIkFwcGVuZC1vbmx5LCB0YW1wZXItZXZpZGVudCBhdWRpdCByZWNvcmRzLiIgIlJlbGF0aW9uYWwgREIiICJEYXRhYmFzZSIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIG9ic2VydmFiaWxpdHkgPSBjb250YWluZXIgIk9ic2VydmFiaWxpdHkiICJIZWFsdGgsIGFsZXJ0cywgc2VjdXJpdHkgZXZlbnRzLiIgIk1vbml0b3JpbmcsIGxvZ3MsIHRyYWNpbmciCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIGdyb3VwICJBZ2VuY3kgdHJ1c3QgZG9tYWluIiB7CiAgICAgICAgICAgIGFnZW5jeVN0YWZmID0gcGVyc29uICJBZ2VuY3kgc3RhZmYiICJQcm9jZXNzZXMgcmVxdWVzdHMgZm9yIHRoZWlyIG93biBvcmdhbml6YXRpb24ncyBzZXJ2aWNlcy4iICJFeHRlcm5hbCIKICAgICAgICAgICAgYWdlbmNpZXMgPSBzb2Z0d2FyZVN5c3RlbSAiQWdlbmN5IGJhY2stZW5kIGUtc2VydmljZXMiICJTeXN0ZW1zIG9mIHRoZSBhZ2VuY2llcyB0aGF0IGRlbGl2ZXIgYW5kIGRlY2lkZSB0aGUgc2VydmljZXMuIFNlcGFyYXRlIHRydXN0IGRvbWFpbi4iICJFeHRlcm5hbCIKICAgICAgICB9CgogICAgICAgIGdyb3VwICJOYXRpb25hbCB0cnVzdCBzZXJ2aWNlcyIgewogICAgICAgICAgICBpZHAgPSBzb2Z0d2FyZVN5c3RlbSAiTmF0aW9uYWwgZUlEIC8gT0lEQyBpZGVudGl0eSBwcm92aWRlciIgIkF1dGhlbnRpY2F0ZXMgcmVzaWRlbnRzLiBUaGUgcG9ydGFsIHRydXN0cyBvbmx5IGNvbmZpZ3VyZWQgcHJvdmlkZXJzIGFuZCB2YWxpZGF0ZXMgZXZlcnkgdG9rZW4uIiAiRXh0ZXJuYWwiCiAgICAgICAgICAgIHNpZ25pbmcgPSBzb2Z0d2FyZVN5c3RlbSAiRGlnaXRhbCBzaWduaW5nIHNlcnZpY2UiICJDcmVhdGVzIGFuZCB2YWxpZGF0ZXMgbGVnYWxseSBiaW5kaW5nIGVJRCBzaWduYXR1cmVzLiIgIkV4dGVybmFsIgogICAgICAgICAgICByZWdpc3RyaWVzID0gc29mdHdhcmVTeXN0ZW0gIkV4dGVybmFsIHJlZ2lzdHJpZXMiICJBdXRob3JpdGF0aXZlIGRhdGEgc3VjaCBhcyBwb3B1bGF0aW9uLCBidXNpbmVzcyBhbmQgbWFuZGF0ZS9kZWxlZ2F0aW9uIHJlZ2lzdHJpZXMuIiAiRXh0ZXJuYWwiCiAgICAgICAgfQoKICAgICAgICB0aGlyZFBhcnR5ID0gc29mdHdhcmVTeXN0ZW0gIlRoaXJkLXBhcnR5IHNlcnZpY2UgcHJvdmlkZXJzIiAiQ29uc3VtZSB0aGUgcG9ydGFsJ3MgcmVndWxhdGVkIHB1YmxpYyBBUElzIGFzIHJlZ2lzdGVyZWQgY2xpZW50cy4iICJFeHRlcm5hbCIKICAgICAgICBub3RpZnkgPSBzb2Z0d2FyZVN5c3RlbSAiTm90aWZpY2F0aW9uIHByb3ZpZGVycyIgIkRlbGl2ZXIgZW1haWwsIFNNUyBhbmQgcHVzaCBtZXNzYWdlcy4iICJFeHRlcm5hbCIKCiAgICAgICAgLy8gRWFjaCByZWxhdGlvbnNoaXAgaGFzIGl0cyBvd24gY29sb3VyIHRhZyAocjEuLnIxMik7IHRoZSBsYWJlbCB0ZXh0IG1hdGNoZXMgaXRzIGxpbmUuCiAgICAgICAgcmVzaWRlbnQgLT4gcG9ydGFsICJVc2VzIHNlcnZpY2VzLCB0cmFja3MgcmVxdWVzdHMsIHNpZ25zIGRvY3VtZW50cyIgIiIgInIxIgogICAgICAgIGFkbWluIC0+IHBvcnRhbCAiU3VwcG9ydHMgcmVzaWRlbnRzLCBhZG1pbmlzdGVycyBwb3J0YWwiICIiICJyMiIKICAgICAgICBhdWRpdG9yIC0+IHBvcnRhbCAiUmV2aWV3cyBhdWRpdCBldmlkZW5jZSAocmVhZC1vbmx5KSIgIiIgInIzIgogICAgICAgIG9wcyAtPiBwb3J0YWwgIk1vbml0b3JzIGhlYWx0aCBhbmQgc2VjdXJpdHkgZXZlbnRzIiAiIiAicjQiCgogICAgICAgIHBvcnRhbCAtPiBpZHAgIkF1dGhlbnRpY2F0ZXMgcmVzaWRlbnRzIHZpYSIgIiIgInI1IgogICAgICAgIHBvcnRhbCAtPiBzaWduaW5nICJTaWducyBhbmQgdmFsaWRhdGVzIGRvY3VtZW50cyB2aWEiICIiICJyNiIKICAgICAgICBwb3J0YWwgLT4gYWdlbmNpZXMgIlNlbmRzIHJlcXVlc3RzOyBnZXRzIHN0YXR1cyBhbmQgZGVjaXNpb25zIiAiIiAicjciCiAgICAgICAgcG9ydGFsIC0+IHJlZ2lzdHJpZXMgIkxvb2tzIHVwIGRhdGEsIHZlcmlmaWVzIGRlbGVnYXRpb25zIiAiIiAicjgiCiAgICAgICAgdGhpcmRQYXJ0eSAtPiBwb3J0YWwgIkNhbGxzIHJlZ3VsYXRlZCBwdWJsaWMgQVBJcyIgIiIgInI5IgogICAgICAgIHBvcnRhbCAtPiBub3RpZnkgIlNlbmRzIG5vdGlmaWNhdGlvbnMgdmlhIiAiIiAicjEwIgogICAgICAgIG5vdGlmeSAtPiByZXNpZGVudCAiRGVsaXZlcnMgZW1haWwsIFNNUywgcHVzaCB0byIgIiIgInIxMSIKICAgICAgICBhZ2VuY3lTdGFmZiAtPiBhZ2VuY2llcyAiUHJvY2Vzc2VzIGNhc2VzIGluIiAiIiAicjEyIgoKICAgICAgICAvLyBDb250YWluZXIgbGV2ZWwuIENvbG91ciB0YWdzIGJ5IGtpbmQgb2YgaW50ZXJhY3Rpb246IHVzZXIsIHJvdXRlLCBzeW5jLCBhc3luYywgZXh0ZXJuYWwsIHN0b3JlLgogICAgICAgIC8vIEludGVyZmFjZSBhcnJvd3MgY2FycnkgdGhlIGludGVyZmFjZSBuYW1lIGZyb20gZG9jcy9pbnRlcmZhY2VfaW52ZW50b3J5LmFkb2MuCiAgICAgICAgcmVzaWRlbnQgLT4gcG9ydGFsLndlYiAiVXNlcyIgIkhUVFBTIiAidXNlciIKICAgICAgICBhZG1pbiAtPiBwb3J0YWwuYmFja29mZmljZSAiVXNlcyIgIkhUVFBTIiAidXNlciIKICAgICAgICBhdWRpdG9yIC0+IHBvcnRhbC5iYWNrb2ZmaWNlICJSZXZpZXdzIGF1ZGl0IGV2aWRlbmNlIiAiSFRUUFMiICJ1c2VyIgogICAgICAgIHRoaXJkUGFydHkgLT4gcG9ydGFsLmdhdGV3YXkgIlBvcnRhbCBUaGlyZC1wYXJ0eSBBUEkiICJIVFRQUywgT0F1dGggMi4wIGNsaWVudCBjcmVkZW50aWFscyIgInVzZXIiCiAgICAgICAgb3BzIC0+IHBvcnRhbC5vYnNlcnZhYmlsaXR5ICJNb25pdG9ycyIgIkhUVFBTIiAidXNlciIKICAgICAgICBwb3J0YWwud2ViIC0+IHBvcnRhbC5nYXRld2F5ICJQb3J0YWwgQ2l0aXplbiBBUEkiICJIVFRQUy9KU09OIiAidXNlciIKICAgICAgICBwb3J0YWwuYmFja29mZmljZSAtPiBwb3J0YWwuZ2F0ZXdheSAiUG9ydGFsIEJhY2stb2ZmaWNlIEFQSSIgIkhUVFBTL0pTT04iICJ1c2VyIgoKICAgICAgICBwb3J0YWwuZ2F0ZXdheSAtPiBwb3J0YWwuaWFtICJJZGVudGl0eSAmIEFjY2VzcyBBUEkiICJIVFRQUy9KU09OIiAicm91dGUiCiAgICAgICAgcG9ydGFsLmdhdGV3YXkgLT4gcG9ydGFsLmJhY2tlbmQgIlBvcnRhbCBCYWNrZW5kIEFQSSIgIkhUVFBTL0pTT04iICJyb3V0ZSIKICAgICAgICBwb3J0YWwuZ2F0ZXdheSAtPiBwb3J0YWwuYXVkaXQgIkF1ZGl0IFRyYW5zcGFyZW5jeSBBUEkiICJIVFRQUy9KU09OIiAicm91dGUiCgogICAgICAgIHBvcnRhbC5pYW0gLT4gcG9ydGFsLmludGVncmF0aW9uICJNYW5kYXRlIENoZWNrIEFQSSIgIkhUVFBTL0pTT04iICJzeW5jIgogICAgICAgIHBvcnRhbC5iYWNrZW5kIC0+IHBvcnRhbC5pbnRlZ3JhdGlvbiAiSW50ZWdyYXRpb24gRGF0YSBBUEkiICJIVFRQUy9KU09OIiAic3luYyIKICAgICAgICBwb3J0YWwuYmFja2VuZCAtPiBwb3J0YWwuc2Nhbm5lciAiU2NhbnMgdXBsb2FkcyIgIlNjYW4gQVBJIiAic3luYyIKICAgICAgICBwb3J0YWwuaW50ZWdyYXRpb24gLT4gcG9ydGFsLmJhY2tlbmQgIkRlbGl2ZXJ5IFJlcG9ydCBBUEkiICJIVFRQUy9KU09OIiAic3luYyIKCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gcG9ydGFsLmJ1cyAiU3VibWlzc2lvbiBRdWV1ZSwgQXVkaXQgRXZlbnQgU3RyZWFtIiAiTWVzc2FnZSBxdWV1ZSIgImFzeW5jIgogICAgICAgIHBvcnRhbC5idXMgLT4gcG9ydGFsLmludGVncmF0aW9uICJTdWJtaXNzaW9uIFF1ZXVlIiAiTWVzc2FnZSBxdWV1ZSIgImFzeW5jIgogICAgICAgIHBvcnRhbC5idXMgLT4gcG9ydGFsLmF1ZGl0ICJBdWRpdCBFdmVudCBTdHJlYW0gKGFsbCBjb250YWluZXJzKSIgIk1lc3NhZ2UgcXVldWUiICJhc3luYyIKCiAgICAgICAgcG9ydGFsLmlhbSAtPiBpZHAgImVJRCBMb2dpbiBBUEkiICJPSURDIiAiZXh0ZXJuYWwiCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gc2lnbmluZyAiRGlnaXRhbCBTaWduaW5nIEFQSSIgIkhUVFBTIEFQSSIgImV4dGVybmFsIgogICAgICAgIHBvcnRhbC5pbnRlZ3JhdGlvbiAtPiBhZ2VuY2llcyAiQWdlbmN5IEFQSSIgIkhUVFBTIEFQSSwgbVRMUyIgImV4dGVybmFsIgogICAgICAgIHBvcnRhbC5pbnRlZ3JhdGlvbiAtPiByZWdpc3RyaWVzICJFeHRlcm5hbCBSZWdpc3RyeSBBUElzIiAiSFRUUFMgQVBJLCBtVExTIiAiZXh0ZXJuYWwiCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gbm90aWZ5ICJOb3RpZmljYXRpb24gUHJvdmlkZXIgQVBJcyIgIkhUVFBTIHByb3ZpZGVyIEFQSXMiICJleHRlcm5hbCIKCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gcG9ydGFsLnBvcnRhbERiICJSZWFkcywgd3JpdGVzIiAiU1FMIiAic3RvcmUiCiAgICAgICAgcG9ydGFsLmlhbSAtPiBwb3J0YWwucG9ydGFsRGIgIlJlYWRzLCB3cml0ZXMiICJTUUwiICJzdG9yZSIKICAgICAgICBwb3J0YWwuYmFja2VuZCAtPiBwb3J0YWwuZG9jU3RvcmUgIlN0b3JlcyBmaWxlcyB0ZW1wb3JhcmlseSIgIk9iamVjdCBzdG9yYWdlIEFQSSIgInN0b3JlIgogICAgICAgIHBvcnRhbC5pbnRlZ3JhdGlvbiAtPiBwb3J0YWwuZG9jU3RvcmUgIlJlYWRzIGZpbGVzIGZvciBkZWxpdmVyeSIgIk9iamVjdCBzdG9yYWdlIEFQSSIgInN0b3JlIgogICAgICAgIHBvcnRhbC5hdWRpdCAtPiBwb3J0YWwuYXVkaXRTdG9yZSAiQXBwZW5kcyIgIlNRTCIgInN0b3JlIgogICAgfQoKICAgIHZpZXdzIHsKICAgICAgICBzeXN0ZW1Db250ZXh0IHBvcnRhbCAiYzRfc3lzdGVtX2NvbnRleHQiIHsKICAgICAgICAgICAgdGl0bGUgIlN5c3RlbSBDb250ZXh0IC0gQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwiCiAgICAgICAgICAgIGRlc2NyaXB0aW9uICJXaG8gdXNlcyB0aGUgQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwsIGFuZCB3aGljaCBleHRlcm5hbCBzeXN0ZW1zIGRvZXMgaXQgZGVwZW5kIG9uIG9yIHNlcnZlPyBEYXNoZWQgYm94ZXMgYXJlIHRydXN0IGRvbWFpbnMuIgogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgaW5jbHVkZSBhZ2VuY3lTdGFmZgogICAgICAgIH0KCiAgICAgICAgY29udGFpbmVyIHBvcnRhbCAiYzRfY29udGFpbmVycyIgewogICAgICAgICAgICB0aXRsZSAiQ29udGFpbmVycyAtIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsIgogICAgICAgICAgICBkZXNjcmlwdGlvbiAiV2hpY2ggZGVwbG95YWJsZSBwYXJ0cyBtYWtlIHVwIHRoZSBwb3J0YWwsIHdoZXJlIGlzIGl0cyBkYXRhIHN0b3JlZCwgYW5kIGhvdyBkbyB0aGV5IGNvbW11bmljYXRlIGFjcm9zcyB0cnVzdCBib3VuZGFyaWVzPyIKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGV4Y2x1ZGUgIm5vdGlmeSAtPiByZXNpZGVudCIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgICAgIG1ldGFkYXRhIGZhbHNlCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJSZWxhdGlvbnNoaXAiIHsKICAgICAgICAgICAgICAgIHdpZHRoIDIyMAogICAgICAgICAgICAgICAgZm9udFNpemUgMjAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJQZXJzb24iIHsKICAgICAgICAgICAgICAgIHNoYXBlIFBlcnNvbgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMDg0MjdiCiAgICAgICAgICAgICAgICBoZWlnaHQgNDgwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxMTY4YmQKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJCb3VuZGFyeSIgewogICAgICAgICAgICAgICAgY29sb3IgIzExNjhiZAogICAgICAgICAgICAgICAgbWV0YWRhdGEgZmFsc2UKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzQzOGRkNQogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlF1ZXVlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBQaXBlCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRXh0ZXJuYWwiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzk5OTk5OQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjEiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMxZjc3YjQKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIyIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjMmNhMDJjCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMyIgewogICAgICAgICAgICAgICAgY29sb3IgIzk0NjdiZAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM4YzU2NGIKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI1IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjZDYyNzI4CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyNiIgewogICAgICAgICAgICAgICAgY29sb3IgI2UzNzdjMgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjciIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZjdmMGUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI4IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjMTdiZWNmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyOSIgewogICAgICAgICAgICAgICAgY29sb3IgIzdmN2Y3ZgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjEwIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjYmNiZDIyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMTEiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMzOTNiNzkKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIxMiIgewogICAgICAgICAgICAgICAgY29sb3IgIzYzNzkzOQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAidXNlciIgewogICAgICAgICAgICAgICAgY29sb3IgIzFmNzdiNAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicm91dGUiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM1NTU1NTUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInN5bmMiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZjdmMGUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgImFzeW5jIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjOTQ2N2JkCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJleHRlcm5hbCIgewogICAgICAgICAgICAgICAgY29sb3IgI2Q2MjcyOAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAic3RvcmUiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMyY2EwMmMKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCn0=",
+    "structurizr.inspection.error" : "29",
+    "structurizr.dsl" : "LyoKICogQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwgLSBDNCBtb2RlbCAoU3RydWN0dXJpenIgRFNMKQogKiBDNCBMZXZlbCAxIC0gU3lzdGVtIENvbnRleHQ6IHdobyB1c2VzIHRoZSBwb3J0YWwsIGFuZCB3aGljaCBleHRlcm5hbCBzeXN0ZW1zIGRvZXMgaXQgZGVwZW5kIG9uIG9yIHNlcnZlPwogKiBDNCBMZXZlbCAyIC0gQ29udGFpbmVyczogd2hpY2ggZGVwbG95YWJsZSBwYXJ0cyBtYWtlIHVwIHRoZSBwb3J0YWwsIHdoYXQgZG9lcyBlYWNoIG93biwgYW5kIGhvdyBkbyB0aGV5IHRhbGs/CiAqICAgQnVzaW5lc3MgZGF0YSAoY2FzZXMsIGRvY3VtZW50cywgcHJvZmlsZSwgZGVsZWdhdGlvbnMpIHN0YXlzIHdpdGggYWdlbmNpZXMgYW5kIHJlZ2lzdHJpZXMgYW5kIGlzIHJlYWQgbGl2ZQogKiAgIHRocm91Z2ggdGhlIEFnZW5jeSBpbnRlZ3JhdGlvbiBzZXJ2aWNlOyB0aGUgcG9ydGFsIGtlZXBzIG9ubHkgYSBtaW5pbWFsIGRhdGFiYXNlLgogKiBDNCBEZXBsb3ltZW50LCBvbmUgdmlldyBwZXIgZGVwbG95bWVudCBlbnZpcm9ubWVudDoKICogICBQcm9kdWN0aW9uOiAgd2hpY2ggaW5mcmFzdHJ1Y3R1cmUgcnVucyBlYWNoIGNvbnRhaW5lciwgd2hpY2ggbmV0d29yayB6b25lcyBkb2VzIHRyYWZmaWMgY3Jvc3MsIGFuZCBob3cgaXMKICogICAgICAgICAgICAgICAgZWFjaCBwYXJ0IG1hZGUgcmVkdW5kYW50PwogKiAgIFRlc3Q6ICAgICAgICB0aGUgc2FtZSB6b25lcywgaW5mcmFzdHJ1Y3R1cmUgYW5kIHNlY3VyaXR5IGNvbnRyb2xzIGFzIHByb2R1Y3Rpb24sIHdpdGggZmV3ZXIgYW5kIHNtYWxsZXIKICogICAgICAgICAgICAgICAgaW5zdGFuY2VzLCBzeW50aGV0aWMgZGF0YSBhbmQgdGhlIHRlc3QgZW52aXJvbm1lbnRzIG9mIHRoZSBleHRlcm5hbCBzeXN0ZW1zLgogKiAgIERldmVsb3BtZW50OiB0aGUgd2hvbGUgcG9ydGFsIG9uIG9uZSBkZXZlbG9wZXIncyBjb21wdXRlciwgd2l0aCBzdHVicyBpbiBwbGFjZSBvZiB0aGUgZXh0ZXJuYWwgc3lzdGVtcy4KICogRWRpdCBvbmxpbmU6IHBhc3RlIGludG8gaHR0cHM6Ly9zdHJ1Y3R1cml6ci5jb20vZHNsCiAqIEV4cG9ydCBTVkc6ICByZW5kZXIgd2l0aCBTdHJ1Y3R1cml6ciAoZG9ja2VyIHJ1biAtaXQgLS1ybSAtLXVzZXIgIiQoaWQgLXUpOiQoaWQgLWcpIiAtcCA4MDgwOjgwODAKICogICAgICAgICAgICAgIC12IDxyZXBvPi9kaWFncmFtczovdXNyL2xvY2FsL3N0cnVjdHVyaXpyIHN0cnVjdHVyaXpyL3N0cnVjdHVyaXpyIGxvY2FsKSwKICogICAgICAgICAgICAgIG9wZW4gaHR0cDovL2xvY2FsaG9zdDo4MDgwLCBhcnJhbmdlIGVhY2ggZGlhZ3JhbSwgZXhwb3J0IGl0IGFzIFNWRyBhbmQgc2F2ZSBpdCBhcwogKiAgICAgICAgICAgICAgZGlhZ3JhbXMvPHZpZXcga2V5Pi5zdmcuIENvbW1pdCB3b3Jrc3BhY2UuanNvbiB0b2dldGhlciB3aXRoIHdvcmtzcGFjZS5kc2wsCiAqICAgICAgICAgICAgICBiZWNhdXNlIGl0IHN0b3JlcyB0aGUgbWFudWFsIGxheW91dC4KICovCndvcmtzcGFjZSAiQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwiICJBcmNoaXRlY3R1cmUgbW9kZWwgb2YgdGhlIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsLiIgewoKICAgICFpZGVudGlmaWVycyBoaWVyYXJjaGljYWwKCiAgICBtb2RlbCB7CiAgICAgICAgcmVzaWRlbnQgPSBwZXJzb24gIlJlc2lkZW50IC8gQ2l0aXplbiIgIkZpbmRzLCByZXF1ZXN0cyBhbmQgdHJhY2tzIHB1YmxpYyBzZXJ2aWNlczsgZXhjaGFuZ2VzIGRvY3VtZW50cyBhbmQgbWVzc2FnZXM7IHNpZ25zIGRvY3VtZW50czsgc2VlcyB3aG8gYWNjZXNzZWQgdGhlaXIgZGF0YS4gTWF5IGFjdCBhcyBhIGRlbGVnYXRlIGZvciBhbm90aGVyIHBlcnNvbiB3aXRoaW4gYSBnaXZlbiBzY29wZS4iCiAgICAgICAgYXVkaXRvciA9IHBlcnNvbiAiQXVkaXRvciAvIE92ZXJzaWdodCBib2R5IiAiVmVyaWZpZXMgdGhhdCBjaXRpemVuIGRhdGEgd2FzIGFjY2Vzc2VkIGFuZCBwcm9jZXNzZWQgbGF3ZnVsbHkuIgoKICAgICAgICBncm91cCAiUG9ydGFsIG9wZXJhdG9yIiB7CiAgICAgICAgICAgIGFkbWluID0gcGVyc29uICJBZG1pbmlzdHJhdG9yIC8gSGVscGRlc2siICJTdXBwb3J0cyByZXNpZGVudHMgYW5kIG9wZXJhdGVzIHRoZSBwb3J0YWwgd2l0aCByb2xlLWxpbWl0ZWQgYWNjZXNzIHRvIGNhc2UgZGF0YS4iCiAgICAgICAgICAgIG9wcyA9IHBlcnNvbiAiT3BlcmF0aW9ucyAvIFNlY3VyaXR5IHRlYW0iICJNb25pdG9ycyBzZXJ2aWNlIGhlYWx0aCBhbmQgcmVzcG9uZHMgdG8gaW5jaWRlbnRzIGFuZCBzZWN1cml0eSBldmVudHMuIgogICAgICAgICAgICBwb3J0YWwgPSBzb2Z0d2FyZVN5c3RlbSAiQ2l0aXplbiBTZXJ2aWNlcyBQb3J0YWwiICJTaW5nbGUgZGlnaXRhbCBlbnRyeSBwb2ludCBmb3IgcHVibGljIHNlcnZpY2VzOiBzZXJ2aWNlIGNhdGFsb2d1ZSwgY2FzZSBtYW5hZ2VtZW50LCBkb2N1bWVudCBleGNoYW5nZSwgc2lnbmluZyB3b3JrZmxvdywgbm90aWZpY2F0aW9ucywgZGVsZWdhdGlvbiwgYXVkaXQgYW5kIHRyYW5zcGFyZW5jeSwgcmVndWxhdGVkIHB1YmxpYyBBUElzLiIgewogICAgICAgICAgICAgICAgd2ViID0gY29udGFpbmVyICJDaXRpemVuIHdlYiBhcHAiICJMb2NhbGl6ZWQgY2l0aXplbiBVSS4iICJXZWIgU1BBIgogICAgICAgICAgICAgICAgYmFja29mZmljZSA9IGNvbnRhaW5lciAiQmFjay1vZmZpY2Ugd2ViIGFwcCIgIkhlbHBkZXNrLCBhZG1pbiBhbmQgYXVkaXQgcmV2aWV3LiIgIldlYiBTUEEiCiAgICAgICAgICAgICAgICBnYXRld2F5ID0gY29udGFpbmVyICJBUEkgZ2F0ZXdheSIgIlRva2VuIHZhbGlkYXRpb24sIHNjb3BlcywgcmF0ZSBsaW1pdHMsIEFQSSB2ZXJzaW9uaW5nLiIgIkdhdGV3YXkiCiAgICAgICAgICAgICAgICBpYW0gPSBjb250YWluZXIgIklkZW50aXR5ICYgYWNjZXNzIiAiZUlEIGxvZ2luLCBzZXNzaW9ucywgcm9sZSBhbmQgZGVsZWdhdGlvbiBjaGVja3MuIiAiU2VydmljZSIKICAgICAgICAgICAgICAgIGJhY2tlbmQgPSBjb250YWluZXIgIlBvcnRhbCBiYWNrZW5kIiAiU2VydmljZSBjYXRhbG9ndWUgYW5kIHByZWZlcmVuY2VzLCBjYXNlIHN1Ym1pc3Npb24gYW5kIHN0YXR1cywgZG9jdW1lbnQgdXBsb2FkIGFuZCBkb3dubG9hZCwgZUlEIHNpZ25pbmcgd29ya2Zsb3csIG5vdGlmaWNhdGlvbiBkaXNwYXRjaCBhbmQgaW5ib3guIiAiTW9kdWxhciBiYWNrZW5kIHNlcnZpY2UiCiAgICAgICAgICAgICAgICBidXMgPSBjb250YWluZXIgIk1lc3NhZ2UgYnJva2VyIiAiRGVsaXZlcnkgcXVldWUgZm9yIHJlcXVlc3RzIHRvIGFnZW5jaWVzIChjb250YWlucyBwZXJzb25hbCBkYXRhOiBlbmNyeXB0ZWQsIGFjY2Vzcy1jb250cm9sbGVkLCBkdXJhYmxlKSBhbmQgYXVkaXQgZXZlbnRzLiIgIkFzeW5jIG1lc3NhZ2luZyIgIlF1ZXVlIgogICAgICAgICAgICAgICAgaW50ZWdyYXRpb24gPSBjb250YWluZXIgIkFnZW5jeSBpbnRlZ3JhdGlvbiIgIkFnZW5jeSBBUEksIHJlZ2lzdHJ5IGFkYXB0ZXJzLCBkYXRhIG1pbmltaXphdGlvbiwgcmV0cmllcy4iICJBZGFwdGVycyIKICAgICAgICAgICAgICAgIGF1ZGl0ID0gY29udGFpbmVyICJBdWRpdCBzZXJ2aWNlIiAiQXVkaXQgdHJhaWwsIHRyYW5zcGFyZW5jeSBxdWVyaWVzLiIgIlNlcnZpY2UiCiAgICAgICAgICAgICAgICBwb3J0YWxEYiA9IGNvbnRhaW5lciAiUG9ydGFsIERCIChtaW5pbWFsKSIgIlByZWZlcmVuY2VzLCBjYXRhbG9ndWUgY29uZmlndXJhdGlvbiwgQVBJIGNsaWVudCByZWdpc3RyYXRpb25zLCBzZXNzaW9ucywgbm90aWZpY2F0aW9uIGluYm94IGFuZCBzdWJtaXNzaW9uIHJlY29yZHMuIiAiUmVsYXRpb25hbCBEQiIgIkRhdGFiYXNlIgogICAgICAgICAgICAgICAgZG9jU3RvcmUgPSBjb250YWluZXIgIlRlbXBvcmFyeSBmaWxlIHN0b3JlIiAiUXVhcmFudGluZSBhbmQgdHJhbnNpdCBvbmx5LiIgIk9iamVjdCBzdG9yYWdlIiAiRGF0YWJhc2UiCiAgICAgICAgICAgICAgICBzY2FubmVyID0gY29udGFpbmVyICJBbnRpdmlydXMgc2Nhbm5lciIgIlNjYW5zIGV2ZXJ5IHVwbG9hZCBpbiBpc29sYXRpb24gYmVmb3JlIGl0IGlzIGFjY2VwdGVkLiIgIlNjYW4gZW5naW5lIgogICAgICAgICAgICAgICAgZ3JvdXAgIkF1ZGl0IGVudmlyb25tZW50IiB7CiAgICAgICAgICAgICAgICAgICAgYXVkaXRTdG9yZSA9IGNvbnRhaW5lciAiQXVkaXQgc3RvcmUiICJBcHBlbmQtb25seSwgdGFtcGVyLWV2aWRlbnQgYXVkaXQgcmVjb3Jkcy4iICJSZWxhdGlvbmFsIERCIiAiRGF0YWJhc2UiCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBvYnNlcnZhYmlsaXR5ID0gY29udGFpbmVyICJPYnNlcnZhYmlsaXR5IiAiSGVhbHRoLCBhbGVydHMsIHNlY3VyaXR5IGV2ZW50cy4iICJNb25pdG9yaW5nLCBsb2dzLCB0cmFjaW5nIgogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBncm91cCAiQWdlbmN5IHRydXN0IGRvbWFpbiIgewogICAgICAgICAgICBhZ2VuY3lTdGFmZiA9IHBlcnNvbiAiQWdlbmN5IHN0YWZmIiAiUHJvY2Vzc2VzIHJlcXVlc3RzIGZvciB0aGVpciBvd24gb3JnYW5pemF0aW9uJ3Mgc2VydmljZXMuIiAiRXh0ZXJuYWwiCiAgICAgICAgICAgIGFnZW5jaWVzID0gc29mdHdhcmVTeXN0ZW0gIkFnZW5jeSBiYWNrLWVuZCBlLXNlcnZpY2VzIiAiU3lzdGVtcyBvZiB0aGUgYWdlbmNpZXMgdGhhdCBkZWxpdmVyIGFuZCBkZWNpZGUgdGhlIHNlcnZpY2VzLiBTZXBhcmF0ZSB0cnVzdCBkb21haW4uIiAiRXh0ZXJuYWwiCiAgICAgICAgfQoKICAgICAgICBncm91cCAiTmF0aW9uYWwgdHJ1c3Qgc2VydmljZXMiIHsKICAgICAgICAgICAgaWRwID0gc29mdHdhcmVTeXN0ZW0gIk5hdGlvbmFsIGVJRCAvIE9JREMgaWRlbnRpdHkgcHJvdmlkZXIiICJBdXRoZW50aWNhdGVzIHJlc2lkZW50cy4gVGhlIHBvcnRhbCB0cnVzdHMgb25seSBjb25maWd1cmVkIHByb3ZpZGVycyBhbmQgdmFsaWRhdGVzIGV2ZXJ5IHRva2VuLiIgIkV4dGVybmFsIgogICAgICAgICAgICBzaWduaW5nID0gc29mdHdhcmVTeXN0ZW0gIkRpZ2l0YWwgc2lnbmluZyBzZXJ2aWNlIiAiQ3JlYXRlcyBhbmQgdmFsaWRhdGVzIGxlZ2FsbHkgYmluZGluZyBlSUQgc2lnbmF0dXJlcy4iICJFeHRlcm5hbCIKICAgICAgICAgICAgcmVnaXN0cmllcyA9IHNvZnR3YXJlU3lzdGVtICJFeHRlcm5hbCByZWdpc3RyaWVzIiAiQXV0aG9yaXRhdGl2ZSBkYXRhIHN1Y2ggYXMgcG9wdWxhdGlvbiwgYnVzaW5lc3MgYW5kIG1hbmRhdGUvZGVsZWdhdGlvbiByZWdpc3RyaWVzLiIgIkV4dGVybmFsIgogICAgICAgIH0KCiAgICAgICAgdGhpcmRQYXJ0eSA9IHNvZnR3YXJlU3lzdGVtICJUaGlyZC1wYXJ0eSBzZXJ2aWNlIHByb3ZpZGVycyIgIkNvbnN1bWUgdGhlIHBvcnRhbCdzIHJlZ3VsYXRlZCBwdWJsaWMgQVBJcyBhcyByZWdpc3RlcmVkIGNsaWVudHMuIiAiRXh0ZXJuYWwiCiAgICAgICAgbm90aWZ5ID0gc29mdHdhcmVTeXN0ZW0gIk5vdGlmaWNhdGlvbiBwcm92aWRlcnMiICJEZWxpdmVyIGVtYWlsLCBTTVMgYW5kIHB1c2ggbWVzc2FnZXMuIiAiRXh0ZXJuYWwiCgogICAgICAgIC8vIEVhY2ggcmVsYXRpb25zaGlwIGhhcyBpdHMgb3duIGNvbG91ciB0YWcgKHIxLi5yMTIpOyB0aGUgbGFiZWwgdGV4dCBtYXRjaGVzIGl0cyBsaW5lLgogICAgICAgIHJlc2lkZW50IC0+IHBvcnRhbCAiVXNlcyBzZXJ2aWNlcywgdHJhY2tzIHJlcXVlc3RzLCBzaWducyBkb2N1bWVudHMiICIiICJyMSIKICAgICAgICBhZG1pbiAtPiBwb3J0YWwgIlN1cHBvcnRzIHJlc2lkZW50cywgYWRtaW5pc3RlcnMgcG9ydGFsIiAiIiAicjIiCiAgICAgICAgYXVkaXRvciAtPiBwb3J0YWwgIlJldmlld3MgYXVkaXQgZXZpZGVuY2UgKHJlYWQtb25seSkiICIiICJyMyIKICAgICAgICBvcHMgLT4gcG9ydGFsICJNb25pdG9ycyBoZWFsdGggYW5kIHNlY3VyaXR5IGV2ZW50cyIgIiIgInI0IgoKICAgICAgICBwb3J0YWwgLT4gaWRwICJBdXRoZW50aWNhdGVzIHJlc2lkZW50cyB2aWEiICIiICJyNSIKICAgICAgICBwb3J0YWwgLT4gc2lnbmluZyAiU2lnbnMgYW5kIHZhbGlkYXRlcyBkb2N1bWVudHMgdmlhIiAiIiAicjYiCiAgICAgICAgcG9ydGFsIC0+IGFnZW5jaWVzICJTZW5kcyByZXF1ZXN0czsgZ2V0cyBzdGF0dXMgYW5kIGRlY2lzaW9ucyIgIiIgInI3IgogICAgICAgIHBvcnRhbCAtPiByZWdpc3RyaWVzICJMb29rcyB1cCBkYXRhLCB2ZXJpZmllcyBkZWxlZ2F0aW9ucyIgIiIgInI4IgogICAgICAgIHRoaXJkUGFydHkgLT4gcG9ydGFsICJDYWxscyByZWd1bGF0ZWQgcHVibGljIEFQSXMiICIiICJyOSIKICAgICAgICBwb3J0YWwgLT4gbm90aWZ5ICJTZW5kcyBub3RpZmljYXRpb25zIHZpYSIgIiIgInIxMCIKICAgICAgICBub3RpZnkgLT4gcmVzaWRlbnQgIkRlbGl2ZXJzIGVtYWlsLCBTTVMsIHB1c2ggdG8iICIiICJyMTEiCiAgICAgICAgYWdlbmN5U3RhZmYgLT4gYWdlbmNpZXMgIlByb2Nlc3NlcyBjYXNlcyBpbiIgIiIgInIxMiIKCiAgICAgICAgLy8gQ29udGFpbmVyIGxldmVsLiBDb2xvdXIgdGFncyBieSBraW5kIG9mIGludGVyYWN0aW9uOiB1c2VyLCByb3V0ZSwgc3luYywgYXN5bmMsIGV4dGVybmFsLCBzdG9yZS4KICAgICAgICAvLyBJbnRlcmZhY2UgYXJyb3dzIGNhcnJ5IHRoZSBpbnRlcmZhY2UgbmFtZSBmcm9tIGRvY3MvaW50ZXJmYWNlX2ludmVudG9yeS5hZG9jLgogICAgICAgIHJlc2lkZW50IC0+IHBvcnRhbC53ZWIgIlVzZXMiICJIVFRQUyIgInVzZXIiCiAgICAgICAgYWRtaW4gLT4gcG9ydGFsLmJhY2tvZmZpY2UgIlVzZXMiICJIVFRQUyIgInVzZXIiCiAgICAgICAgYXVkaXRvciAtPiBwb3J0YWwuYmFja29mZmljZSAiUmV2aWV3cyBhdWRpdCBldmlkZW5jZSIgIkhUVFBTIiAidXNlciIKICAgICAgICB0aGlyZFBhcnR5IC0+IHBvcnRhbC5nYXRld2F5ICJQb3J0YWwgVGhpcmQtcGFydHkgQVBJIiAiSFRUUFMsIE9BdXRoIDIuMCBjbGllbnQgY3JlZGVudGlhbHMiICJ1c2VyIgogICAgICAgIG9wcyAtPiBwb3J0YWwub2JzZXJ2YWJpbGl0eSAiTW9uaXRvcnMiICJIVFRQUyIgInVzZXIiCiAgICAgICAgcG9ydGFsLndlYiAtPiBwb3J0YWwuZ2F0ZXdheSAiUG9ydGFsIENpdGl6ZW4gQVBJIiAiSFRUUFMvSlNPTiIgInVzZXIiCiAgICAgICAgcG9ydGFsLmJhY2tvZmZpY2UgLT4gcG9ydGFsLmdhdGV3YXkgIlBvcnRhbCBCYWNrLW9mZmljZSBBUEkiICJIVFRQUy9KU09OIiAidXNlciIKCiAgICAgICAgcG9ydGFsLmdhdGV3YXkgLT4gcG9ydGFsLmlhbSAiSWRlbnRpdHkgJiBBY2Nlc3MgQVBJIiAiSFRUUFMvSlNPTiIgInJvdXRlIgogICAgICAgIHBvcnRhbC5nYXRld2F5IC0+IHBvcnRhbC5iYWNrZW5kICJQb3J0YWwgQmFja2VuZCBBUEkiICJIVFRQUy9KU09OIiAicm91dGUiCiAgICAgICAgcG9ydGFsLmdhdGV3YXkgLT4gcG9ydGFsLmF1ZGl0ICJBdWRpdCBUcmFuc3BhcmVuY3kgQVBJIiAiSFRUUFMvSlNPTiIgInJvdXRlIgoKICAgICAgICBwb3J0YWwuaWFtIC0+IHBvcnRhbC5pbnRlZ3JhdGlvbiAiTWFuZGF0ZSBDaGVjayBBUEkiICJIVFRQUy9KU09OIiAic3luYyIKICAgICAgICBwb3J0YWwuYmFja2VuZCAtPiBwb3J0YWwuaW50ZWdyYXRpb24gIkludGVncmF0aW9uIERhdGEgQVBJIiAiSFRUUFMvSlNPTiIgInN5bmMiCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gcG9ydGFsLnNjYW5uZXIgIlNjYW5zIHVwbG9hZHMiICJTY2FuIEFQSSIgInN5bmMiCiAgICAgICAgcG9ydGFsLmludGVncmF0aW9uIC0+IHBvcnRhbC5iYWNrZW5kICJEZWxpdmVyeSBSZXBvcnQgQVBJIiAiSFRUUFMvSlNPTiIgInN5bmMiCgogICAgICAgIHBvcnRhbC5iYWNrZW5kIC0+IHBvcnRhbC5idXMgIlN1Ym1pc3Npb24gUXVldWUsIEF1ZGl0IEV2ZW50IFN0cmVhbSIgIk1lc3NhZ2UgcXVldWUiICJhc3luYyIKICAgICAgICBwb3J0YWwuYnVzIC0+IHBvcnRhbC5pbnRlZ3JhdGlvbiAiU3VibWlzc2lvbiBRdWV1ZSIgIk1lc3NhZ2UgcXVldWUiICJhc3luYyIKICAgICAgICBwb3J0YWwuYnVzIC0+IHBvcnRhbC5hdWRpdCAiQXVkaXQgRXZlbnQgU3RyZWFtIChhbGwgY29udGFpbmVycykiICJNZXNzYWdlIHF1ZXVlIiAiYXN5bmMiCgogICAgICAgIHBvcnRhbC5pYW0gLT4gaWRwICJlSUQgTG9naW4gQVBJIiAiT0lEQyIgImV4dGVybmFsIgogICAgICAgIHBvcnRhbC5iYWNrZW5kIC0+IHNpZ25pbmcgIkRpZ2l0YWwgU2lnbmluZyBBUEkiICJIVFRQUyBBUEkiICJleHRlcm5hbCIKICAgICAgICBwb3J0YWwuaW50ZWdyYXRpb24gLT4gYWdlbmNpZXMgIkFnZW5jeSBBUEkiICJIVFRQUyBBUEksIG1UTFMiICJleHRlcm5hbCIKICAgICAgICBwb3J0YWwuaW50ZWdyYXRpb24gLT4gcmVnaXN0cmllcyAiRXh0ZXJuYWwgUmVnaXN0cnkgQVBJcyIgIkhUVFBTIEFQSSwgbVRMUyIgImV4dGVybmFsIgogICAgICAgIHBvcnRhbC5iYWNrZW5kIC0+IG5vdGlmeSAiTm90aWZpY2F0aW9uIFByb3ZpZGVyIEFQSXMiICJIVFRQUyBwcm92aWRlciBBUElzIiAiZXh0ZXJuYWwiCgogICAgICAgIHBvcnRhbC5iYWNrZW5kIC0+IHBvcnRhbC5wb3J0YWxEYiAiUmVhZHMsIHdyaXRlcyIgIlNRTCIgInN0b3JlIgogICAgICAgIHBvcnRhbC5pYW0gLT4gcG9ydGFsLnBvcnRhbERiICJSZWFkcywgd3JpdGVzIiAiU1FMIiAic3RvcmUiCiAgICAgICAgcG9ydGFsLmJhY2tlbmQgLT4gcG9ydGFsLmRvY1N0b3JlICJTdG9yZXMgZmlsZXMgdGVtcG9yYXJpbHkiICJPYmplY3Qgc3RvcmFnZSBBUEkiICJzdG9yZSIKICAgICAgICBwb3J0YWwuaW50ZWdyYXRpb24gLT4gcG9ydGFsLmRvY1N0b3JlICJSZWFkcyBmaWxlcyBmb3IgZGVsaXZlcnkiICJPYmplY3Qgc3RvcmFnZSBBUEkiICJzdG9yZSIKICAgICAgICBwb3J0YWwuYXVkaXQgLT4gcG9ydGFsLmF1ZGl0U3RvcmUgIkFwcGVuZHMiICJTUUwiICJzdG9yZSIKCiAgICAgICAgLy8gRGVwbG95bWVudDogd2hlcmUgdGhlIGNvbnRhaW5lcnMgcnVuIGluIGVhY2ggZW52aXJvbm1lbnQgKFByb2R1Y3Rpb24sIFRlc3QsIERldmVsb3BtZW50KS4KICAgICAgICAvLyBUZWNobm9sb2dpZXMgb24gdGhlIGRlcGxveW1lbnQgbm9kZXMgYXJlIHdvcmtpbmcgYXNzdW1wdGlvbnMuIFN0cnVjdHVyaXpyIGNvcGllcyBldmVyeSBjb250YWluZXIKICAgICAgICAvLyByZWxhdGlvbnNoaXAgdG8gdGhlIGNvbnRhaW5lciBpbnN0YW5jZXMgb2YgZWFjaCBlbnZpcm9ubWVudC4KCiAgICAgICAgLy8gUHJvZHVjdGlvbi4gVHJhZmZpYyB0aGF0IGNyb3NzZXMgdGhlIHBvcnRhbCBuZXR3b3JrIGVkZ2UgaXMgZHJhd24gdGhyb3VnaCB0aGUgaW5mcmFzdHJ1Y3R1cmUgbm9kZXMsCiAgICAgICAgLy8gc28gdGhlIGRlcGxveW1lbnQgdmlldyBoaWRlcyB0aGUgZGlyZWN0IGNvcGllcyBvZiB0aG9zZSByZWxhdGlvbnNoaXBzICh0YWdzICJ1c2VyIiBhbmQgImV4dGVybmFsIikuCiAgICAgICAgcHJvZHVjdGlvbiA9IGRlcGxveW1lbnRFbnZpcm9ubWVudCAiUHJvZHVjdGlvbiIgewoKICAgICAgICAgICAgcmVzaWRlbnREZXZpY2UgPSBkZXBsb3ltZW50Tm9kZSAiUmVzaWRlbnQncyBkZXZpY2UiICJDb21wdXRlciwgdGFibGV0IG9yIHBob25lIG9mIGEgcmVzaWRlbnQgb3IgZGVsZWdhdGUuIiAiV2luZG93cywgbWFjT1MsIExpbnV4LCBBbmRyb2lkIG9yIGlPUyIgewogICAgICAgICAgICAgICAgYnJvd3NlciA9IGRlcGxveW1lbnROb2RlICJXZWIgYnJvd3NlciIgIiIgIkNocm9tZSwgRmlyZWZveCwgU2FmYXJpIG9yIEVkZ2UiIHsKICAgICAgICAgICAgICAgICAgICB3ZWJBcHAgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwud2ViCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHN0YWZmRGV2aWNlID0gZGVwbG95bWVudE5vZGUgIlN0YWZmIG9yIGF1ZGl0b3Igd29ya3N0YXRpb24iICJEZXZpY2Ugb2YgYSBoZWxwZGVzayB3b3JrZXIsIGFkbWluaXN0cmF0b3Igb3IgYXVkaXRvci4gUmVhY2hlcyB0aGUgcG9ydGFsIG9ubHkgdGhyb3VnaCB0aGUgc3RhZmYgVlBOLiIgIldpbmRvd3Mgb3IgbWFjT1Mgd2l0aCBWUE4gY2xpZW50IiB7CiAgICAgICAgICAgICAgICBicm93c2VyID0gZGVwbG95bWVudE5vZGUgIldlYiBicm93c2VyIiAiIiAiQ2hyb21lLCBGaXJlZm94IG9yIEVkZ2UiIHsKICAgICAgICAgICAgICAgICAgICBiYWNrb2ZmaWNlQXBwID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmJhY2tvZmZpY2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgdGhpcmRQYXJ0eUhvc3RpbmcgPSBkZXBsb3ltZW50Tm9kZSAiVGhpcmQtcGFydHkgcHJvdmlkZXIgaG9zdGluZyIgIlJ1biBieSBlYWNoIHJlZ2lzdGVyZWQgQVBJIGNsaWVudCwgb3V0c2lkZSB0aGUgcG9ydGFsIG9wZXJhdG9yJ3MgY29udHJvbC4iICJQcm92aWRlcidzIG93biBpbmZyYXN0cnVjdHVyZSIgewogICAgICAgICAgICAgICAgdGhpcmRQYXJ0eUNsaWVudCA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2UgdGhpcmRQYXJ0eQogICAgICAgICAgICB9CgogICAgICAgICAgICBnb3ZDbG91ZCA9IGRlcGxveW1lbnROb2RlICJFc3RvbmlhbiBHb3Zlcm5tZW50IENsb3VkIiAiU3RhdGUgcHJpdmF0ZSBjbG91ZCAoUmlpZ2lwaWx2KS4gQXNzdW1lZCB0byBoYXZlIHRocmVlIGF2YWlsYWJpbGl0eSB6b25lcyAoem9uZXMpIGluIEVzdG9uaWEsIHNvIGFsbCBkYXRhIHN0YXlzIGluIHRoZSBjb3VudHJ5LiIgIlByaXZhdGUgY2xvdWQgKElhYVMpLCAzIHpvbmVzIiB7CgogICAgICAgICAgICAgICAgZWRnZSA9IGRlcGxveW1lbnROb2RlICJFZGdlIG5ldHdvcmsgKERNWikiICJUaGUgb25seSB6b25lIHJlYWNoYWJsZSBmcm9tIHRoZSBpbnRlcm5ldC4gSG9sZHMgbm8gcGVyc29uYWwgZGF0YS4iICJOZXR3b3JrIHpvbmUiIHsKICAgICAgICAgICAgICAgICAgICB3YWYgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIldlYiBhcHBsaWNhdGlvbiBmaXJld2FsbCIgIkRyb3BzIGZsb29kcywgYm90IHRyYWZmaWMgYW5kIG92ZXJzaXplZCByZXF1ZXN0cywgYW5kIGxpbWl0cyByZXF1ZXN0cyBwZXIgY2xpZW50IElQLiIgIldBRiB3aXRoIEREb1MgcHJvdGVjdGlvbiIKICAgICAgICAgICAgICAgICAgICBsYiA9IGluZnJhc3RydWN0dXJlTm9kZSAiUHVibGljIGxvYWQgYmFsYW5jZXIiICJUZXJtaW5hdGVzIHB1YmxpYyBUTFMgYW5kIHNwcmVhZHMgcmVxdWVzdHMgb3ZlciB0aGUgem9uZXMuIiAiSFRUUFMgbG9hZCBiYWxhbmNlciIKICAgICAgICAgICAgICAgICAgICB2cG4gPSBpbmZyYXN0cnVjdHVyZU5vZGUgIlN0YWZmIFZQTiBnYXRld2F5IiAiQWRtaXRzIG9ubHkgc3RhZmYgYW5kIGF1ZGl0b3IgZGV2aWNlcyB3aXRoIGEgVlBOIGNlcnRpZmljYXRlLiBCYWNrLW9mZmljZSB0cmFmZmljIG5ldmVyIHVzZXMgdGhlIHB1YmxpYyBlbnRyeS4iICJJUHNlYyBWUE4gZ2F0ZXdheSIKICAgICAgICAgICAgICAgICAgICB3ZWJDb250ZW50ID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJXZWIgY29udGVudCBzZXJ2ZXIiICJTZXJ2ZXMgdGhlIGZpbGVzIG9mIHRoZSBDaXRpemVuIHdlYiBhcHAgYW5kIHRoZSBCYWNrLW9mZmljZSB3ZWIgYXBwLiBIb2xkcyBubyBkYXRhLiIgIm5naW54IgogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGVncmVzc1pvbmUgPSBkZXBsb3ltZW50Tm9kZSAiRWdyZXNzIHpvbmUiICJPdXRib3VuZCB0cmFmZmljIG9ubHkuIiAiTmV0d29yayB6b25lIiB7CiAgICAgICAgICAgICAgICAgICAgZWdyZXNzID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJFZ3Jlc3MgcHJveHkiICJUaGUgb25seSB3YXkgb3V0LiBMZXRzIGVhY2ggc2VydmljZSByZWFjaCBvbmx5IGl0cyBvd24gZXh0ZXJuYWwgZGVzdGluYXRpb25zLCBmcm9tIGZpeGVkIElQIGFkZHJlc3NlcyB0aGF0IGFnZW5jaWVzIGFuZCByZWdpc3RyaWVzIGFsbG93LiBUTFMgcGFzc2VzIHRocm91Z2gsIHNvIG1UTFMgZW5kcyBpbiB0aGUgY2FsbGluZyBwb2QuIiAiSFRUUFMgZm9yd2FyZCBwcm94eSIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBjbHVzdGVyID0gZGVwbG95bWVudE5vZGUgIlBvcnRhbCBhcHBsaWNhdGlvbiBjbHVzdGVyIiAiU3RhdGVsZXNzIHNlcnZpY2VzLiBFYWNoIHJ1bnMgYXQgbGVhc3QgMyBwb2RzLCBvbmUgcGVyIHpvbmUsIGFuZCBzY2FsZXMgb3V0IG9uIGxvYWQuIE5ldHdvcmsgcG9saWNpZXMgYWxsb3cgb25seSB0aGUgY2FsbHMgb24gdGhlIGNvbnRhaW5lciBkaWFncmFtOyBldmVyeSBwb2QgaGFzIGl0cyBvd24gbVRMUyBzZXJ2aWNlIGlkZW50aXR5LiIgIkt1YmVybmV0ZXMiIHsKICAgICAgICAgICAgICAgICAgICBnYXRld2F5UG9kID0gZGVwbG95bWVudE5vZGUgIkFQSSBnYXRld2F5IHBvZCIgIiIgIkt1YmVybmV0ZXMgcG9kIiAiIiAzIHsKICAgICAgICAgICAgICAgICAgICAgICAgZ2F0ZXdheSA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5nYXRld2F5CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGlhbVBvZCA9IGRlcGxveW1lbnROb2RlICJJZGVudGl0eSAmIGFjY2VzcyBwb2QiICIiICJLdWJlcm5ldGVzIHBvZCIgIiIgMyB7CiAgICAgICAgICAgICAgICAgICAgICAgIGlhbSA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5pYW0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgYmFja2VuZFBvZCA9IGRlcGxveW1lbnROb2RlICJQb3J0YWwgYmFja2VuZCBwb2QiICJBbHNvIHJ1bnMgdGhlIG91dGJveCByZWxheSAoQURSLTAwMDUpLiIgIkt1YmVybmV0ZXMgcG9kIiAiIiAzIHsKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2VuZCA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5iYWNrZW5kCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGludGVncmF0aW9uUG9kID0gZGVwbG95bWVudE5vZGUgIkFnZW5jeSBpbnRlZ3JhdGlvbiBwb2QiICIiICJLdWJlcm5ldGVzIHBvZCIgIiIgMyB7CiAgICAgICAgICAgICAgICAgICAgICAgIGludGVncmF0aW9uID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmludGVncmF0aW9uCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGF1ZGl0UG9kID0gZGVwbG95bWVudE5vZGUgIkF1ZGl0IHNlcnZpY2UgcG9kIiAiIiAiS3ViZXJuZXRlcyBwb2QiICIiIDMgewogICAgICAgICAgICAgICAgICAgICAgICBhdWRpdCA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5hdWRpdAogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBzY2FubmVyUG9kID0gZGVwbG95bWVudE5vZGUgIkFudGl2aXJ1cyBzY2FubmVyIHBvZCIgIlNlcGFyYXRlIG5vZGUgcG9vbCB3aXRoIG5vIG91dGJvdW5kIG5ldHdvcmsgYWNjZXNzLiBWaXJ1cyBzaWduYXR1cmVzIGFyZSB1cGRhdGVkIGJ5IHJvbGxpbmcgb3V0IGEgbmV3IGltYWdlLiIgIkt1YmVybmV0ZXMgcG9kIiAiIiAzIHsKICAgICAgICAgICAgICAgICAgICAgICAgc2Nhbm5lciA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5zY2FubmVyCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGNvbGxlY3RvciA9IGluZnJhc3RydWN0dXJlTm9kZSAiVGVsZW1ldHJ5IGNvbGxlY3RvciIgIkNvbGxlY3RzIG1ldHJpY3MsIGxvZ3MgYW5kIHRyYWNlcyBmcm9tIGV2ZXJ5IHBvZCBhbmQgZHJvcHMgdG9rZW5zIGFuZCBwZXJzb25hbCBpZGVudGlmaWNhdGlvbiBjb2Rlcy4iICJPcGVuVGVsZW1ldHJ5IENvbGxlY3RvciIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkYXRhID0gZGVwbG95bWVudE5vZGUgIkRhdGEgem9uZSIgIlJlYWNoYWJsZSBvbmx5IGZyb20gdGhlIGFwcGxpY2F0aW9uIGNsdXN0ZXIuIEFsbCBzdG9yYWdlIGlzIGVuY3J5cHRlZCBhdCByZXN0LiIgIk5ldHdvcmsgem9uZSIgewogICAgICAgICAgICAgICAgICAgIGRiU2VydmVyID0gZGVwbG95bWVudE5vZGUgIlBvcnRhbCBEQiBzZXJ2ZXIiICJQcmltYXJ5IGFuZCBzeW5jaHJvbm91cyBzdGFuZGJ5IGluIGRpZmZlcmVudCB6b25lcywgd2l0aCBhdXRvbWF0aWMgZmFpbG92ZXIgYW5kIGVuY3J5cHRlZCBwb2ludC1pbi10aW1lIGJhY2t1cHMuIiAiUG9zdGdyZVNRTCBvbiBMaW51eCBWTSIgIiIgMiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHBvcnRhbERiID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLnBvcnRhbERiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIG9iamVjdFN0b3JhZ2UgPSBkZXBsb3ltZW50Tm9kZSAiT2JqZWN0IHN0b3JhZ2UiICJSZXBsaWNhdGVkIG92ZXIgdGhlIHpvbmVzIGFuZCBub3QgYmFja2VkIHVwLCBzbyBhIGRlbGV0ZWQgZmlsZSBsZWF2ZXMgbm8gY29weS4gQSBsaWZlY3ljbGUgcnVsZSBkZWxldGVzIGZpbGVzIG9sZGVyIHRoYW4gNyBkYXlzLiIgIlMzLWNvbXBhdGlibGUgb2JqZWN0IHN0b3JhZ2UiIHsKICAgICAgICAgICAgICAgICAgICAgICAgZG9jU3RvcmUgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwuZG9jU3RvcmUKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgYnJva2VyTm9kZSA9IGRlcGxveW1lbnROb2RlICJNZXNzYWdlIGJyb2tlciBub2RlIiAiT25lIG5vZGUgcGVyIHpvbmUuIFF1b3J1bSBxdWV1ZXMga2VlcCBldmVyeSBtZXNzYWdlIG9uIGFsbCB0aHJlZSBub2RlcyBvbiBlbmNyeXB0ZWQgZGlza3M7IHBlci1xdWV1ZSBwZXJtaXNzaW9ucyBlbmZvcmNlIElGLTkgYW5kIElGLTEwLiIgIlJhYmJpdE1RIG9uIExpbnV4IFZNIiAiIiAzIHsKICAgICAgICAgICAgICAgICAgICAgICAgYnVzID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmJ1cwogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBhdWRpdEVudiA9IGRlcGxveW1lbnROb2RlICJBdWRpdCBlbnZpcm9ubWVudCIgIlNlcGFyYXRlIGNsb3VkIHRlbmFudCBhbmQgbmV0d29yayB3aXRoIGl0cyBvd24gYWRtaW5pc3RyYXRvcnMuIFBvcnRhbCBhZG1pbmlzdHJhdG9ycyBjYW5ub3QgY2hhbmdlIG9yIGRlbGV0ZSBhdWRpdCByZWNvcmRzLiIgIlNlcGFyYXRlIEdvdmVybm1lbnQgQ2xvdWQgdGVuYW50IiB7CiAgICAgICAgICAgICAgICAgICAgYXVkaXREYlNlcnZlciA9IGRlcGxveW1lbnROb2RlICJBdWRpdCBzdG9yZSBzZXJ2ZXIiICJQcmltYXJ5IGFuZCBzdGFuZGJ5IGluIGRpZmZlcmVudCB6b25lcy4gVGhlIEF1ZGl0IHNlcnZpY2UgbWF5IG9ubHkgaW5zZXJ0OyBkYWlseSBiYWNrdXBzIGdvIHRvIHdyaXRlLW9uY2UgKFdPUk0pIHN0b3JhZ2UuIiAiUG9zdGdyZVNRTCBvbiBMaW51eCBWTSIgIiIgMiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGF1ZGl0U3RvcmUgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwuYXVkaXRTdG9yZQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBvcHNab25lID0gZGVwbG95bWVudE5vZGUgIk9wZXJhdGlvbnMgem9uZSIgIlJlYWNoZWQgYnkgdGhlIE9wZXJhdGlvbnMgLyBTZWN1cml0eSB0ZWFtIHRocm91Z2ggdGhlIHN0YWZmIFZQTi4iICJOZXR3b3JrIHpvbmUiIHsKICAgICAgICAgICAgICAgICAgICBvYnNTdGFjayA9IGRlcGxveW1lbnROb2RlICJPYnNlcnZhYmlsaXR5IHN0YWNrIiAiS2VlcHMgbm8gdG9rZW5zLCBwZXJzb25hbCBpZGVudGlmaWNhdGlvbiBjb2RlcyBvciBkb2N1bWVudCBjb250ZW50LiIgIlByb21ldGhldXMsIExva2ksIFRlbXBvLCBHcmFmYW5hIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIG9ic2VydmFiaWxpdHkgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwub2JzZXJ2YWJpbGl0eQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgbmF0aW9uYWxUcnVzdCA9IGRlcGxveW1lbnROb2RlICJOYXRpb25hbCB0cnVzdCBzZXJ2aWNlcyIgIlJ1biBieSB0aGUgc3RhdGUgYW5kIGJ5IHRydXN0IHNlcnZpY2UgcHJvdmlkZXJzLCBvdXRzaWRlIHRoZSBwb3J0YWwgb3BlcmF0b3IncyBjb250cm9sLiIgIlByb3ZpZGVycycgb3duIGluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBpZHBTZXJ2aWNlID0gc29mdHdhcmVTeXN0ZW1JbnN0YW5jZSBpZHAKICAgICAgICAgICAgICAgIHNpZ25pbmdTZXJ2aWNlID0gc29mdHdhcmVTeXN0ZW1JbnN0YW5jZSBzaWduaW5nCiAgICAgICAgICAgICAgICByZWdpc3RyeVNlcnZpY2VzID0gc29mdHdhcmVTeXN0ZW1JbnN0YW5jZSByZWdpc3RyaWVzCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGFnZW5jeUhvc3RpbmcgPSBkZXBsb3ltZW50Tm9kZSAiQWdlbmN5IGRhdGEgY2VudHJlcyIgIkVhY2ggYWdlbmN5IGhvc3RzIGl0cyBvd24gZW5kcG9pbnQgb2YgdGhlIEFnZW5jeSBBUEkuIiAiQWdlbmNpZXMnIG93biBpbmZyYXN0cnVjdHVyZSIgewogICAgICAgICAgICAgICAgYWdlbmN5U2VydmljZXMgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIGFnZW5jaWVzCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIG5vdGlmeUhvc3RpbmcgPSBkZXBsb3ltZW50Tm9kZSAiTm90aWZpY2F0aW9uIHByb3ZpZGVyIGhvc3RpbmciICJPdXRzaWRlIHRoZSBwb3J0YWwgb3BlcmF0b3IncyBjb250cm9sLiIgIlByb3ZpZGVycycgb3duIGluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICBub3RpZnlTZXJ2aWNlcyA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2Ugbm90aWZ5CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIC8vIEluZ3Jlc3M6IHJlc2lkZW50cyBhbmQgdGhpcmQgcGFydGllcyBlbnRlciB0aHJvdWdoIHRoZSBXQUYsIHN0YWZmIGFuZCBhdWRpdG9ycyB0aHJvdWdoIHRoZSBWUE4uCiAgICAgICAgICAgIHByb2R1Y3Rpb24ucmVzaWRlbnREZXZpY2UuYnJvd3Nlci53ZWJBcHAgLT4gcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZGdlLndhZiAiTG9hZHMgYXBwIGZpbGVzLCBjYWxscyBQb3J0YWwgQ2l0aXplbiBBUEkiICJIVFRQUyIgImluZ3Jlc3MiCiAgICAgICAgICAgIHByb2R1Y3Rpb24udGhpcmRQYXJ0eUhvc3RpbmcudGhpcmRQYXJ0eUNsaWVudCAtPiBwcm9kdWN0aW9uLmdvdkNsb3VkLmVkZ2Uud2FmICJQb3J0YWwgVGhpcmQtcGFydHkgQVBJIiAiSFRUUFMsIE9BdXRoIDIuMCBjbGllbnQgY3JlZGVudGlhbHMiICJpbmdyZXNzIgogICAgICAgICAgICBwcm9kdWN0aW9uLmdvdkNsb3VkLmVkZ2Uud2FmIC0+IHByb2R1Y3Rpb24uZ292Q2xvdWQuZWRnZS5sYiAiRm9yd2FyZHMgYWxsb3dlZCByZXF1ZXN0cyIgIkhUVFBTIiAiaW5ncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZGdlLmxiIC0+IHByb2R1Y3Rpb24uZ292Q2xvdWQuZWRnZS53ZWJDb250ZW50ICJGb3J3YXJkcyBhcHAgZmlsZSByZXF1ZXN0cyIgIkhUVFBTIiAiaW5ncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZGdlLmxiIC0+IHByb2R1Y3Rpb24uZ292Q2xvdWQuY2x1c3Rlci5nYXRld2F5UG9kLmdhdGV3YXkgIkZvcndhcmRzIEFQSSByZXF1ZXN0cyIgIkhUVFBTIiAiaW5ncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5zdGFmZkRldmljZS5icm93c2VyLmJhY2tvZmZpY2VBcHAgLT4gcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZGdlLnZwbiAiTG9hZHMgYXBwIGZpbGVzLCBjYWxscyBQb3J0YWwgQmFjay1vZmZpY2UgQVBJIiAiSFRUUFMgb3ZlciBJUHNlYyIgImluZ3Jlc3MiCiAgICAgICAgICAgIHByb2R1Y3Rpb24uZ292Q2xvdWQuZWRnZS52cG4gLT4gcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZGdlLndlYkNvbnRlbnQgIkZvcndhcmRzIGFwcCBmaWxlIHJlcXVlc3RzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICBwcm9kdWN0aW9uLmdvdkNsb3VkLmVkZ2UudnBuIC0+IHByb2R1Y3Rpb24uZ292Q2xvdWQuY2x1c3Rlci5nYXRld2F5UG9kLmdhdGV3YXkgIkZvcndhcmRzIGJhY2stb2ZmaWNlIEFQSSByZXF1ZXN0cyIgIkhUVFBTIiAiaW5ncmVzcyIKCiAgICAgICAgICAgIC8vIEVncmVzczogZXZlcnkgY2FsbCB0byBhbiBleHRlcm5hbCBzeXN0ZW0gbGVhdmVzIHRocm91Z2ggdGhlIGVncmVzcyBwcm94eS4KICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5jbHVzdGVyLmlhbVBvZC5pYW0gLT4gcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZ3Jlc3Nab25lLmVncmVzcyAiZUlEIExvZ2luIEFQSSIgIk9JREMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHByb2R1Y3Rpb24uZ292Q2xvdWQuY2x1c3Rlci5iYWNrZW5kUG9kLmJhY2tlbmQgLT4gcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZ3Jlc3Nab25lLmVncmVzcyAiRGlnaXRhbCBTaWduaW5nIEFQSSwgTm90aWZpY2F0aW9uIFByb3ZpZGVyIEFQSXMiICJIVFRQUyIgImVncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5jbHVzdGVyLmludGVncmF0aW9uUG9kLmludGVncmF0aW9uIC0+IHByb2R1Y3Rpb24uZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgIkFnZW5jeSBBUEksIEV4dGVybmFsIFJlZ2lzdHJ5IEFQSXMiICJIVFRQUywgbVRMUyIgImVncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZ3Jlc3Nab25lLmVncmVzcyAtPiBwcm9kdWN0aW9uLm5hdGlvbmFsVHJ1c3QuaWRwU2VydmljZSAiZUlEIExvZ2luIEFQSSIgIk9JREMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHByb2R1Y3Rpb24uZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgLT4gcHJvZHVjdGlvbi5uYXRpb25hbFRydXN0LnNpZ25pbmdTZXJ2aWNlICJEaWdpdGFsIFNpZ25pbmcgQVBJIiAiSFRUUFMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHByb2R1Y3Rpb24uZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgLT4gcHJvZHVjdGlvbi5uYXRpb25hbFRydXN0LnJlZ2lzdHJ5U2VydmljZXMgIkV4dGVybmFsIFJlZ2lzdHJ5IEFQSXMiICJIVFRQUywgbVRMUyIgImVncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZ3Jlc3Nab25lLmVncmVzcyAtPiBwcm9kdWN0aW9uLmFnZW5jeUhvc3RpbmcuYWdlbmN5U2VydmljZXMgIkFnZW5jeSBBUEkiICJIVFRQUywgbVRMUyIgImVncmVzcyIKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5lZ3Jlc3Nab25lLmVncmVzcyAtPiBwcm9kdWN0aW9uLm5vdGlmeUhvc3Rpbmcubm90aWZ5U2VydmljZXMgIk5vdGlmaWNhdGlvbiBQcm92aWRlciBBUElzIiAiSFRUUFMiICJlZ3Jlc3MiCgogICAgICAgICAgICAvLyBUZWxlbWV0cnkKICAgICAgICAgICAgcHJvZHVjdGlvbi5nb3ZDbG91ZC5jbHVzdGVyLmNvbGxlY3RvciAtPiBwcm9kdWN0aW9uLmdvdkNsb3VkLm9wc1pvbmUub2JzU3RhY2sub2JzZXJ2YWJpbGl0eSAiU2VuZHMgbWV0cmljcywgbG9ncyBhbmQgdHJhY2VzIiAiT1RMUCBvdmVyIFRMUyIgInRlbGVtZXRyeSIKICAgICAgICB9CgogICAgICAgIC8vIFRlc3QgKHN0YWdpbmcpOiB0aGUgc2FtZSB6b25lcywgaW5mcmFzdHJ1Y3R1cmUgbm9kZXMsIHRlY2hub2xvZ2llcyBhbmQgc2VjdXJpdHkgY29udHJvbHMgYXMKICAgICAgICAvLyBwcm9kdWN0aW9uLCBzbyBhIHJlbGVhc2UgdGhhdCBwYXNzZXMgaGVyZSBiZWhhdmVzIHRoZSBzYW1lIHRoZXJlLiBJdCBkaWZmZXJzIG9ubHkgaW4gc2l6ZQogICAgICAgIC8vIChvbmUgem9uZSwgZmV3ZXIgYW5kIHNtYWxsZXIgaW5zdGFuY2VzKSwgaW4gZGF0YSAoc3ludGhldGljIG9ubHkpIGFuZCBpbiB0aGUgZXh0ZXJuYWwgc3lzdGVtcwogICAgICAgIC8vIGl0IHJlYWNoZXMgKHRoZWlyIHRlc3QgZW52aXJvbm1lbnRzKS4gS2VlcCB0aGUgc3RydWN0dXJlIGluIHN0ZXAgd2l0aCBwcm9kdWN0aW9uLgogICAgICAgIHRlc3QgPSBkZXBsb3ltZW50RW52aXJvbm1lbnQgIlRlc3QiIHsKCiAgICAgICAgICAgIHRlc3RlckRldmljZSA9IGRlcGxveW1lbnROb2RlICJUZXN0ZXIncyB3b3Jrc3RhdGlvbiIgIkRldmljZSBvZiBhIGRldmVsb3BlciwgdGVzdGVyIG9yIHByb2R1Y3Qgb3duZXIuIFJlYWNoZXMgdGhlIHRlc3QgZW52aXJvbm1lbnQgb25seSBmcm9tIGFuIGFsbG93LWxpc3RlZCBJUCBhZGRyZXNzOyB0aGUgYmFjayBvZmZpY2UgYWxzbyBuZWVkcyB0aGUgc3RhZmYgVlBOLiIgIldpbmRvd3MsIG1hY09TIG9yIExpbnV4IHdpdGggVlBOIGNsaWVudCIgewogICAgICAgICAgICAgICAgYnJvd3NlciA9IGRlcGxveW1lbnROb2RlICJXZWIgYnJvd3NlciIgIiIgIkNocm9tZSwgRmlyZWZveCwgU2FmYXJpIG9yIEVkZ2UiIHsKICAgICAgICAgICAgICAgICAgICBiYWNrb2ZmaWNlQXBwID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmJhY2tvZmZpY2UKICAgICAgICAgICAgICAgICAgICB3ZWJBcHAgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwud2ViCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIHRoaXJkUGFydHlIb3N0aW5nID0gZGVwbG95bWVudE5vZGUgIlRoaXJkLXBhcnR5IHByb3ZpZGVyIGhvc3RpbmciICJUZXN0IHN5c3RlbXMgb2YgcmVnaXN0ZXJlZCB0aGlyZC1wYXJ0eSBwcm92aWRlcnMgYW5kIHRoZSB0ZWFtJ3Mgb3duIHRlc3QgY2xpZW50LCBhZG1pdHRlZCBieSBJUCBhZGRyZXNzLiIgIlByb3ZpZGVyJ3Mgb3duIGluZnJhc3RydWN0dXJlIiB7CiAgICAgICAgICAgICAgICB0aGlyZFBhcnR5Q2xpZW50ID0gc29mdHdhcmVTeXN0ZW1JbnN0YW5jZSB0aGlyZFBhcnR5CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGdvdkNsb3VkID0gZGVwbG95bWVudE5vZGUgIkVzdG9uaWFuIEdvdmVybm1lbnQgQ2xvdWQiICJTYW1lIGNsb3VkIGFzIHByb2R1Y3Rpb24sIGluIGEgc2VwYXJhdGUgdGVzdCB0ZW5hbnQgd2l0aCBpdHMgb3duIG5ldHdvcmssIGFjY291bnRzIGFuZCBzZWNyZXRzLiBVc2VzIG9uZSB6b25lLiIgIlByaXZhdGUgY2xvdWQgKElhYVMpLCB0ZXN0IHRlbmFudCwgMSB6b25lIiB7CgogICAgICAgICAgICAgICAgZWRnZSA9IGRlcGxveW1lbnROb2RlICJFZGdlIG5ldHdvcmsgKERNWikiICJUaGUgb25seSB6b25lIHJlYWNoYWJsZSBmcm9tIG91dHNpZGUuIEhvbGRzIG5vIGRhdGEuIiAiTmV0d29yayB6b25lIiB7CiAgICAgICAgICAgICAgICAgICAgd2FmID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJXZWIgYXBwbGljYXRpb24gZmlyZXdhbGwiICJTYW1lIHJ1bGVzIGFzIHByb2R1Y3Rpb24uIEFsc28gYWRtaXRzIG9ubHkgYWxsb3ctbGlzdGVkIElQIGFkZHJlc3Nlcywgc28gdGhlIHRlc3QgZW52aXJvbm1lbnQgaXMgY2xvc2VkIHRvIHRoZSBwdWJsaWMuIiAiV0FGIHdpdGggRERvUyBwcm90ZWN0aW9uIgogICAgICAgICAgICAgICAgICAgIGxiID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJQdWJsaWMgbG9hZCBiYWxhbmNlciIgIlRlcm1pbmF0ZXMgVExTIGFuZCBzcHJlYWRzIHJlcXVlc3RzIG92ZXIgdGhlIHBvZHMuIiAiSFRUUFMgbG9hZCBiYWxhbmNlciIKICAgICAgICAgICAgICAgICAgICB2cG4gPSBpbmZyYXN0cnVjdHVyZU5vZGUgIlN0YWZmIFZQTiBnYXRld2F5IiAiQWRtaXRzIG9ubHkgdGVzdGVyIGFuZCBzdGFmZiBkZXZpY2VzIHdpdGggYSBWUE4gY2VydGlmaWNhdGUuIEJhY2stb2ZmaWNlIHRyYWZmaWMgbmV2ZXIgdXNlcyB0aGUgcHVibGljIGVudHJ5LiIgIklQc2VjIFZQTiBnYXRld2F5IgogICAgICAgICAgICAgICAgICAgIHdlYkNvbnRlbnQgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIldlYiBjb250ZW50IHNlcnZlciIgIlNlcnZlcyB0aGUgZmlsZXMgb2YgdGhlIENpdGl6ZW4gd2ViIGFwcCBhbmQgdGhlIEJhY2stb2ZmaWNlIHdlYiBhcHAuIEhvbGRzIG5vIGRhdGEuIiAibmdpbngiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgZWdyZXNzWm9uZSA9IGRlcGxveW1lbnROb2RlICJFZ3Jlc3Mgem9uZSIgIk91dGJvdW5kIHRyYWZmaWMgb25seS4iICJOZXR3b3JrIHpvbmUiIHsKICAgICAgICAgICAgICAgICAgICBlZ3Jlc3MgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIkVncmVzcyBwcm94eSIgIlRoZSBvbmx5IHdheSBvdXQuIFNhbWUgcnVsZXMgYXMgcHJvZHVjdGlvbiwgYnV0IGVhY2ggc2VydmljZSByZWFjaGVzIG9ubHkgdGhlIHRlc3QgZW52aXJvbm1lbnRzIG9mIGl0cyBleHRlcm5hbCBzeXN0ZW1zOyBwcm9kdWN0aW9uIGVuZHBvaW50cyBhcmUgYmxvY2tlZC4iICJIVFRQUyBmb3J3YXJkIHByb3h5IgogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGNsdXN0ZXIgPSBkZXBsb3ltZW50Tm9kZSAiUG9ydGFsIGFwcGxpY2F0aW9uIGNsdXN0ZXIiICJTYW1lIGltYWdlcywgY29uZmlndXJhdGlvbiwgbmV0d29yayBwb2xpY2llcyBhbmQgbVRMUyBzZXJ2aWNlIGlkZW50aXRpZXMgYXMgcHJvZHVjdGlvbi4gRWFjaCBzZXJ2aWNlIHJ1bnMgMiBzbWFsbCBwb2RzLCB0aGUgZmV3ZXN0IHRoYXQgc3RpbGwgc2hvdyBmYXVsdHMgYmV0d2VlbiBpbnN0YW5jZXMsIGFuZCBkb2VzIG5vdCBzY2FsZSBvdXQuIiAiS3ViZXJuZXRlcyIgewogICAgICAgICAgICAgICAgICAgIGdhdGV3YXlQb2QgPSBkZXBsb3ltZW50Tm9kZSAiQVBJIGdhdGV3YXkgcG9kIiAiIiAiS3ViZXJuZXRlcyBwb2QiICIiIDIgewogICAgICAgICAgICAgICAgICAgICAgICBnYXRld2F5ID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmdhdGV3YXkKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgaWFtUG9kID0gZGVwbG95bWVudE5vZGUgIklkZW50aXR5ICYgYWNjZXNzIHBvZCIgIiIgIkt1YmVybmV0ZXMgcG9kIiAiIiAyIHsKICAgICAgICAgICAgICAgICAgICAgICAgaWFtID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmlhbQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBiYWNrZW5kUG9kID0gZGVwbG95bWVudE5vZGUgIlBvcnRhbCBiYWNrZW5kIHBvZCIgIkFsc28gcnVucyB0aGUgb3V0Ym94IHJlbGF5IChBRFItMDAwNSkuIFR3byBwb2RzIHNob3cgd2hldGhlciB0d28gcmVsYXlzIHB1Ymxpc2ggdGhlIHNhbWUgcm93IHR3aWNlLiIgIkt1YmVybmV0ZXMgcG9kIiAiIiAyIHsKICAgICAgICAgICAgICAgICAgICAgICAgYmFja2VuZCA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5iYWNrZW5kCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGludGVncmF0aW9uUG9kID0gZGVwbG95bWVudE5vZGUgIkFnZW5jeSBpbnRlZ3JhdGlvbiBwb2QiICIiICJLdWJlcm5ldGVzIHBvZCIgIiIgMiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGludGVncmF0aW9uID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmludGVncmF0aW9uCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGF1ZGl0UG9kID0gZGVwbG95bWVudE5vZGUgIkF1ZGl0IHNlcnZpY2UgcG9kIiAiIiAiS3ViZXJuZXRlcyBwb2QiICIiIDIgewogICAgICAgICAgICAgICAgICAgICAgICBhdWRpdCA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5hdWRpdAogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBzY2FubmVyUG9kID0gZGVwbG95bWVudE5vZGUgIkFudGl2aXJ1cyBzY2FubmVyIHBvZCIgIlNlcGFyYXRlIG5vZGUgcG9vbCB3aXRoIG5vIG91dGJvdW5kIG5ldHdvcmsgYWNjZXNzLCBhcyBpbiBwcm9kdWN0aW9uLiIgIkt1YmVybmV0ZXMgcG9kIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHNjYW5uZXIgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwuc2Nhbm5lcgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBjb2xsZWN0b3IgPSBpbmZyYXN0cnVjdHVyZU5vZGUgIlRlbGVtZXRyeSBjb2xsZWN0b3IiICJDb2xsZWN0cyBtZXRyaWNzLCBsb2dzIGFuZCB0cmFjZXMgZnJvbSBldmVyeSBwb2QgYW5kIGRyb3BzIHRva2VucyBhbmQgcGVyc29uYWwgaWRlbnRpZmljYXRpb24gY29kZXMuIiAiT3BlblRlbGVtZXRyeSBDb2xsZWN0b3IiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgZGF0YSA9IGRlcGxveW1lbnROb2RlICJEYXRhIHpvbmUiICJSZWFjaGFibGUgb25seSBmcm9tIHRoZSBhcHBsaWNhdGlvbiBjbHVzdGVyLiBBbGwgc3RvcmFnZSBpcyBlbmNyeXB0ZWQgYXQgcmVzdC4gSG9sZHMgc3ludGhldGljIHRlc3QgZGF0YSBvbmx5LCBuZXZlciBhIGNvcHkgb2YgcHJvZHVjdGlvbiBkYXRhLiIgIk5ldHdvcmsgem9uZSIgewogICAgICAgICAgICAgICAgICAgIGRiU2VydmVyID0gZGVwbG95bWVudE5vZGUgIlBvcnRhbCBEQiBzZXJ2ZXIiICJPbmUgc21hbGwgaW5zdGFuY2Ugd2l0aG91dCBhIHN0YW5kYnkgb3IgcG9pbnQtaW4tdGltZSBiYWNrdXBzLiBUaGUgZGF0YSBpcyByZWNyZWF0ZWQgZnJvbSBzZWVkIHNjcmlwdHMuIiAiUG9zdGdyZVNRTCBvbiBMaW51eCBWTSIgewogICAgICAgICAgICAgICAgICAgICAgICBwb3J0YWxEYiA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5wb3J0YWxEYgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBvYmplY3RTdG9yYWdlID0gZGVwbG95bWVudE5vZGUgIk9iamVjdCBzdG9yYWdlIiAiTm90IHJlcGxpY2F0ZWQuIFNhbWUgNy1kYXkgbGlmZWN5Y2xlIHJ1bGUgYXMgcHJvZHVjdGlvbi4iICJTMy1jb21wYXRpYmxlIG9iamVjdCBzdG9yYWdlIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGRvY1N0b3JlID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmRvY1N0b3JlCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGJyb2tlck5vZGUgPSBkZXBsb3ltZW50Tm9kZSAiTWVzc2FnZSBicm9rZXIgbm9kZSIgIk9uZSBub2RlIHdpdGggdGhlIHNhbWUgcXVldWVzIGFuZCBwZXItcXVldWUgcGVybWlzc2lvbnMgYXMgcHJvZHVjdGlvbi4gTWVzc2FnZXMgYXJlIGtlcHQgb24gb25lIGVuY3J5cHRlZCBkaXNrLiIgIlJhYmJpdE1RIG9uIExpbnV4IFZNIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGJ1cyA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5idXMKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgYXVkaXRFbnYgPSBkZXBsb3ltZW50Tm9kZSAiQXVkaXQgZW52aXJvbm1lbnQiICJTZXBhcmF0ZSB0ZW5hbnQgd2l0aCBpdHMgb3duIGFkbWluaXN0cmF0b3JzLCBhcyBpbiBwcm9kdWN0aW9uLCBzbyB0aGUgc2VwYXJhdGlvbiBpcyB0ZXN0ZWQgdG9vLiIgIlNlcGFyYXRlIEdvdmVybm1lbnQgQ2xvdWQgdGVuYW50IiB7CiAgICAgICAgICAgICAgICAgICAgYXVkaXREYlNlcnZlciA9IGRlcGxveW1lbnROb2RlICJBdWRpdCBzdG9yZSBzZXJ2ZXIiICJPbmUgaW5zdGFuY2UuIFRoZSBBdWRpdCBzZXJ2aWNlIG1heSBvbmx5IGluc2VydCwgYXMgaW4gcHJvZHVjdGlvbi4gTm8gd3JpdGUtb25jZSBiYWNrdXBzLiIgIlBvc3RncmVTUUwgb24gTGludXggVk0iIHsKICAgICAgICAgICAgICAgICAgICAgICAgYXVkaXRTdG9yZSA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5hdWRpdFN0b3JlCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIG9wc1pvbmUgPSBkZXBsb3ltZW50Tm9kZSAiT3BlcmF0aW9ucyB6b25lIiAiUmVhY2hlZCB0aHJvdWdoIHRoZSBzdGFmZiBWUE4uIiAiTmV0d29yayB6b25lIiB7CiAgICAgICAgICAgICAgICAgICAgb2JzU3RhY2sgPSBkZXBsb3ltZW50Tm9kZSAiT2JzZXJ2YWJpbGl0eSBzdGFjayIgIlNhbWUgc3RhY2sgYXMgcHJvZHVjdGlvbiwgd2l0aCBzbWFsbCBkaXNrcyBhbmQgc2hvcnQgcmV0ZW50aW9uLiIgIlByb21ldGhldXMsIExva2ksIFRlbXBvLCBHcmFmYW5hIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIG9ic2VydmFiaWxpdHkgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwub2JzZXJ2YWJpbGl0eQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgbmF0aW9uYWxUcnVzdCA9IGRlcGxveW1lbnROb2RlICJOYXRpb25hbCB0cnVzdCBzZXJ2aWNlcyAodGVzdCkiICJUZXN0IGVudmlyb25tZW50cyBvZiB0aGUgc3RhdGUgYW5kIHRoZSB0cnVzdCBzZXJ2aWNlIHByb3ZpZGVycy4gVGhleSBpc3N1ZSB0ZXN0IGlkZW50aXRpZXMgYW5kIHRlc3Qgc2lnbmF0dXJlcyBvbmx5LiIgIlByb3ZpZGVycycgdGVzdCBlbnZpcm9ubWVudHMiIHsKICAgICAgICAgICAgICAgIGlkcFNlcnZpY2UgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIGlkcAogICAgICAgICAgICAgICAgc2lnbmluZ1NlcnZpY2UgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIHNpZ25pbmcKICAgICAgICAgICAgICAgIHJlZ2lzdHJ5U2VydmljZXMgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIHJlZ2lzdHJpZXMKICAgICAgICAgICAgfQoKICAgICAgICAgICAgYWdlbmN5SG9zdGluZyA9IGRlcGxveW1lbnROb2RlICJBZ2VuY3kgdGVzdCBlbnZpcm9ubWVudHMiICJFYWNoIGFnZW5jeSBob3N0cyBhIHRlc3QgZW5kcG9pbnQgb2YgdGhlIEFnZW5jeSBBUEkuIiAiQWdlbmNpZXMnIHRlc3QgZW52aXJvbm1lbnRzIiB7CiAgICAgICAgICAgICAgICBhZ2VuY3lTZXJ2aWNlcyA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2UgYWdlbmNpZXMKICAgICAgICAgICAgfQoKICAgICAgICAgICAgbm90aWZ5SG9zdGluZyA9IGRlcGxveW1lbnROb2RlICJOb3RpZmljYXRpb24gcHJvdmlkZXIgc2FuZGJveGVzIiAiU2FuZGJveCBhY2NvdW50cyB0aGF0IGRlbGl2ZXIgbWVzc2FnZXMgb25seSB0byB0ZXN0IHJlY2lwaWVudHMuIiAiUHJvdmlkZXJzJyB0ZXN0IGVudmlyb25tZW50cyIgewogICAgICAgICAgICAgICAgbm90aWZ5U2VydmljZXMgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIG5vdGlmeQogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyBJbmdyZXNzOiB0ZXN0ZXJzIGFuZCB0aGlyZC1wYXJ0eSB0ZXN0IGNsaWVudHMgZW50ZXIgdGhyb3VnaCB0aGUgV0FGLCB0aGUgYmFjayBvZmZpY2UgdGhyb3VnaCB0aGUgVlBOLgogICAgICAgICAgICB0ZXN0LnRlc3RlckRldmljZS5icm93c2VyLndlYkFwcCAtPiB0ZXN0LmdvdkNsb3VkLmVkZ2Uud2FmICJMb2FkcyBhcHAgZmlsZXMsIGNhbGxzIFBvcnRhbCBDaXRpemVuIEFQSSIgIkhUVFBTIiAiaW5ncmVzcyIKICAgICAgICAgICAgdGVzdC50aGlyZFBhcnR5SG9zdGluZy50aGlyZFBhcnR5Q2xpZW50IC0+IHRlc3QuZ292Q2xvdWQuZWRnZS53YWYgIlBvcnRhbCBUaGlyZC1wYXJ0eSBBUEkiICJIVFRQUywgT0F1dGggMi4wIGNsaWVudCBjcmVkZW50aWFscyIgImluZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuZWRnZS53YWYgLT4gdGVzdC5nb3ZDbG91ZC5lZGdlLmxiICJGb3J3YXJkcyBhbGxvd2VkIHJlcXVlc3RzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmVkZ2UubGIgLT4gdGVzdC5nb3ZDbG91ZC5lZGdlLndlYkNvbnRlbnQgIkZvcndhcmRzIGFwcCBmaWxlIHJlcXVlc3RzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmVkZ2UubGIgLT4gdGVzdC5nb3ZDbG91ZC5jbHVzdGVyLmdhdGV3YXlQb2QuZ2F0ZXdheSAiRm9yd2FyZHMgQVBJIHJlcXVlc3RzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICB0ZXN0LnRlc3RlckRldmljZS5icm93c2VyLmJhY2tvZmZpY2VBcHAgLT4gdGVzdC5nb3ZDbG91ZC5lZGdlLnZwbiAiTG9hZHMgYXBwIGZpbGVzLCBjYWxscyBQb3J0YWwgQmFjay1vZmZpY2UgQVBJIiAiSFRUUFMgb3ZlciBJUHNlYyIgImluZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuZWRnZS52cG4gLT4gdGVzdC5nb3ZDbG91ZC5lZGdlLndlYkNvbnRlbnQgIkZvcndhcmRzIGFwcCBmaWxlIHJlcXVlc3RzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmVkZ2UudnBuIC0+IHRlc3QuZ292Q2xvdWQuY2x1c3Rlci5nYXRld2F5UG9kLmdhdGV3YXkgIkZvcndhcmRzIGJhY2stb2ZmaWNlIEFQSSByZXF1ZXN0cyIgIkhUVFBTIiAiaW5ncmVzcyIKCiAgICAgICAgICAgIC8vIEVncmVzczogZXZlcnkgY2FsbCB0byBhbiBleHRlcm5hbCB0ZXN0IGVudmlyb25tZW50IGxlYXZlcyB0aHJvdWdoIHRoZSBlZ3Jlc3MgcHJveHkuCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuY2x1c3Rlci5pYW1Qb2QuaWFtIC0+IHRlc3QuZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgImVJRCBMb2dpbiBBUEkiICJPSURDIiAiZWdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmNsdXN0ZXIuYmFja2VuZFBvZC5iYWNrZW5kIC0+IHRlc3QuZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgIkRpZ2l0YWwgU2lnbmluZyBBUEksIE5vdGlmaWNhdGlvbiBQcm92aWRlciBBUElzIiAiSFRUUFMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuY2x1c3Rlci5pbnRlZ3JhdGlvblBvZC5pbnRlZ3JhdGlvbiAtPiB0ZXN0LmdvdkNsb3VkLmVncmVzc1pvbmUuZWdyZXNzICJBZ2VuY3kgQVBJLCBFeHRlcm5hbCBSZWdpc3RyeSBBUElzIiAiSFRUUFMsIG1UTFMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgLT4gdGVzdC5uYXRpb25hbFRydXN0LmlkcFNlcnZpY2UgImVJRCBMb2dpbiBBUEkiICJPSURDIiAiZWdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmVncmVzc1pvbmUuZWdyZXNzIC0+IHRlc3QubmF0aW9uYWxUcnVzdC5zaWduaW5nU2VydmljZSAiRGlnaXRhbCBTaWduaW5nIEFQSSIgIkhUVFBTIiAiZWdyZXNzIgogICAgICAgICAgICB0ZXN0LmdvdkNsb3VkLmVncmVzc1pvbmUuZWdyZXNzIC0+IHRlc3QubmF0aW9uYWxUcnVzdC5yZWdpc3RyeVNlcnZpY2VzICJFeHRlcm5hbCBSZWdpc3RyeSBBUElzIiAiSFRUUFMsIG1UTFMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgLT4gdGVzdC5hZ2VuY3lIb3N0aW5nLmFnZW5jeVNlcnZpY2VzICJBZ2VuY3kgQVBJIiAiSFRUUFMsIG1UTFMiICJlZ3Jlc3MiCiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuZWdyZXNzWm9uZS5lZ3Jlc3MgLT4gdGVzdC5ub3RpZnlIb3N0aW5nLm5vdGlmeVNlcnZpY2VzICJOb3RpZmljYXRpb24gUHJvdmlkZXIgQVBJcyIgIkhUVFBTIiAiZWdyZXNzIgoKICAgICAgICAgICAgLy8gVGVsZW1ldHJ5CiAgICAgICAgICAgIHRlc3QuZ292Q2xvdWQuY2x1c3Rlci5jb2xsZWN0b3IgLT4gdGVzdC5nb3ZDbG91ZC5vcHNab25lLm9ic1N0YWNrLm9ic2VydmFiaWxpdHkgIlNlbmRzIG1ldHJpY3MsIGxvZ3MgYW5kIHRyYWNlcyIgIk9UTFAgb3ZlciBUTFMiICJ0ZWxlbWV0cnkiCiAgICAgICAgfQoKICAgICAgICAvLyBEZXZlbG9wbWVudDogdGhlIHdob2xlIHBvcnRhbCBvbiBvbmUgZGV2ZWxvcGVyJ3MgY29tcHV0ZXIuIFRoZXJlIGlzIG5vIG5ldHdvcmsgZWRnZSBhbmQgdGhlCiAgICAgICAgLy8gZXh0ZXJuYWwgc3lzdGVtcyBhcmUgc3R1YnMsIHNvIHRoZSBjb3BpZWQgY29udGFpbmVyIHJlbGF0aW9uc2hpcHMgYXJlIGRyYXduIGFzIHRoZXkgYXJlLgogICAgICAgIGRldmVsb3BtZW50ID0gZGVwbG95bWVudEVudmlyb25tZW50ICJEZXZlbG9wbWVudCIgewoKICAgICAgICAgICAgZGV2Q29tcHV0ZXIgPSBkZXBsb3ltZW50Tm9kZSAiRGV2ZWxvcGVyJ3MgY29tcHV0ZXIiICJSdW5zIHRoZSB3aG9sZSBwb3J0YWwgZm9yIG9uZSBkZXZlbG9wZXIuIEV2ZXJ5IHBvcnQgbGlzdGVucyBvbiBsb2NhbGhvc3Qgb25seS4gSG9sZHMgc3ludGhldGljIHRlc3QgZGF0YSBhbmQgbm8gc2VjcmV0cyBvZiB0aGUgdGVzdCBvciBwcm9kdWN0aW9uIGVudmlyb25tZW50LiIgIm1hY09TLCBMaW51eCBvciBXaW5kb3dzIiB7CgogICAgICAgICAgICAgICAgd2ViRGV2U2VydmVyID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJXZWIgZGV2IHNlcnZlciIgIlNlcnZlcyB0aGUgZmlsZXMgb2YgYm90aCB3ZWIgYXBwcyBhbmQgcmVsb2FkcyB0aGVtIHdoZW4gdGhlIGNvZGUgY2hhbmdlcy4iICJMb2NhbCBkZXZlbG9wbWVudCBzZXJ2ZXIiCgogICAgICAgICAgICAgICAgYnJvd3NlciA9IGRlcGxveW1lbnROb2RlICJXZWIgYnJvd3NlciIgIiIgIkNocm9tZSwgRmlyZWZveCwgU2FmYXJpIG9yIEVkZ2UiIHsKICAgICAgICAgICAgICAgICAgICBiYWNrb2ZmaWNlQXBwID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmJhY2tvZmZpY2UKICAgICAgICAgICAgICAgICAgICB3ZWJBcHAgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwud2ViCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgZG9ja2VyID0gZGVwbG95bWVudE5vZGUgIkxvY2FsIERvY2tlciBlbnZpcm9ubWVudCIgIlN0YXJ0cyBldmVyeXRoaW5nIGJlbG93IGZyb20gb25lIENvbXBvc2UgZmlsZSwgZWFjaCBwYXJ0IG9uY2UuIEEgbG9jYWwgZGV2ZWxvcG1lbnQgQ0EsIHdoaWNoIGV4aXN0cyBvbmx5IG9uIHRoaXMgY29tcHV0ZXIsIGlzc3VlcyB0aGUgVExTIGFuZCBtVExTIGNlcnRpZmljYXRlcy4iICJEb2NrZXIgQ29tcG9zZSIgewogICAgICAgICAgICAgICAgICAgIGdhdGV3YXkgPSBjb250YWluZXJJbnN0YW5jZSBwb3J0YWwuZ2F0ZXdheQogICAgICAgICAgICAgICAgICAgIGlhbSA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5pYW0KICAgICAgICAgICAgICAgICAgICBiYWNrZW5kID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmJhY2tlbmQKICAgICAgICAgICAgICAgICAgICBpbnRlZ3JhdGlvbiA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5pbnRlZ3JhdGlvbgogICAgICAgICAgICAgICAgICAgIGF1ZGl0ID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmF1ZGl0CiAgICAgICAgICAgICAgICAgICAgc2Nhbm5lciA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5zY2FubmVyCiAgICAgICAgICAgICAgICAgICAgY29sbGVjdG9yID0gaW5mcmFzdHJ1Y3R1cmVOb2RlICJUZWxlbWV0cnkgY29sbGVjdG9yIiAiU2FtZSBydWxlcyBhcyBwcm9kdWN0aW9uOiBkcm9wcyB0b2tlbnMgYW5kIHBlcnNvbmFsIGlkZW50aWZpY2F0aW9uIGNvZGVzLiIgIk9wZW5UZWxlbWV0cnkgQ29sbGVjdG9yIgoKICAgICAgICAgICAgICAgICAgICBkYlNlcnZlciA9IGRlcGxveW1lbnROb2RlICJQb3J0YWwgREIgc2VydmVyIiAiRmlsbGVkIHdpdGggc3ludGhldGljIHRlc3QgZGF0YSBieSBhIHNlZWQgc2NyaXB0LiIgIlBvc3RncmVTUUwgaW4gRG9ja2VyIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHBvcnRhbERiID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLnBvcnRhbERiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIG9iamVjdFN0b3JhZ2UgPSBkZXBsb3ltZW50Tm9kZSAiT2JqZWN0IHN0b3JhZ2UiICJTYW1lIDctZGF5IGxpZmVjeWNsZSBydWxlIGFzIHByb2R1Y3Rpb24uIiAiUzMtY29tcGF0aWJsZSBzdG9yYWdlIGluIERvY2tlciIgewogICAgICAgICAgICAgICAgICAgICAgICBkb2NTdG9yZSA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5kb2NTdG9yZQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBicm9rZXJOb2RlID0gZGVwbG95bWVudE5vZGUgIk1lc3NhZ2UgYnJva2VyIG5vZGUiICJPbmUgbm9kZSB3aXRoIHRoZSBzYW1lIHF1ZXVlcyBhbmQgcGVyLXF1ZXVlIHBlcm1pc3Npb25zIGFzIHByb2R1Y3Rpb24uIiAiUmFiYml0TVEgaW4gRG9ja2VyIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGJ1cyA9IGNvbnRhaW5lckluc3RhbmNlIHBvcnRhbC5idXMKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgYXVkaXREYlNlcnZlciA9IGRlcGxveW1lbnROb2RlICJBdWRpdCBzdG9yZSBzZXJ2ZXIiICJJdHMgb3duIHNlcnZlciBhbmQgY3JlZGVudGlhbHMsIGFzIGluIHByb2R1Y3Rpb24uIFRoZSBBdWRpdCBzZXJ2aWNlIG1heSBvbmx5IGluc2VydC4iICJQb3N0Z3JlU1FMIGluIERvY2tlciIgewogICAgICAgICAgICAgICAgICAgICAgICBhdWRpdFN0b3JlID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLmF1ZGl0U3RvcmUKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgb2JzU3RhY2sgPSBkZXBsb3ltZW50Tm9kZSAiT2JzZXJ2YWJpbGl0eSBzdGFjayIgIk9wdGlvbmFsLiBTdGFydGVkIG9ubHkgd2hlbiB0aGUgZGV2ZWxvcGVyIG5lZWRzIGRhc2hib2FyZHMgb3IgdHJhY2VzLiIgIlByb21ldGhldXMsIExva2ksIFRlbXBvLCBHcmFmYW5hIGluIERvY2tlciIgewogICAgICAgICAgICAgICAgICAgICAgICBvYnNlcnZhYmlsaXR5ID0gY29udGFpbmVySW5zdGFuY2UgcG9ydGFsLm9ic2VydmFiaWxpdHkKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgc3R1YnMgPSBkZXBsb3ltZW50Tm9kZSAiU3R1YiBleHRlcm5hbCBzeXN0ZW1zIiAiU3RhbmQgaW4gZm9yIGV2ZXJ5IGV4dGVybmFsIHN5c3RlbSB3aXRoIHNjcmlwdGVkIGFuc3dlcnMsIHNvIG5vIGNhbGwgbGVhdmVzIHRoZSBjb21wdXRlciBhbmQgbm8gcmVhbCBjcmVkZW50aWFscyBhcmUgbmVlZGVkLiBBIHRlc3QgY2FuIG1ha2UgYSBzdHViIGZhaWwgb3IgYW5zd2VyIGxhdGUuIiAiTW9jayBzZXJ2ZXIgaW4gRG9ja2VyIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGlkcFN0dWIgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIGlkcAogICAgICAgICAgICAgICAgICAgICAgICBzaWduaW5nU3R1YiA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2Ugc2lnbmluZwogICAgICAgICAgICAgICAgICAgICAgICByZWdpc3RyeVN0dWIgPSBzb2Z0d2FyZVN5c3RlbUluc3RhbmNlIHJlZ2lzdHJpZXMKICAgICAgICAgICAgICAgICAgICAgICAgYWdlbmN5U3R1YiA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2UgYWdlbmNpZXMKICAgICAgICAgICAgICAgICAgICAgICAgbm90aWZ5U3R1YiA9IHNvZnR3YXJlU3lzdGVtSW5zdGFuY2Ugbm90aWZ5CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICBkZXZlbG9wbWVudC5kZXZDb21wdXRlci5icm93c2VyLndlYkFwcCAtPiBkZXZlbG9wbWVudC5kZXZDb21wdXRlci53ZWJEZXZTZXJ2ZXIgIkxvYWRzIGFwcCBmaWxlcyIgIkhUVFBTIiAiaW5ncmVzcyIKICAgICAgICAgICAgZGV2ZWxvcG1lbnQuZGV2Q29tcHV0ZXIuYnJvd3Nlci5iYWNrb2ZmaWNlQXBwIC0+IGRldmVsb3BtZW50LmRldkNvbXB1dGVyLndlYkRldlNlcnZlciAiTG9hZHMgYXBwIGZpbGVzIiAiSFRUUFMiICJpbmdyZXNzIgogICAgICAgICAgICBkZXZlbG9wbWVudC5kZXZDb21wdXRlci5kb2NrZXIuY29sbGVjdG9yIC0+IGRldmVsb3BtZW50LmRldkNvbXB1dGVyLmRvY2tlci5vYnNTdGFjay5vYnNlcnZhYmlsaXR5ICJTZW5kcyBtZXRyaWNzLCBsb2dzIGFuZCB0cmFjZXMiICJPVExQIiAidGVsZW1ldHJ5IgogICAgICAgIH0KICAgIH0KCiAgICB2aWV3cyB7CiAgICAgICAgc3lzdGVtQ29udGV4dCBwb3J0YWwgImM0X3N5c3RlbV9jb250ZXh0IiB7CiAgICAgICAgICAgIHRpdGxlICJTeXN0ZW0gQ29udGV4dCAtIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsIgogICAgICAgICAgICBkZXNjcmlwdGlvbiAiV2hvIHVzZXMgdGhlIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsLCBhbmQgd2hpY2ggZXh0ZXJuYWwgc3lzdGVtcyBkb2VzIGl0IGRlcGVuZCBvbiBvciBzZXJ2ZT8gRGFzaGVkIGJveGVzIGFyZSB0cnVzdCBkb21haW5zLiIKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGluY2x1ZGUgYWdlbmN5U3RhZmYKICAgICAgICB9CgogICAgICAgIGNvbnRhaW5lciBwb3J0YWwgImM0X2NvbnRhaW5lcnMiIHsKICAgICAgICAgICAgdGl0bGUgIkNvbnRhaW5lcnMgLSBDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIKICAgICAgICAgICAgZGVzY3JpcHRpb24gIldoaWNoIGRlcGxveWFibGUgcGFydHMgbWFrZSB1cCB0aGUgcG9ydGFsLCB3aGVyZSBpcyBpdHMgZGF0YSBzdG9yZWQsIGFuZCBob3cgZG8gdGhleSBjb21tdW5pY2F0ZSBhY3Jvc3MgdHJ1c3QgYm91bmRhcmllcz8iCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBleGNsdWRlICJub3RpZnkgLT4gcmVzaWRlbnQiCiAgICAgICAgfQoKICAgICAgICBkZXBsb3ltZW50IHBvcnRhbCAiUHJvZHVjdGlvbiIgImM0X2RlcGxveW1lbnRfcHJvZHVjdGlvbiIgewogICAgICAgICAgICB0aXRsZSAiRGVwbG95bWVudCAoUHJvZHVjdGlvbikgLSBDaXRpemVuIFNlcnZpY2VzIFBvcnRhbCIKICAgICAgICAgICAgZGVzY3JpcHRpb24gIldoZXJlIGRvZXMgZWFjaCBjb250YWluZXIgcnVuIGluIHByb2R1Y3Rpb24sIHdoaWNoIG5ldHdvcmsgem9uZXMgYW5kIGluZnJhc3RydWN0dXJlIGRvZXMgdHJhZmZpYyBjcm9zcywgYW5kIGhvdyBpcyBlYWNoIHBhcnQgbWFkZSByZWR1bmRhbnQ/IHhOIGlzIHRoZSBudW1iZXIgb2YgaW5zdGFuY2VzIG9mIGEgbm9kZS4iCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICAvLyBIaWRlIHRoZSBkaXJlY3QgY29waWVzIG9mIHJlbGF0aW9uc2hpcHMgdGhhdCBhcmUgZHJhd24gdGhyb3VnaCB0aGUgV0FGLCBWUE4gb3IgZWdyZXNzIHByb3h5LgogICAgICAgICAgICBleGNsdWRlICJyZWxhdGlvbnNoaXAudGFnPT11c2VyIgogICAgICAgICAgICBleGNsdWRlICJyZWxhdGlvbnNoaXAudGFnPT1leHRlcm5hbCIKICAgICAgICB9CgogICAgICAgIGRlcGxveW1lbnQgcG9ydGFsICJUZXN0IiAiYzRfZGVwbG95bWVudF90ZXN0IiB7CiAgICAgICAgICAgIHRpdGxlICJEZXBsb3ltZW50IChUZXN0KSAtIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsIgogICAgICAgICAgICBkZXNjcmlwdGlvbiAiV2hlcmUgZG9lcyBlYWNoIGNvbnRhaW5lciBydW4gaW4gdGhlIHRlc3QgZW52aXJvbm1lbnQsIGFuZCBob3cgZG9lcyBpdCBkaWZmZXIgZnJvbSBwcm9kdWN0aW9uPyBTYW1lIHpvbmVzLCBpbmZyYXN0cnVjdHVyZSBhbmQgc2VjdXJpdHkgY29udHJvbHM7IG9uZSB6b25lIHdpdGggZmV3ZXIgYW5kIHNtYWxsZXIgaW5zdGFuY2VzOyBzeW50aGV0aWMgZGF0YTsgdGVzdCBlbnZpcm9ubWVudHMgb2YgdGhlIGV4dGVybmFsIHN5c3RlbXMuIHhOIGlzIHRoZSBudW1iZXIgb2YgaW5zdGFuY2VzIG9mIGEgbm9kZS4iCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICAvLyBIaWRlIHRoZSBkaXJlY3QgY29waWVzIG9mIHJlbGF0aW9uc2hpcHMgdGhhdCBhcmUgZHJhd24gdGhyb3VnaCB0aGUgV0FGLCBWUE4gb3IgZWdyZXNzIHByb3h5LgogICAgICAgICAgICBleGNsdWRlICJyZWxhdGlvbnNoaXAudGFnPT11c2VyIgogICAgICAgICAgICBleGNsdWRlICJyZWxhdGlvbnNoaXAudGFnPT1leHRlcm5hbCIKICAgICAgICB9CgogICAgICAgIGRlcGxveW1lbnQgcG9ydGFsICJEZXZlbG9wbWVudCIgImM0X2RlcGxveW1lbnRfZGV2ZWxvcG1lbnQiIHsKICAgICAgICAgICAgdGl0bGUgIkRlcGxveW1lbnQgKERldmVsb3BtZW50KSAtIENpdGl6ZW4gU2VydmljZXMgUG9ydGFsIgogICAgICAgICAgICBkZXNjcmlwdGlvbiAiV2hhdCBydW5zIG9uIGEgZGV2ZWxvcGVyJ3MgY29tcHV0ZXIsIGFuZCB3aGF0IHN0YW5kcyBpbiBmb3IgdGhlIHByb2R1Y3Rpb24gaW5mcmFzdHJ1Y3R1cmUgYW5kIHRoZSBleHRlcm5hbCBzeXN0ZW1zPyBFdmVyeXRoaW5nIHJ1bnMgb25jZSwgb24gbG9jYWxob3N0LCB3aXRoIHN5bnRoZXRpYyBkYXRhIGFuZCBzdHVicy4iCiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgIH0KCiAgICAgICAgc3R5bGVzIHsKICAgICAgICAgICAgZWxlbWVudCAiRWxlbWVudCIgewogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICAgICAgbWV0YWRhdGEgZmFsc2UKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgIlJlbGF0aW9uc2hpcCIgewogICAgICAgICAgICAgICAgd2lkdGggMjIwCiAgICAgICAgICAgICAgICBmb250U2l6ZSAyMAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMwODQyN2IKICAgICAgICAgICAgICAgIGhlaWdodCA0ODAKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkJvdW5kYXJ5IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjMTE2OGJkCiAgICAgICAgICAgICAgICBtZXRhZGF0YSBmYWxzZQogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbnRhaW5lciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjNDM4ZGQ1CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUXVldWUiIHsKICAgICAgICAgICAgICAgIHNoYXBlIFBpcGUKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJFeHRlcm5hbCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRGVwbG95bWVudCBOb2RlIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICNmZmZmZmYKICAgICAgICAgICAgICAgIGNvbG9yICMwMDAwMDAKICAgICAgICAgICAgICAgIHN0cm9rZSAjODg4ODg4CiAgICAgICAgICAgICAgICBtZXRhZGF0YSB0cnVlCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiSW5mcmFzdHJ1Y3R1cmUgTm9kZSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZmZmZmZmCiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgICAgICBzdHJva2UgIzU1NTU1NQogICAgICAgICAgICAgICAgbWV0YWRhdGEgdHJ1ZQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjEiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMxZjc3YjQKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIyIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjMmNhMDJjCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMyIgewogICAgICAgICAgICAgICAgY29sb3IgIzk0NjdiZAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjQiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM4YzU2NGIKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI1IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjZDYyNzI4CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyNiIgewogICAgICAgICAgICAgICAgY29sb3IgI2UzNzdjMgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjciIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZjdmMGUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInI4IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjMTdiZWNmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyOSIgewogICAgICAgICAgICAgICAgY29sb3IgIzdmN2Y3ZgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicjEwIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjYmNiZDIyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJyMTEiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMzOTNiNzkKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInIxMiIgewogICAgICAgICAgICAgICAgY29sb3IgIzYzNzkzOQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAidXNlciIgewogICAgICAgICAgICAgICAgY29sb3IgIzFmNzdiNAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAicm91dGUiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM1NTU1NTUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgInN5bmMiIHsKICAgICAgICAgICAgICAgIGNvbG9yICNmZjdmMGUKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgImFzeW5jIiB7CiAgICAgICAgICAgICAgICBjb2xvciAjOTQ2N2JkCiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmVsYXRpb25zaGlwICJleHRlcm5hbCIgewogICAgICAgICAgICAgICAgY29sb3IgI2Q2MjcyOAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAic3RvcmUiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMyY2EwMmMKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgImluZ3Jlc3MiIHsKICAgICAgICAgICAgICAgIGNvbG9yICMxZjc3YjQKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgImVncmVzcyIgewogICAgICAgICAgICAgICAgY29sb3IgI2Q2MjcyOAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAidGVsZW1ldHJ5IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjOGM1NjRiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cgp9",
     "structurizr.inspection.info" : "0",
     "structurizr.inspection.ignore" : "0",
     "structurizr.inspection.warning" : "0"
@@ -551,12 +2669,24 @@
           "shape" : "Cylinder",
           "tag" : "Database"
         }, {
+          "background" : "#ffffff",
+          "color" : "#000000",
+          "metadata" : true,
+          "stroke" : "#888888",
+          "tag" : "Deployment Node"
+        }, {
           "color" : "#ffffff",
           "metadata" : false,
           "tag" : "Element"
         }, {
           "background" : "#999999",
           "tag" : "External"
+        }, {
+          "background" : "#ffffff",
+          "color" : "#000000",
+          "metadata" : true,
+          "stroke" : "#555555",
+          "tag" : "Infrastructure Node"
         }, {
           "background" : "#08427b",
           "height" : 480,
@@ -578,7 +2708,13 @@
           "tag" : "async"
         }, {
           "color" : "#d62728",
+          "tag" : "egress"
+        }, {
+          "color" : "#d62728",
           "tag" : "external"
+        }, {
+          "color" : "#1f77b4",
+          "tag" : "ingress"
         }, {
           "color" : "#1f77b4",
           "tag" : "r1"
@@ -624,6 +2760,9 @@
         }, {
           "color" : "#ff7f0e",
           "tag" : "sync"
+        }, {
+          "color" : "#8c564b",
+          "tag" : "telemetry"
         }, {
           "color" : "#1f77b4",
           "tag" : "user"
@@ -806,6 +2945,878 @@
       } ],
       "softwareSystemId" : "5",
       "title" : "Containers - Citizen Services Portal"
+    } ],
+    "deploymentViews" : [ {
+      "description" : "Where does each container run in production, which network zones and infrastructure does traffic cross, and how is each part made redundant? xN is the number of instances of a node.",
+      "dimensions" : {
+        "height" : 4700,
+        "width" : 7650
+      },
+      "elements" : [ {
+        "id" : "65",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "66",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "67",
+        "x" : 200,
+        "y" : 1900
+      }, {
+        "id" : "68",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "69",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "70",
+        "x" : 200,
+        "y" : 1000
+      }, {
+        "id" : "71",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "72",
+        "x" : 200,
+        "y" : 2750
+      }, {
+        "id" : "73",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "74",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "75",
+        "x" : 1300,
+        "y" : 1900
+      }, {
+        "id" : "76",
+        "x" : 2000,
+        "y" : 1900
+      }, {
+        "id" : "77",
+        "x" : 1300,
+        "y" : 1000
+      }, {
+        "id" : "78",
+        "x" : 2000,
+        "y" : 450
+      }, {
+        "id" : "79",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "80",
+        "x" : 5850,
+        "y" : 1200
+      }, {
+        "id" : "81",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "82",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "83",
+        "x" : 3000,
+        "y" : 1900
+      }, {
+        "id" : "87",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "88",
+        "x" : 3800,
+        "y" : 1200
+      }, {
+        "id" : "90",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "91",
+        "x" : 3800,
+        "y" : 1900
+      }, {
+        "id" : "93",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "94",
+        "x" : 4700,
+        "y" : 1200
+      }, {
+        "id" : "98",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "99",
+        "x" : 4700,
+        "y" : 2700
+      }, {
+        "id" : "101",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "102",
+        "x" : 3000,
+        "y" : 1200
+      }, {
+        "id" : "104",
+        "x" : 4700,
+        "y" : 2050
+      }, {
+        "id" : "105",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "106",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "107",
+        "x" : 3800,
+        "y" : 3650
+      }, {
+        "id" : "110",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "111",
+        "x" : 3000,
+        "y" : 3650
+      }, {
+        "id" : "114",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "115",
+        "x" : 4700,
+        "y" : 3650
+      }, {
+        "id" : "119",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "120",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "121",
+        "x" : 5850,
+        "y" : 2700
+      }, {
+        "id" : "123",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "124",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "125",
+        "x" : 5850,
+        "y" : 3650
+      }, {
+        "id" : "126",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "127",
+        "x" : 6950,
+        "y" : 300
+      }, {
+        "id" : "129",
+        "x" : 6950,
+        "y" : 900
+      }, {
+        "id" : "131",
+        "x" : 6950,
+        "y" : 1500
+      }, {
+        "id" : "133",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "134",
+        "x" : 6950,
+        "y" : 2400
+      }, {
+        "id" : "136",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "137",
+        "x" : 6950,
+        "y" : 3200
+      } ],
+      "environment" : "Production",
+      "key" : "c4_deployment_production",
+      "name" : "Deployment View: Citizen Services Portal - Production",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "100",
+        "vertices" : [ {
+          "x" : 3225,
+          "y" : 2850
+        } ]
+      }, {
+        "id" : "103",
+        "position" : 28
+      }, {
+        "id" : "108",
+        "vertices" : [ {
+          "x" : 3625,
+          "y" : 1350
+        }, {
+          "x" : 3625,
+          "y" : 3800
+        } ]
+      }, {
+        "id" : "109"
+      }, {
+        "id" : "112"
+      }, {
+        "id" : "113",
+        "vertices" : [ {
+          "x" : 4475,
+          "y" : 1450
+        }, {
+          "x" : 4475,
+          "y" : 3500
+        }, {
+          "x" : 3225,
+          "y" : 3500
+        } ]
+      }, {
+        "id" : "116"
+      }, {
+        "id" : "117",
+        "vertices" : [ {
+          "x" : 5500,
+          "y" : 3800
+        }, {
+          "x" : 5500,
+          "y" : 1450
+        } ]
+      }, {
+        "id" : "118"
+      }, {
+        "id" : "122"
+      }, {
+        "id" : "139"
+      }, {
+        "id" : "140"
+      }, {
+        "id" : "141"
+      }, {
+        "id" : "142"
+      }, {
+        "id" : "143"
+      }, {
+        "id" : "144"
+      }, {
+        "id" : "145"
+      }, {
+        "id" : "146"
+      }, {
+        "id" : "147",
+        "vertices" : [ {
+          "x" : 4025,
+          "y" : 1000
+        }, {
+          "x" : 6075,
+          "y" : 1000
+        } ]
+      }, {
+        "id" : "148"
+      }, {
+        "id" : "149"
+      }, {
+        "id" : "150"
+      }, {
+        "id" : "151"
+      }, {
+        "id" : "152"
+      }, {
+        "id" : "153"
+      }, {
+        "id" : "154"
+      }, {
+        "id" : "155"
+      }, {
+        "id" : "89",
+        "position" : 28
+      }, {
+        "id" : "92"
+      }, {
+        "id" : "95"
+      }, {
+        "id" : "96",
+        "vertices" : [ {
+          "x" : 4575,
+          "y" : 1800
+        } ]
+      }, {
+        "id" : "97",
+        "vertices" : [ {
+          "x" : 4375,
+          "y" : 1650
+        } ]
+      } ],
+      "softwareSystemId" : "5",
+      "title" : "Deployment (Production) - Citizen Services Portal"
+    }, {
+      "description" : "Where does each container run in the test environment, and how does it differ from production? Same zones, infrastructure and security controls; one zone with fewer and smaller instances; synthetic data; test environments of the external systems. xN is the number of instances of a node.",
+      "dimensions" : {
+        "height" : 4700,
+        "width" : 7650
+      },
+      "elements" : [ {
+        "id" : "156",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "157",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "158",
+        "x" : 200,
+        "y" : 1000
+      }, {
+        "id" : "159",
+        "x" : 200,
+        "y" : 1900
+      }, {
+        "id" : "160",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "161",
+        "x" : 200,
+        "y" : 2750
+      }, {
+        "id" : "162",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "163",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "164",
+        "x" : 1300,
+        "y" : 1900
+      }, {
+        "id" : "165",
+        "x" : 2000,
+        "y" : 1900
+      }, {
+        "id" : "166",
+        "x" : 1300,
+        "y" : 1000
+      }, {
+        "id" : "167",
+        "x" : 2000,
+        "y" : 450
+      }, {
+        "id" : "168",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "169",
+        "x" : 5850,
+        "y" : 1200
+      }, {
+        "id" : "170",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "171",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "172",
+        "x" : 3000,
+        "y" : 1900
+      }, {
+        "id" : "176",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "177",
+        "x" : 3800,
+        "y" : 1200
+      }, {
+        "id" : "179",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "180",
+        "x" : 3800,
+        "y" : 1900
+      }, {
+        "id" : "182",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "183",
+        "x" : 4700,
+        "y" : 1200
+      }, {
+        "id" : "187",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "188",
+        "x" : 4700,
+        "y" : 2700
+      }, {
+        "id" : "190",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "191",
+        "x" : 3000,
+        "y" : 1200
+      }, {
+        "id" : "193",
+        "x" : 4700,
+        "y" : 2050
+      }, {
+        "id" : "194",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "195",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "196",
+        "x" : 3800,
+        "y" : 3650
+      }, {
+        "id" : "199",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "200",
+        "x" : 3000,
+        "y" : 3650
+      }, {
+        "id" : "203",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "204",
+        "x" : 4700,
+        "y" : 3650
+      }, {
+        "id" : "208",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "209",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "210",
+        "x" : 5850,
+        "y" : 2700
+      }, {
+        "id" : "212",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "213",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "214",
+        "x" : 5850,
+        "y" : 3650
+      }, {
+        "id" : "215",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "216",
+        "x" : 6950,
+        "y" : 300
+      }, {
+        "id" : "218",
+        "x" : 6950,
+        "y" : 900
+      }, {
+        "id" : "220",
+        "x" : 6950,
+        "y" : 1500
+      }, {
+        "id" : "222",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "223",
+        "x" : 6950,
+        "y" : 2400
+      }, {
+        "id" : "225",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "226",
+        "x" : 6950,
+        "y" : 3200
+      } ],
+      "environment" : "Test",
+      "key" : "c4_deployment_test",
+      "name" : "Deployment View: Citizen Services Portal - Test",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "178",
+        "position" : 28
+      }, {
+        "id" : "181"
+      }, {
+        "id" : "184"
+      }, {
+        "id" : "185",
+        "vertices" : [ {
+          "x" : 4575,
+          "y" : 1800
+        } ]
+      }, {
+        "id" : "186",
+        "vertices" : [ {
+          "x" : 4375,
+          "y" : 1650
+        } ]
+      }, {
+        "id" : "189",
+        "vertices" : [ {
+          "x" : 3225,
+          "y" : 2850
+        } ]
+      }, {
+        "id" : "192",
+        "position" : 28
+      }, {
+        "id" : "197",
+        "vertices" : [ {
+          "x" : 3625,
+          "y" : 1350
+        }, {
+          "x" : 3625,
+          "y" : 3800
+        } ]
+      }, {
+        "id" : "198"
+      }, {
+        "id" : "201"
+      }, {
+        "id" : "202",
+        "vertices" : [ {
+          "x" : 4475,
+          "y" : 1450
+        }, {
+          "x" : 4475,
+          "y" : 3500
+        }, {
+          "x" : 3225,
+          "y" : 3500
+        } ]
+      }, {
+        "id" : "205"
+      }, {
+        "id" : "206",
+        "vertices" : [ {
+          "x" : 5500,
+          "y" : 3800
+        }, {
+          "x" : 5500,
+          "y" : 1450
+        } ]
+      }, {
+        "id" : "207"
+      }, {
+        "id" : "211"
+      }, {
+        "id" : "228"
+      }, {
+        "id" : "229"
+      }, {
+        "id" : "230"
+      }, {
+        "id" : "231"
+      }, {
+        "id" : "232"
+      }, {
+        "id" : "233"
+      }, {
+        "id" : "234"
+      }, {
+        "id" : "235"
+      }, {
+        "id" : "236",
+        "vertices" : [ {
+          "x" : 4025,
+          "y" : 1000
+        }, {
+          "x" : 6075,
+          "y" : 1000
+        } ]
+      }, {
+        "id" : "237"
+      }, {
+        "id" : "238"
+      }, {
+        "id" : "239"
+      }, {
+        "id" : "240"
+      }, {
+        "id" : "241"
+      }, {
+        "id" : "242"
+      }, {
+        "id" : "243"
+      }, {
+        "id" : "244"
+      } ],
+      "softwareSystemId" : "5",
+      "title" : "Deployment (Test) - Citizen Services Portal"
+    }, {
+      "description" : "What runs on a developer's computer, and what stands in for the production infrastructure and the external systems? Everything runs once, on localhost, with synthetic data and stubs.",
+      "dimensions" : {
+        "height" : 4700,
+        "width" : 6800
+      },
+      "elements" : [ {
+        "id" : "245",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "246",
+        "x" : 200,
+        "y" : 1450
+      }, {
+        "id" : "247",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "248",
+        "x" : 1000,
+        "y" : 1000
+      }, {
+        "id" : "249",
+        "x" : 1000,
+        "y" : 1900
+      }, {
+        "id" : "250",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "251",
+        "x" : 2100,
+        "y" : 1900
+      }, {
+        "id" : "254",
+        "x" : 2900,
+        "y" : 1200
+      }, {
+        "id" : "256",
+        "x" : 2900,
+        "y" : 1900
+      }, {
+        "id" : "258",
+        "x" : 3800,
+        "y" : 1200
+      }, {
+        "id" : "262",
+        "x" : 3800,
+        "y" : 2700
+      }, {
+        "id" : "264",
+        "x" : 2100,
+        "y" : 1200
+      }, {
+        "id" : "266",
+        "x" : 4950,
+        "y" : 3650
+      }, {
+        "id" : "267",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "268",
+        "x" : 2900,
+        "y" : 3650
+      }, {
+        "id" : "271",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "272",
+        "x" : 2100,
+        "y" : 3650
+      }, {
+        "id" : "275",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "276",
+        "x" : 3800,
+        "y" : 3650
+      }, {
+        "id" : "280",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "281",
+        "x" : 4950,
+        "y" : 2700
+      }, {
+        "id" : "283",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "284",
+        "x" : 6050,
+        "y" : 3650
+      }, {
+        "id" : "285",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "286",
+        "x" : 6050,
+        "y" : 300
+      }, {
+        "id" : "288",
+        "x" : 6050,
+        "y" : 1950
+      }, {
+        "id" : "290",
+        "x" : 6050,
+        "y" : 850
+      }, {
+        "id" : "292",
+        "x" : 6050,
+        "y" : 1400
+      }, {
+        "id" : "294",
+        "x" : 6050,
+        "y" : 2500
+      } ],
+      "environment" : "Development",
+      "key" : "c4_deployment_development",
+      "name" : "Deployment View: Citizen Services Portal - Development",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "252"
+      }, {
+        "id" : "253"
+      }, {
+        "id" : "255",
+        "position" : 28
+      }, {
+        "id" : "257"
+      }, {
+        "id" : "259"
+      }, {
+        "id" : "260",
+        "vertices" : [ {
+          "x" : 3675,
+          "y" : 1800
+        } ]
+      }, {
+        "id" : "261",
+        "vertices" : [ {
+          "x" : 3475,
+          "y" : 1650
+        } ]
+      }, {
+        "id" : "263",
+        "vertices" : [ {
+          "x" : 2325,
+          "y" : 2850
+        } ]
+      }, {
+        "id" : "265",
+        "position" : 28
+      }, {
+        "id" : "269",
+        "vertices" : [ {
+          "x" : 2725,
+          "y" : 1350
+        }, {
+          "x" : 2725,
+          "y" : 3800
+        } ]
+      }, {
+        "id" : "270"
+      }, {
+        "id" : "273"
+      }, {
+        "id" : "274",
+        "vertices" : [ {
+          "x" : 3575,
+          "y" : 1450
+        }, {
+          "x" : 3575,
+          "y" : 3500
+        }, {
+          "x" : 2325,
+          "y" : 3500
+        } ]
+      }, {
+        "id" : "277"
+      }, {
+        "id" : "278",
+        "vertices" : [ {
+          "x" : 4600,
+          "y" : 3800
+        }, {
+          "x" : 4600,
+          "y" : 1450
+        } ]
+      }, {
+        "id" : "279"
+      }, {
+        "id" : "282"
+      }, {
+        "id" : "287",
+        "vertices" : [ {
+          "x" : 3125,
+          "y" : 900
+        }, {
+          "x" : 4950,
+          "y" : 900
+        } ]
+      }, {
+        "id" : "289"
+      }, {
+        "id" : "291"
+      }, {
+        "id" : "293"
+      }, {
+        "id" : "295"
+      }, {
+        "id" : "296"
+      }, {
+        "id" : "297"
+      }, {
+        "id" : "298"
+      } ],
+      "softwareSystemId" : "5",
+      "title" : "Deployment (Development) - Citizen Services Portal"
     } ],
     "systemContextViews" : [ {
       "description" : "Who uses the Citizen Services Portal, and which external systems does it depend on or serve? Dashed boxes are trust domains.",

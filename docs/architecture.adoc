@@ -333,7 +333,12 @@ Link to threat model and risk register artifacts.
 
 == 9. Deployment and operations
 
-Link to deployment, observability, and recovery notes in link:../ops/[ops/].
+The portal runs in three deployment environments: Development on a developer's computer, Test
+(staging) with the same structure as Production but fewer and smaller instances, and Production in
+the Estonian Government Cloud across three zones. The deployment diagrams, the differences between
+the environments and the assumptions behind them are in
+link:deployment_model.adoc[deployment_model.adoc].
+
 
 == 10. Evolution plan
 
@@ -342,4 +347,5 @@ Describe expected changes, versioning, compatibility, migration, and deprecation
 == Appendix
 
 * ADR index: link:../adrs/README.adoc[adrs/README.adoc]
+* Deployment model: link:deployment_model.adoc[deployment_model.adoc]
 * Glossary: link:glossary.adoc[glossary.adoc]
